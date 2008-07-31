@@ -10,7 +10,7 @@ VPATH   := ../lvvlib/
 #SPEED := $(s:o=OPTIMZE)
 #SPEED := $(s:d=DEBUG)
 
-g++FLAGS          := -pipe -frecord-gcc-switches
+g++FLAGS          := -pipe
 g++FLAGS_OPTIMIZE := -O3 -march=native 
 g++FLAGS_DEBUG    := -O0 -ggdb3 -p -fbounds-check -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
 #g++FLAGS_DEBUG    += -Wfloat-equal -Weffc++

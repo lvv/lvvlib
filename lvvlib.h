@@ -53,6 +53,7 @@
                     
 class Timer { //=========================================== TIMER
                         // ther is similar impl at http://www.boost.org/doc/libs/1_35_0/libs/timer/timer.htm
+						// article about hi-res timers: http://www.devx.com/cplus/Article/35375/0/page/2
     private: 
         timeval  creator_tv; 
         timeval  tv; 
@@ -105,7 +106,7 @@ class Timer { //=========================================== TIMER
             if (msg=="") 
                 cout << setw(13) << "timer: ";
             else {
-                cout <<"          (*) " << msg << ":  "; 
+                cout <<"          ⌛ " << msg << ":  "; 
             };
             cout  << (*this)() << "s " << endl; 
         };
