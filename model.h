@@ -9,11 +9,10 @@
 
     ////////////////////////////////////////////////////////////////////////////////// Model Data - μ² polinom fitting
 
-                                template<typename C = const double[] >
 class   Model   {                                 // gsl multifit wrapper
 
     public:
-        Model (C _x, C _y, int _n, int _m=-1) : n(_n), m(_m)   { ////////////////////////////////   CTOR
+        Model (double _x[], double _y[], int _n, int _m=-1) : n(_n), m(_m), x(_x), y(_y)    { ////////////////////////////////   CTOR
 
                 // N, M 
                 assert(_n >= 3);     //  n==1 and n==2  - not implemented
@@ -26,38 +25,31 @@ class   Model   {                                 // gsl multifit wrapper
                 assert(n >= m);  
 
                 X   = gsl_matrix_alloc (n, m) ;
-                x   = gsl_vector_alloc (n   ) ;
-                y   = gsl_vector_alloc (n   ) ;
                 c   = gsl_vector_alloc (m   ) ;
                 cov = gsl_matrix_alloc (m, m) ;
                 
-                /////    INPUT
-                for (i = 0; i < n; i++) {
-                    gsl_vector_set (x, i, _x[i]);
-                    gsl_vector_set (y, i, _y[i]);
-                }
+                xv = gsl_vector_view_array (_x, n); 
+                yv = gsl_vector_view_array (_y, n); 
 
                 /////    INIT - PREP MATRIX for POLIFIT
                 for (i = 0; i<n; i++)    for (int p=0; p<m; ++p)     gsl_matrix_set (X, i, p, lvv::powi(_x[i], p));
 
                 /////    FIT
                 gsl_multifit_linear_workspace *work = gsl_multifit_linear_alloc (n, m); 
-                //  gsl_multifit_linear     (X, y,                 c, cov, &chisq, work); // int gsl_multifit_linear     (const gsl_matrix *X, const gsl_vector *y,                           gsl_vector *c, gsl_matrix *cov, double *chisq, gsl_multifit_linear_workspace *ws)
-                    gsl_multifit_linear_svd (X, y, svd_tol, &rank, c, cov, &chisq, work); // int gsl_multifit_linear_svd (const gsl_matrix *X, const gsl_vector *y, double tol, size t* rank, gsl_vector *c, gsl_matrix *cov, double *chisq, gsl_multifit_linear_workspace *ws)
+                //  gsl_multifit_linear     (X, y,                         c, cov, &chisq, work); // int gsl_multifit_linear     (const gsl_matrix *X, const gsl_vector *y,                           gsl_vector *c, gsl_matrix *cov, double *chisq, gsl_multifit_linear_workspace *ws)
+                    gsl_multifit_linear_svd (X, &yv.vector, svd_tol, &rank, c, cov, &chisq, work); // int gsl_multifit_linear_svd (const gsl_matrix *X, const gsl_vector *y, double tol, size t* rank, gsl_vector *c, gsl_matrix *cov, double *chisq, gsl_multifit_linear_workspace *ws)
                 gsl_multifit_linear_free (work);
         };
 
         ~Model() { ////////////////////////////////////////////////////////////////// DTOR
                 gsl_matrix_free (X);
-                gsl_vector_free (x);
-                gsl_vector_free (y);
                 gsl_vector_free (c);
                 gsl_matrix_free (cov);
         };
 
-        public:
+    public:
 
-            double estimate(const double x) const {
+        double estimate(const double x) const {
                 double y_est = gsl_vector_get(c,0) ; 
                 double pow_x = 1.0                 ; // x[0,0]^0
 
@@ -67,9 +59,9 @@ class   Model   {                                 // gsl multifit wrapper
                 }
 
                 return y_est;
-            };
+        };
 
-            double inverse_estimate(const double yy) const {
+        double inverse_estimate(const double yy) const {
 
                 double xx;
                 //PR2(yy,xx);
@@ -111,43 +103,46 @@ class   Model   {                                 // gsl multifit wrapper
                 }
 
                 return xx;
-            };
+        };
 
-            void print() {
-                    #define C(i) (gsl_vector_get(c,(i)))
-                    #define COV(i,j) (gsl_matrix_get(cov,(i),(j)))
 
-                    // printing for gnu plot
-                    double xx;
-                    double x_delta = (gsl_vector_get(x,n-1) - gsl_vector_get(x,0))/(n-1);
+        void print() {
+                #define C(i) (gsl_vector_get(c,(i)))
+                #define COV(i,j) (gsl_matrix_get(cov,(i),(j)))
 
-                    cout  << "# Xᵢ 	"   <<  "  Yᵢ"  <<  "	Y est "  <<  endl;
-                    #define PRINT_DATA_LINE    cout << xx << " 	"  << " \" \" "  << " 	" <<  estimate(xx) << endl;
-                    xx = gsl_vector_get(x,0) - x_delta  ;    PRINT_DATA_LINE
-                    xx = gsl_vector_get(x,0) - x_delta/2;    PRINT_DATA_LINE
+                // printing for gnu plot
+                double xx;
+                double x_delta = (x[n-1] - x[0])/(n-1);
 
-                    float  sum_data_model_delta = 0;
-                    for (int i=0;  i<n;  ++i)  {
-                        xx     = gsl_vector_get(x,i)             ; cout << xx << " 	"  << gsl_vector_get(y,i)  << " 	" <<  estimate(xx) << endl;
-                        sum_data_model_delta += lvv::abs(gsl_vector_get(y,i) - estimate(xx));
-                        xx     = gsl_vector_get(x,i) + x_delta/2 ; PRINT_DATA_LINE
-                    }
-                    xx = gsl_vector_get(x,n-1) + x_delta  ;    PRINT_DATA_LINE
+                cout  << "# Xᵢ 	"   <<  "  Yᵢ"  <<  "	Y est "  <<  endl;
+                #define PRINT_DATA_LINE    cout << xx << " 	"  << " \" \" "  << " 	" <<  estimate(xx) << endl;
+                xx = x[0] - x_delta  ;    PRINT_DATA_LINE
+                xx = x[0] - x_delta/2;    PRINT_DATA_LINE
 
-                    cout  << "#  N=" << n <<  "  M=" <<  m << "  rank=" <<  rank  <<  "   χ²/n="   << chisq/n 
-                            << "   μ|data-model|=" << sum_data_model_delta/n ;
-                    cout  << "   C[p]={"; for (int p=0;  p<m;  ++p) cout << gsl_vector_get(c,p) << ", "; cout << "}\n";
+                float  sum_data_model_delta = 0;
+                for (int i=0;  i<n;  ++i)  {
+                    xx     = x[i]             ; cout << xx << " 	"  << y[i]  << " 	" <<  estimate(xx) << endl;
+                    sum_data_model_delta += lvv::abs(y[i]) - estimate(xx);
+                    xx     = x[i] + x_delta/2 ; PRINT_DATA_LINE
+                }
+                xx = x[n-1] + x_delta  ;    PRINT_DATA_LINE
 
-            };
+                cout  << "#  N=" << n <<  "  M=" <<  m << "  rank=" <<  rank  <<  "   χ²/n="   << chisq/n 
+                        << "   μ|data-model|=" << sum_data_model_delta/n ;
+                cout  << "   C[p]={"; for (int p=0;  p<m;  ++p) cout << gsl_vector_get(c,p) << ", "; cout << "}\n";
 
-        private:
-            int                 n, m;
-            const static double  svd_tol = 0.000001;
-            size_t               rank;
-            int                  i;
-            double               xi, yi, ei, chisq;
-            gsl_matrix          *X, *cov;
-            gsl_vector          *x, *y, *c;
+        };
+
+    private:
+        int                  n         , m;
+        const static double  svd_tol = 0.000001;
+        size_t               rank;
+        int                  i;
+        double               xi        , yi, ei, chisq;
+        gsl_matrix          *X         , *cov;
+        gsl_vector          *c;
+        gsl_vector_view      xv        , yv;
+        double              *x         , *y;
  };
 
     }      // namespace lvv
