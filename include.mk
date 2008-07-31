@@ -12,7 +12,7 @@ VPATH   := ../lvvlib/
 
 g++FLAGS          := -pipe -frecord-gcc-switches
 g++FLAGS_OPTIMIZE := -O3 -march=native 
-g++FLAGS_DEBUG    := -O1 -ggdb3 -p -fbounds-check -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
+g++FLAGS_DEBUG    := -O0 -ggdb3 -p -fbounds-check -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
 #g++FLAGS_DEBUG    += -Wfloat-equal -Weffc++
 #g++FLAGS_DEBUG    += -fmudflap
 #g++FLAGS_OPTIMIZE += -fast-math -fstrict-overflow 
@@ -25,7 +25,7 @@ iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2
 iccFLAGS_DEBUG    := -debug all
 
 CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'
-CXXFLAGS_OPTIMIZE	:= -DNDEBUG 
+CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DO2SCL_NO_RANGE_CHECK -DGSL_RANGE_CHECK_OFF
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
 CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz
 CXXFLAGS           = $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF)

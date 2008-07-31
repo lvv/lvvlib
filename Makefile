@@ -1,13 +1,13 @@
 
-.DEFAULT_GOAL := fit
+.DEFAULT_GOAL := it
 	
 t-*     : lvvlib.h lvvmath.h lvvcheck.h
 t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
 
 LDFLAGS += -lgsl -lgslcblas
 
-fit: t-fit
-	t-fit | gph
+it: t-model
+	t-model | gp
 	
 allt: t-timer t-equal t-gzstream t-gzip
 
