@@ -2,8 +2,18 @@
     #ifndef LVVMODEL_H
     #define LVVMODEL_H
 
-    #include "lvvmath.h"
+    #include <iostream>
+    #include <iomanip>
+    using std::fixed;
+    using std::showpos;
+
+    #include <string>
     #include <gsl/gsl_multifit.h>
+    #include <gsl/gsl_poly.h>
+    #include "lvvlib.h"
+    #include "lvvmath.h"
+
+    #define poly_order 4
 
     namespace lvv {
 
@@ -49,7 +59,7 @@ class   Model   {                                 // gsl multifit wrapper
 
     public:
 
-        double estimate(const double x) const {
+        double  estimate (const double x)   const {
                 double y_est = gsl_vector_get(c,0) ; 
                 double pow_x = 1.0                 ; // x[0,0]^0
 
@@ -61,12 +71,49 @@ class   Model   {                                 // gsl multifit wrapper
                 return y_est;
         };
 
-        double inverse_estimate(const double yy) const {
+        double  inverse_estimate (const double yy)    const {
 
-                double xx;
+                double xx = -1.0;
                 //PR2(yy,xx);
 
-                if        (m==4) {
+                if        (m>2) {
+
+                    double c0_save = gsl_vector_get(c,0);
+                    gsl_vector_set(c, 0, c0_save-yy);
+
+                    double z[(poly_order-1)*2];
+
+                    //  solve
+                    gsl_poly_complex_workspace * w = gsl_poly_complex_workspace_alloc (poly_order);                                                                                                            
+                    gsl_poly_complex_solve (gsl_vector_ptr(c,0), poly_order, w, z);                                                                                                                   
+                    gsl_poly_complex_workspace_free (w);                                                                                                                   
+
+                    //  select root
+                    bool got_root=false;
+                    double real_root=3.6;
+                                                                                                                //cerr << "Y=" << yy ;  
+                    for (int i = 0; i < poly_order-1; i++)   {
+                         cerr << " \t("<<i<<") "<<  z[2*i] << "+i" << z[2*i+1];            
+                        if (lvv::abs(z[2*i+1]) <  0.00000001) {              //*imag part  2GEN
+                            if ( x[0]-2 <  z[2*i]  &&  z[2*i] <  x[n-1]+2) {
+                                real_root = z[2*i];
+                                                                                                                //cerr << " \tr=" << real_root ;
+                                got_root = true;
+                            }
+                        }
+                    };
+                    cerr << endl;
+
+                    if (!got_root) {
+                        cerr << "root not found\n";   
+                        print();
+                    } 
+
+                    gsl_vector_set(c, 0, c0_save);
+
+                    xx = real_root;
+
+                    /*
                     double c0 =  gsl_vector_get(c,0);
                     double c1 =  gsl_vector_get(c,1);
                     double c2 =  gsl_vector_get(c,2);
@@ -94,6 +141,7 @@ class   Model   {                                 // gsl multifit wrapper
                     xx = (sqrt(4*c2*yy-4*c0*c2+pow2(c1))-c1)/(2*c2);
                     //xx = -(sqrt(4*c2*yy-4*c0*c2+pow2(c1))+c1)/(2*c2);
                    
+                   */ 
                 } else if (m==2){
                     double c0 =  gsl_vector_get(c,0);
                     double c1 =  gsl_vector_get(c,1);
@@ -106,32 +154,22 @@ class   Model   {                                 // gsl multifit wrapper
         };
 
 
-        void print() {
-                #define C(i) (gsl_vector_get(c,(i)))
-                #define COV(i,j) (gsl_matrix_get(cov,(i),(j)))
-
-                // printing for gnu plot
-                double xx;
-                double x_delta = (x[n-1] - x[0])/(n-1);
-
-                cout  << "# Xᵢ 	"   <<  "  Yᵢ"  <<  "	Y est "  <<  endl;
-                #define PRINT_DATA_LINE    cout << xx << " 	"  << " \" \" "  << " 	" <<  estimate(xx) << endl;
-                xx = x[0] - x_delta  ;    PRINT_DATA_LINE
-                xx = x[0] - x_delta/2;    PRINT_DATA_LINE
-
-                float  sum_data_model_delta = 0;
-                for (int i=0;  i<n;  ++i)  {
-                    xx     = x[i]             ; cout << xx << " 	"  << y[i]  << " 	" <<  estimate(xx) << endl;
-                    sum_data_model_delta += lvv::abs(y[i]) - estimate(xx);
-                    xx     = x[i] + x_delta/2 ; PRINT_DATA_LINE
-                }
-                xx = x[n-1] + x_delta  ;    PRINT_DATA_LINE
-
-                cout  << "#  N=" << n <<  "  M=" <<  m << "  rank=" <<  rank  <<  "   χ²/n="   << chisq/n 
-                        << "   μ|data-model|=" << sum_data_model_delta/n ;
-                cout  << "   C[p]={"; for (int p=0;  p<m;  ++p) cout << gsl_vector_get(c,p) << ", "; cout << "}\n";
-
+        void print (string title="")  const {
+                cout << "# :gnuplot: set key bottom; set ytics 0,0.5; set yrange [-0.1:1.1]; set xrange [0:6]; set grid; "
+                        << (title.length()>0  ?  "set title \" " +  title + "\";"  :  "") << 
+                    
+                            "plot "
+                                " \"pipe\" using 1:3 title \"model\" with lines 5, "
+                                " \"pipe\" using 4:2 title \"inv x(y)\" with point 4,"
+                                " \"pipe\" using 1:2 title \"data\" with points 11 "
+                        ";\n"
+                    <<                                       "#  X              Y            "      "  Y-mod         X-mod-inv\n" << fixed << showpos ;
+                for (int i=0;  i<n; ++i)                 cout << x[i]        << "\t" << y[i]                                                << endl;
+                for (double xx=0.0;  xx<=6.0; xx+=1./3.) cout << xx          << "\t" << "\" \"\t\t" << estimate(xx)                         << endl;
+                for (double yy=0.0;  yy<=1.0; yy+=0.05)  cout << "\" \"\t\t" << yy   << "\t"        << "\" \"\t\t"  << inverse_estimate(yy) << endl;
         };
+
+        gsl_vector          *c;
 
     private:
         int                  n         , m;
@@ -140,9 +178,9 @@ class   Model   {                                 // gsl multifit wrapper
         int                  i;
         double               xi        , yi, ei, chisq;
         gsl_matrix          *X         , *cov;
-        gsl_vector          *c;
         gsl_vector_view      xv        , yv;
-        double              *x         , *y;
+        double     * x;
+        double     * y;
  };
 
     }      // namespace lvv
