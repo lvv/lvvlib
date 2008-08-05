@@ -84,34 +84,55 @@ class   Model   {                                 // gsl multifit wrapper
                     double z[(poly_order-1)*2];
 
                     //  solve
-                    gsl_poly_complex_workspace * w = gsl_poly_complex_workspace_alloc (poly_order);                                                                                                            
-                    gsl_poly_complex_solve (gsl_vector_ptr(c,0), poly_order, w, z);                                                                                                                   
-                    gsl_poly_complex_workspace_free (w);                                                                                                                   
+                    gsl_poly_complex_workspace * w = gsl_poly_complex_workspace_alloc (poly_order);
+                    gsl_poly_complex_solve (gsl_vector_ptr(c,0), poly_order, w, z);
+                    gsl_poly_complex_workspace_free (w);
 
                     //  select root
+					double oorr_distance=numeric_limits<double>::max(); // out_of_range root distance to normal interval
                     bool got_root=false;
-                    double real_root=3.6;
-                                                                                                                //cerr << "Y=" << yy ;  
+                    bool got_out_of_range_root=-20;
+                    double out_of_range_root=-10;
+                    double real_root=-100000;
+                                                                                          	//cerr << "Y=" << yy ;  
                     for (int i = 0; i < poly_order-1; i++)   {
-                         cerr << " \t("<<i<<") "<<  z[2*i] << "+i" << z[2*i+1];            
-                        if (lvv::abs(z[2*i+1]) <  0.00000001) {              //*imag part  2GEN
-                            if ( x[0]-2 <  z[2*i]  &&  z[2*i] <  x[n-1]+2) {
-                                real_root = z[2*i];
-                                                                                                                //cerr << " \tr=" << real_root ;
-                                got_root = true;
-                            }
-                        }
-                    };
-                    cerr << endl;
+																							//cerr << " \t("<<i<<") "<<  z[2*i] << "+i" << z[2*i+1];
+                        if (abs(z[2*i+1]) >  0.00000001) continue;              //*imag part  2GEN
 
-                    if (!got_root) {
-                        cerr << "root not found\n";   
-                        print();
-                    } 
+						if ( x[0] <  z[2*i]  &&  z[2*i] <  x[n-1]) {
+							real_root = z[2*i];
+							got_root = true;
+																							//cerr << " rr=" << real_root;
+							break;
+						}
+						if ( z[2*i] < x[0] )  {
+							if (( x[0] - z[2*i] < oorr_distance && got_out_of_range_root ) || ! got_out_of_range_root)  {
+								oorr_distance = x[0] - z[2*i];
+								got_out_of_range_root=true;
+								out_of_range_root = 1;
+																							//cerr  << " oor=" << out_of_range_root ;
+								continue;
+							}
+						}
+						if ( x[4] <  z[2*i])  {
+							if ((z[2*i] - x[4]  < oorr_distance && got_out_of_range_root ) || ! got_out_of_range_root)  {  
+								oorr_distance = z[2*i] - x[4];
+								got_out_of_range_root=true;
+								out_of_range_root = 5;
+																							//cerr  << " oor=" << out_of_range_root ;
+								continue;
+							}
+						}
+
+                    };
+				
+
+                    if		(got_root)					  xx=real_root;
+                    else if (got_out_of_range_root)		  xx=out_of_range_root;
+                    else								{ xx=3.6666; cerr << "root not found\n";   print(); }
+																							//cerr << "  ROOT=" << xx << endl;
 
                     gsl_vector_set(c, 0, c0_save);
-
-                    xx = real_root;
 
                     /*
                     double c0 =  gsl_vector_get(c,0);
@@ -167,8 +188,9 @@ class   Model   {                                 // gsl multifit wrapper
                 for (int i=0;  i<n; ++i)                 cout << x[i]        << "\t" << y[i]                                                << endl;
                 for (double xx=0.0;  xx<=6.0; xx+=1./3.) cout << xx          << "\t" << "\" \"\t\t" << estimate(xx)                         << endl;
                 for (double yy=0.0;  yy<=1.0; yy+=0.05)  cout << "\" \"\t\t" << yy   << "\t"        << "\" \"\t\t"  << inverse_estimate(yy) << endl;
+				cout << noshowpos;
         };
-
+		
         gsl_vector          *c;
 
     private:
