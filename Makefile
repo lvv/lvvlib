@@ -6,6 +6,9 @@ t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
 
 LDFLAGS += -lgsl -lgslcblas
 
+t-root: LDFLAGS +=  -lgsl -lgslcblas -lm -L /usr/local/lib -lo2scl_base -lo2scl_other
+t-root: CXXFLAGS +=  -I/usr/local/include/o2scl
+
 it: t-model
 	t-model | gp
 	
