@@ -107,6 +107,8 @@ template<typename T>  T static inline pow5(T x)  { return x*x*x*x*x; };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////  ABS()
 template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
+//template<typename T>  T static inline max(T x, T y){ return x > y ? x  : y; };
+//template<typename T>  T static inline mix(T x, T y){ return x < y ? x  : y; };
 
 
  /////////////////////////////////////////////////////////////////////////////////////////////////////  EQ (int/FP)
