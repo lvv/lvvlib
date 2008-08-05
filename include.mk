@@ -34,15 +34,15 @@ CXXFLAGS           = $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($
 
 *: ../lvvlib/include.mk ../lvvlib/lvvlib.h
 
-%.gp : %
-	@tput sgr0; tput setaf 4
-	$< | gp
-	@tput sgr0
-
 % : %.cc
 	@tput sgr0; tput setaf 4
 	$(CXX)	 $< -o $(name_prefix)$@     $(CXXFLAGS)  $(LDFLAGS)
 	@tput sgr0
 
-# vim:noexpandtab ft=make:
+%-gp: %
+	@tput sgr0; tput setaf 4
+	@make $<
+	$< | gp
+	@tput sgr0
 
+# vim:noexpandtab ft=make:

@@ -9,6 +9,11 @@
 	#include <boost/lexical_cast.hpp>
 	using boost::lexical_cast; 
 
+	#include <boost/format.hpp>
+	using boost::format; 
+	#define FMT(f)	cout << format(f)
+
+
     #if  defined(NDEBUG) && defined(DEBUG)
         #undef DEBUG
     #endif

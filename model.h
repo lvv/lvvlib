@@ -176,19 +176,23 @@ class   Model   {                                 // gsl multifit wrapper
 
 
         void print (string title="")  const {
-                cout << "# :gnuplot: set key bottom; set ytics 0,0.5; set yrange [-0.1:1.1]; set xrange [0:6]; set grid; "
+                cout << "# :gnuplot: set key bottom; set ytics 0,0.5; set yrange [-0.1:1.1]; set xrange [0:6]; set grid; set pointsize 1.5;"
                         << (title.length()>0  ?  "set title \" " +  title + "\";"  :  "") << 
                     
                             "plot "
                                 " \"pipe\" using 1:3 title \"model\" with lines 5, "
                                 " \"pipe\" using 4:2 title \"inv x(y)\" with point 4,"
                                 " \"pipe\" using 1:2 title \"data\" with points 11 "
-                        ";\n"
-                    <<                                       "#  X              Y            "      "  Y-mod         X-mod-inv\n" << fixed << showpos ;
-                for (int i=0;  i<n; ++i)                 cout << x[i]        << "\t" << y[i]                                                << endl;
-                for (double xx=0.0;  xx<=6.0; xx+=1./3.) cout << xx          << "\t" << "\" \"\t\t" << estimate(xx)                         << endl;
-                for (double yy=0.0;  yy<=1.0; yy+=0.05)  cout << "\" \"\t\t" << yy   << "\t"        << "\" \"\t\t"  << inverse_estimate(yy) << endl;
-				cout << noshowpos;
+                        ";\n";
+
+															format		table(" % 9f    %20t % 9f   %40t % 9f   %60t % 9f\n");
+															string		_("\" \"");
+
+															cout << table		% "#  X"	% "  Y"		% "Y-mod"     	% "X-mod-inv" ;
+
+				for (int i=0;  i<n; ++i                )	cout << table		% x[i]  	% y[i] 		% _       		% _ ;
+				for (double xx=0.0;  xx<=6.0; xx+=1./3.)	cout << table		% xx    	% _			% estimate(xx)	% _  ;
+				for (double yy=0.0;  yy<=1.0; yy+=0.05 )	cout << table		% _		 	% yy   		% _       		% inverse_estimate(yy) ;
         };
 		
         gsl_vector          *c;
