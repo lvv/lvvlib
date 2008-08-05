@@ -5,6 +5,10 @@
     #include <iomanip>
     #include <sys/time.h>
     #include <sys/resource.h>
+
+	#include <boost/lexical_cast.hpp>
+	using boost::lexical_cast; 
+
     #if  defined(NDEBUG) && defined(DEBUG)
         #undef DEBUG
     #endif
@@ -155,6 +159,8 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
 
  ///////////////////////////////////////////////////////////////////////////////////
 
+	// TODO replace lexica_cast with boost::format  
+    #define STR(x)              (string(" " #x "=")+lexical_cast<string>(x))
     #define PR(x)               cerr << " " #x " = " << (x) << "  "<< flush;
 
     #define PR1(x1)             cerr << "-- "; PR(x1)                            ; cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
@@ -162,6 +168,9 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
     #define PR3(x1,x2,x3)       cerr << "-- "; PR(x1) PR(x2) PR(x3)              ; cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
     #define PR4(x1,x2,x3,x4)    cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4)       ; cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
     #define PR5(x1,x2,x3,x4,x5) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
+    #define PR6(x1,x2,x3,x4,x5,x6) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
+    #define PR7(x1,x2,x3,x4,x5,x6,x7) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
+
     
 ///////////////////////////////////////////////////////////////////////////////////// DEBUG MACROS
  #ifdef DEBUG
