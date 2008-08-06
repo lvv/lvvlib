@@ -39,9 +39,10 @@ CXXFLAGS           = $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($
 	$(CXX)	 $< -o $(name_prefix)$@     $(CXXFLAGS)  $(LDFLAGS)
 	@tput sgr0
 
+	#@make $<
+
 %-gp: %
 	@tput sgr0; tput setaf 4
-	@make $<
 	$< | gp
 	@tput sgr0
 
