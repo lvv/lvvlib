@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <string.h>
 #include <iostream>
 using std::cerr;
 #include <gsl/gsl_errno.h>
@@ -15,11 +14,11 @@ class FMinimizer {  public:
 		minex_func.f = F;
 		minex_func.params = p;
 
-		gsl_vector *x  = gsl_vector_alloc(N);     memcpy(gsl_vector_ptr(x, 0), xa , N*sizeof(double));
-		gsl_vector *ss = gsl_vector_alloc(N);     memcpy(gsl_vector_ptr(ss,0), ssa, N*sizeof(double));
+		gsl_vector x = { N, 1, xa, NULL, 0}; 	// this is auto on stack(temp), will be copied in minimizer, //  so we are fine when it will go out of scope
+		gsl_vector ss =  { N, 1, ssa, NULL, 0};
 
 		minimizer = gsl_multimin_fminimizer_alloc(T, N);
-		gsl_multimin_fminimizer_set(minimizer, &minex_func, x, ss);
+		gsl_multimin_fminimizer_set(minimizer, &minex_func, &x, &ss);
 		if (trace)   cout << "#  minimizer: "  <<  gsl_multimin_fminimizer_name (minimizer)  <<  endl;
 	}
 
@@ -104,16 +103,17 @@ double my_f(const gsl_vector * v, void *params) {
 
 	return p[2] * (x - p[0]) * (x - p[0]) + p[3] * (y - p[1]) * (y - p[1]) + p[4];
 }
+double  par[5] = { 1.0, 2.0, 10.0, 20.0, 30.0 };
 
-double f(const gsl_vector * v, void *params) {
+double f(const gsl_vector * gv, void *dummy) {
 	/* Paraboloid centered on (p[0],p[1]), with  scale factors (p[2],p[3]) and minimum p[4] */
-	double const *x   = gsl_vector_const_ptr(v, 0);
-	double       *p   = (double *) params;
+	double  p[5] = { 1.0, 2.0, 10.0, 20.0, 30.0 };
+	double const *x   = gsl_vector_const_ptr(gv, 0);
 	int static    cnt = 0;
 	double        y   = p[2] *(x[0] - p[0]) *(x[0] - p[0]) + p[3] *(x[1] - p[1]) *(x[1] - p[1]) + p[4];
 
 	FMT("%5d %10.5d %10.5d") % cnt++   % y  % "\" \"";
-	for (int i=0; i<2; ++i) FMT("%10.5d") %gsl_vector_get(v, i);
+	for (int i=0; i<2; ++i) FMT("%10.5d") %x[i];
 	cout << endl;
 	return y;
 }
@@ -132,7 +132,6 @@ int	main(void)  {
 	gsl_vector *ss = gsl_vector_alloc(2);
 	gsl_vector_set_all(ss, 1.0);
 
-	double  par[5] = { 1.0, 2.0, 10.0, 20.0, 30.0 };
 	cout << 
 		"# :gnuplot:  set font \"arial,6\"; set view 0,90,1.7;  set dgrid3d;  set key off;  set contour surface;  set cntrparam levels 20;  set isosample 20;"
 		"p0=1; p1=2; p2=10; p3=20; p4=30;"
@@ -141,14 +140,14 @@ int	main(void)  {
 			"\"pipe\" using 4:5:2:1 with labels;\n";
 
 
-	//FMinimizer fm(2, f, xa, par, ssa, false);	
-	FMinimizer fm(2, f, x, par, ss, false);	
+	FMinimizer fm(2, f, xa, par, ssa, false);	
+	//FMinimizer fm(2, my_f, x, par, ss, false);	
 	fm.find_min(1e-2, 100);
 
 	if (fm.found)  {
 		FMT("Result: Fmin=%10.5f   Xmin: ") % fm.fmin ;    for  ( int i=0;   i < int(x->size);   ++i )   FMT("%10.5d") % fm.xmin[i];  cout << endl;
 	} else {
-		cout << "minimum not found\n";
+		cout << "Result: minimum not found\n";
 	}
 
 	gsl_vector_free(x);
