@@ -9,7 +9,7 @@ using std::cerr;
 
 class FMinimizer {  public:
 	FMinimizer (int N, double F(const gsl_vector*, void *), double *xa, void *p,  double *ssa,  bool _trace=false)
-	:	T (gsl_multimin_fminimizer_nmsimplex), trace(_trace)
+	:	T (gsl_multimin_fminimizer_nmsimplex), trace(_trace), found(false), xmin(NULL), fmin(999999)
 	{
 		minex_func.n = N;
 		minex_func.f = F;
@@ -24,7 +24,7 @@ class FMinimizer {  public:
 	}
 
 	FMinimizer (int N, double F(const gsl_vector*, void *), gsl_vector *x, void *p,  gsl_vector *ss,  bool _trace=false)
-	:	T (gsl_multimin_fminimizer_nmsimplex), trace(_trace)
+	:	T (gsl_multimin_fminimizer_nmsimplex), trace(_trace), found(false)
 	{
 		minex_func.n = N;
 		minex_func.f = F;
@@ -42,7 +42,8 @@ class FMinimizer {  public:
 	void   find_min (double characteristic_size, int max_iter) {
 		int	test_status=GSL_CONTINUE;			// test_status:  GSL_SUCCESS==0; GSL_CONTINUE==-2; 
 
-		if (trace) FMT("# Itr  %10t Y   %20t Step  %30t X[0..]\n");
+		if (trace)  FMT("# Itr  %10t Y   %20t Step  %30t X[0..]\n");
+	
 		for  ( int iter=0;  iter<max_iter && (test_status==GSL_CONTINUE);   ++iter )   {
 
 			int  iterate_status = gsl_multimin_fminimizer_iterate(minimizer);
@@ -55,8 +56,12 @@ class FMinimizer {  public:
 			double size = gsl_multimin_fminimizer_size(minimizer);
 			test_status = gsl_multimin_test_size(size, characteristic_size);
 
-			if (test_status == GSL_SUCCESS && trace )    cout  << "converged to minimum at\n";
-
+			if (test_status == GSL_SUCCESS)  {
+				found=true;
+				fmin=minimizer->fval;
+				xmin = minimizer->x->data;
+				if (trace )    cout  << "converged to minimum at\n";
+			}
 			
 			if (trace) { 
 				FMT("%5d %10.5d %10.5d") %iter   %(minimizer->fval)  %size;
@@ -71,6 +76,9 @@ class FMinimizer {  public:
 	gsl_multimin_fminimizer 	*minimizer;
 	gsl_multimin_function		minex_func;
 	bool				trace;
+	bool				found;
+	double 				*xmin;
+	double 				fmin;
  };
 
 
@@ -127,17 +135,21 @@ int	main(void)  {
 	double  par[5] = { 1.0, 2.0, 10.0, 20.0, 30.0 };
 	cout << 
 		"# :gnuplot:  set font \"arial,6\"; set view 0,90,1.7;  set dgrid3d;  set key off;  set contour surface;  set cntrparam levels 20;  set isosample 20;"
-		"set zrange  [0:1000];  p0=1; p1=2; p2=10; p3=20; p4=30;"
+		"p0=1; p1=2; p2=10; p3=20; p4=30;"
 		"splot [-3:10] [-3:10]"
 			"p2*(x - p0)*(x-p0) + p3*(y-p1)*(y-p1) + p4,"
 			"\"pipe\" using 4:5:2:1 with labels;\n";
 
 
-	FMinimizer fm(2, f, xa, par, ssa, false);	
-	//FMinimizer fm(2, f, x, par, ss, false);	
+	//FMinimizer fm(2, f, xa, par, ssa, false);	
+	FMinimizer fm(2, f, x, par, ss, false);	
 	fm.find_min(1e-2, 100);
 
-	cout << "Result: " ;    for  ( int i=0;   i < int(x->size);   ++i )   FMT("%10.5d") %gsl_vector_get(x, i);  cout << endl;
+	if (fm.found)  {
+		FMT("Result: Fmin=%10.5f   Xmin: ") % fm.fmin ;    for  ( int i=0;   i < int(x->size);   ++i )   FMT("%10.5d") % fm.xmin[i];  cout << endl;
+	} else {
+		cout << "minimum not found\n";
+	}
 
 	gsl_vector_free(x);
 	gsl_vector_free(ss);
