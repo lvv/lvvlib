@@ -12,7 +12,11 @@ VPATH   := ../lvvlib/
 
 g++FLAGS          := -pipe
 g++FLAGS_OPTIMIZE := -O3 -march=native 
+
 g++FLAGS_DEBUG    := -O0 -ggdb3 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
+#g++FLAGS_DEBUG    := -O0 -g3 -gstabs+ -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
+#g++FLAGS_DEBUG    := -O0 -g3 -gdwarf-2 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
+
 g++FLAGS_STATS    := -O3           -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check -DSTATS
 #g++FLAGS_DEBUG    += -Wfloat-equal -Weffc++
 #g++FLAGS_DEBUG    += -fmudflap
