@@ -1,41 +1,43 @@
+	
+	#ifndef LVVMATH_H
+	#define LVVMATH_H
+	
+	// TODO:  2 check boost: typedef typename tools::promote_args<T>::type result_type;
+	#include <blitz/promote-old.h>
+	
+	#include <fenv.h>
+	#include <csignal>
+	#include <csetjmp>
+	#include <limits>
+	
+	//#include <sys/resource.h>
+	#include <cassert>
+	#include <cstring>
+	
+	#include <string>
+	#include <iostream>
+	#include <iomanip>
+	using std::string;
+	
+	using std::cout;
+	using std::cerr;
+	using std::flush;
+	using std::endl;
+	using std::setw;
+	using std::boolalpha;
+	using std::ostream;
+	using std::setprecision;
+	
+	using std::numeric_limits;
 
-    #ifndef LVVMATH_H
-    #define LVVMATH_H
+	#include <gsl/gsl_vector.h>
 
-    // TODO:  2 check boost: typedef typename tools::promote_args<T>::type result_type;
-    #include <blitz/promote-old.h>
-
-    #include <fenv.h>
-    #include <csignal>
-    #include <csetjmp>
-    #include <limits>
-
-    //#include <sys/resource.h>
-    #include <cassert>
-    #include <cstring>
-
-    #include <string>
-    #include <iostream>
-    #include <iomanip>
-    using std::string;
-
-    using std::cout;
-    using std::cerr;
-    using std::flush;
-    using std::endl;
-    using std::setw;
-    using std::boolalpha;
-    using std::ostream;
-    using std::setprecision;
-
-    using std::numeric_limits;
-
-    #include <boost/type_traits.hpp>
-    using boost::true_type;
-    using boost::false_type;
-    using boost::is_integral;
-
-    namespace lvv {
+	#include <boost/type_traits.hpp>
+	using boost::true_type;
+	using boost::false_type;
+	using boost::is_integral;
+	
+	namespace lvv {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////  SUPERIOR TYPE type_trait
     // this is promote_trait class to provide summator type
@@ -98,7 +100,7 @@ powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/
 	n >>= 1;
     }
     return y;
- }
+ };
 
 	template<typename T>  T static inline pow2(T x)  { return x*x; };
 	template<typename T>  T static inline pow3(T x)  { return x*x*x; };
@@ -115,7 +117,7 @@ powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/
 		data = a;
 		block = NULL;
 		owner = 0;
-	 }
+	 };
   };
  
     ////////////////////////////////////////////////////////////////////////////////////////////////////  ABS()
