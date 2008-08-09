@@ -4,8 +4,10 @@ using std::cerr;
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_multimin.h>
-#include "lvvlib.h"
-
+#include "../lvvlib/lvvlib.h"
+#include "../lvvlib/math.h"
+using namespace lvv;
+ 
 class FMinimizer {  public:
 	FMinimizer (int N, double F(const gsl_vector*, void *), double *xa, void *p,  double *ssa,  bool _trace=false)
 	:	T (gsl_multimin_fminimizer_nmsimplex), trace(_trace), found(false), xmin(NULL), fmin(999999)
@@ -14,8 +16,8 @@ class FMinimizer {  public:
 		minex_func.f = F;
 		minex_func.params = p;
 
-		gsl_vector x = { N, 1, xa, NULL, 0}; 	// this is auto on stack(temp), will be copied in minimizer, //  so we are fine when it will go out of scope
-		gsl_vector ss =  { N, 1, ssa, NULL, 0};
+		mk_gsl_vector x (xa,N);// this is auto on stack(temp), will be copied in minimizer, //  so we are fine when it will go out of scope
+		mk_gsl_vector ss(ssa, N);
 
 		minimizer = gsl_multimin_fminimizer_alloc(T, N);
 		gsl_multimin_fminimizer_set(minimizer, &minex_func, &x, &ss);

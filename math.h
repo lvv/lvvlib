@@ -53,62 +53,75 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////  Average
 
-            template<typename T>
-class Average {  public:
-        Average(string _lable=0):  count(0), sum(0),  lable(_lable)  {};
-        double    average()  const    { /* div by 0 posible */  return double(sum)/count; }
-        void      sample(T x)         { sum += x;  ++count; }
+		    template<typename T>
+	class Average {  public:
+		Average(string _lable=0):  count(0), sum(0),  lable(_lable)  {};
+		double    average()  const    { /* div by 0 posible */  return double(sum)/count; }
+		void      sample(T x)         { sum += x;  ++count; }
 
-        template <typename U> friend ostream& operator<< (ostream& os, Average<U>  s);
-    private:
-        long        count;
-        typename Type<T>::SuperiorType       sum;
-        string      lable;
- };
+		template <typename U> friend ostream& operator<< (ostream& os, Average<U>  s);
+	    private:
+		long        count;
+		typename Type<T>::SuperiorType       sum;
+		string      lable;
+	 };
 
-                    template <typename T> ostream&
- operator<<  (ostream& os, Average<T> s)  {
-        if     ( !s.lable.empty() ) 
-           os  <<  s.lable << " avg: ";
+			    template <typename T> ostream&
+	 operator<<  (ostream& os, Average<T> s)  {
+		if     ( !s.lable.empty() ) 
+		   os  <<  s.lable << " avg: ";
 
-       if (s.count > 0 ) 
-           cout << s.average(); 
-       else
-           cout << "n/a" ;
-       return os;
- };
+	       if (s.count > 0 ) 
+		   cout << s.average(); 
+	       else
+		   cout << "n/a" ;
+	       return os;
+	 };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////  POWI()
-                double  inline  static
+		double  inline  static
 powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c.  TODO: add asserts 
     double y;
     if( n & 1 )
-        y = x;
+	y = x;
     else
-        y = 1.0;
+	y = 1.0;
 
     double w = x;
     n >>= 1;
     while( n ) {
-        w = w * w; 
+	w = w * w; 
 
-        if( n & 1 )
-            y *= w;
+	if( n & 1 )
+	    y *= w;
 
-        n >>= 1;
+	n >>= 1;
     }
     return y;
  }
 
-template<typename T>  T static inline pow2(T x)  { return x*x; };
-template<typename T>  T static inline pow3(T x)  { return x*x*x; };
-template<typename T>  T static inline pow4(T x)  { return x*x*x*x; };
-template<typename T>  T static inline pow5(T x)  { return x*x*x*x*x; };
+	template<typename T>  T static inline pow2(T x)  { return x*x; };
+	template<typename T>  T static inline pow3(T x)  { return x*x*x; };
+	template<typename T>  T static inline pow4(T x)  { return x*x*x*x; };
+	template<typename T>  T static inline pow5(T x)  { return x*x*x*x*x; };
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////  GSL
+ 
+  // double[]  to  gsl_vector  wrapper
+  struct mk_gsl_vector: public gsl_vector {
+  	 mk_gsl_vector(double *a, int n) {
+	 	size = n;
+		stride = 1;
+		data = a;
+		block = NULL;
+		owner = 0;
+	 }
+  };
+ 
     ////////////////////////////////////////////////////////////////////////////////////////////////////  ABS()
 template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
-//template<typename T>  T static inline max(T x, T y){ return x > y ? x  : y; };
-//template<typename T>  T static inline mix(T x, T y){ return x < y ? x  : y; };
+ //template<typename T>  T static inline max(T x, T y){ return x > y ? x  : y; };
+ //template<typename T>  T static inline mix(T x, T y){ return x < y ? x  : y; };
 
 
  /////////////////////////////////////////////////////////////////////////////////////////////////////  EQ (int/FP)

@@ -1,7 +1,7 @@
 
 .DEFAULT_GOAL := t-multimin-gp
 	
-t-*     : lvvlib.h lvvmath.h lvvcheck.h
+t-*     : lvvlib.h math.h check.h
 t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
 
 LDFLAGS += -lgsl -lgslcblas
