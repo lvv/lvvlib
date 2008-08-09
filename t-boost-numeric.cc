@@ -1,4 +1,4 @@
-#include "lvvlib.h"
+#include "lvv.h"
 #include <cassert>
 #include <boost/numeric/conversion/converter.hpp>
 

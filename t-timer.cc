@@ -1,7 +1,7 @@
 
 #include <limits>
-#include "../lvvlib/lvvlib.h"
-#include "../lvvlib/lvvcheck.h"
+#include "../lvv/lvv.h"
+#include "../lvv/lvvcheck.h"
 
 using namespace lvv;
 

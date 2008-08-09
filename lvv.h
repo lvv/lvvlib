@@ -1,5 +1,5 @@
-    #ifndef  LVVLIB_H
-    #define  LVVLIB_H
+    #ifndef  LVV_H
+    #define  LVV_H
 
     #include <iostream> 
     #include <iomanip>
@@ -218,4 +218,4 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
     extern  struct mallinfo mallinfo (void);
 
  };  // namespace lvv
-    #endif // LVVLIB_H
+    #endif // LVV_H

@@ -166,19 +166,6 @@ group_mean(
  } 
 
 
-                    double static inline  
-group_value(
-    double group_weight,    // Simon's K;   default ==25.  How much more we prefer group to individual mean (bigger --> prefer group)
-    double group_value,     // global value
-    double value,           // individual measurements value
-    double count            // individual measurements count 
- ) { 
-    // So intead of : mean = sum(ratings)/count(ratings)
-    // He uses: bettermean = [K*global_mean + sum(ratings)] / [K+count(ratings)] and he uses K=25
-                                                                            assert (group_weight > 0);
-        return ( group_weight * group_value + value * count )  /  ( group_weight + count );
- } 
-
     //////////////////////////////////////////////////////////////////////////////////////  FP Exceptions
 
     // from http://publib.boulder.ibm.com/infocenter/systems/index.jsp?topic=/com.ibm.aix.basetechref/doc/basetrf1/nextafterf.htm

@@ -4,8 +4,8 @@ using std::cerr;
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_multimin.h>
-#include "../lvvlib/lvvlib.h"
-#include "../lvvlib/math.h"
+#include "../lvv/lvv.h"
+#include "../lvv/math.h"
 using namespace lvv;
  
 class FMinimizer {  public:

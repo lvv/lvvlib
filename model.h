@@ -10,8 +10,8 @@
     #include <string>
     #include <gsl/gsl_multifit.h>
     #include <gsl/gsl_poly.h>
-    #include "lvvlib.h"
-    #include "lvvmath.h"
+    #include "lvv.h"
+    #include "math.h"
 
     #define poly_order 4
 

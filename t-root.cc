@@ -6,7 +6,7 @@ using namespace std;
 //using namespace o2scl;
 //#include <gsl/gsl_poly.h> 
 
-#include  "lvvlib.h"
+#include  "lvv.h"
 #include  "model.h"
 using namespace lvv;
 

@@ -1,6 +1,6 @@
 
-#include "../lvvlib/lvvlib.h"
-#include "../lvvlib/lvvcheck.h"
+#include "../lvv/lvv.h"
+#include "../lvv/lvvcheck.h"
 #include <limits>
 using namespace std;
 using namespace lvv;

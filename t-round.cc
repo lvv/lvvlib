@@ -1,7 +1,7 @@
 
 #include <limits>
-#include "../lvvlib/lvvlib.h"
-#include "../lvvlib/lvvmath.h"
+#include "../lvv/lvv.h"
+#include "../lvv/lvvmath.h"
 
 
 template<typename F, typename I> I round(F x)  { return I(x+0.5); }

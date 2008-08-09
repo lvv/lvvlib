@@ -4,7 +4,7 @@
 # to set speed run as:  make s=o
 CXX 	?=  g++
 SPEED  	?= DEBUG
-VPATH   := ../lvvlib/
+VPATH   := ../lvv/
 
 ########################################################################################
 #SPEED := $(s:o=OPTIMZE)
@@ -36,7 +36,7 @@ CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DO2SCL_NO_RANGE_CHECK -DGSL_RANGE_CHECK_OFF
 CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz
 CXXFLAGS           = $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF)
 
-*: ../lvvlib/include.mk ../lvvlib/lvvlib.h
+*: ../lvv/include.mk ../lvv/lvv.h
 
 % : %.cc
 	@tput sgr0; tput setaf 4
