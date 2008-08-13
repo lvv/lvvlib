@@ -10,78 +10,85 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <fcntl.h>
+
+#include <cstdlib>
 #include <iostream>
 using namespace std;
 
+#include "lvv.h"
+using namespace lvv;
+
+void * mmap_read(char *name) {
+	int 	src_fd = open(name, O_RDONLY);
+
+	if (src_fd  < 0) {
+		cerr  << "mmap_read error: couldn't open  \"" << name << "\"  file\n";
+		exit(1);
+	}
+	
+	struct stat sb;
+	if (fstat(src_fd, &sb) < 0) {
+		cerr << "mmap_read error: couldn't stat  \"" << name << "\"   file\n";
+		close(src_fd);
+		exit(3);
+	}
+
+	void *p =  mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, src_fd, 0);
+	if  ( p == MAP_FAILED ) {
+		cerr  << "mmap_read error: couldn't mmap  \"" << name << "\"  file\n";
+		close(src_fd);
+		exit(5);
+	}
+
+	return p;
+}
+
+			template<typename T>
+void	mmap_write(char* name, T &obj, size_t size) {
+	int	trg_fd = open(name, O_CREAT | O_RDWR, S_IRWXU);
+	if (trg_fd  < 0) {
+		cerr  << "mmap_write error: couldn't open  \"" << name << "\"  file\n";
+		exit(2);
+	}
+
+	if (ftruncate(trg_fd, size) < 0) {
+		cerr << "mmap_write error: couldn't allocate space for  \"" << name << "\" file\n";
+		close(trg_fd);
+		exit(4);
+	}
+
+
+	void *p = mmap(NULL, size, PROT_WRITE, MAP_SHARED, trg_fd, 0);
+	if ( p == MAP_FAILED ) {
+		cerr << "mmap_write error: couldn't mmap \"" << name << "\" file\n";
+		close(trg_fd);
+		exit(6);
+	}
+
+	/*	MAP_FIXED
+	Don’t  interpret  addr  as  a hint: place the mapping at exactly that address.  addr must be a multiple of the page size.  If the
+       	memory region specified by addr and len overlaps pages of any existing mapping(s), then the overlapped part of the existing  map‐
+       	ping(s)  will  be discarded.  If the specified address cannot be used, mmap() will fail.  Because requiring a fixed address for a
+       	mapping is less portable, the use of this option is discouraged. */
+
+	if (memcpy(p, &obj, size) < 0) {
+		cerr << "mmap_write error: couldn't memcpy() for \"" << name << "\" file\n";
+		close(trg_fd);
+		exit(8);
+	}
+
+	if (munmap(p, size) < 0) {
+		cerr << "mmap_write error: couldn't munmap() for \"" << name << "\" file\n";
+		close(trg_fd);
+		exit(10);
+	}
+}
 
 int main(int argc, char *argv[]) {
-	int     src_fd, trg_fd;
-	char   *src_file, *trg_file;
-	struct stat sb;
 
-	if ((src_fd = open(argv[1], O_RDONLY)) < 0) {
-		printf("Backing store: couldn't open the src_ file\n");
-		return 0;
-	}
-
-	trg_fd = open(argv[2], O_CREAT | O_RDWR, S_IRWXU);
-	if (trg_fd  < 0) {
-		printf("Backing store: couldn't open the trg_ file\n");
-		close(src_fd);
-		return 0;
-	}
-
-	if (fstat(src_fd, &sb) < 0) {
-		cerr << "output: couldn't stat the src_ file\n";
-		close(src_fd);
-		close(trg_fd);
-		return 0;
-	}
-
-	if (ftruncate(trg_fd, sb.st_size) < 0) {
-		printf("output: couldn't allocate space for trg_ data\n");
-		close(src_fd);
-		close(trg_fd);
-		return 0;
-	}
-
-	src_file = (char *) mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, src_fd, 0);
-	if (src_file  == MAP_FAILED) {
-		printf("output: couldn't mmap the src_ file\n");
-		close(src_fd);
-		close(trg_fd);
-		return 0;
-	}
-
-	trg_file = (char *) mmap(NULL, sb.st_size, PROT_WRITE, MAP_SHARED, trg_fd, 0);
-	if ( trg_file == MAP_FAILED ) {
-		printf("output: couldn't mmap the trg_ file\n");
-		close(src_fd);
-		close(trg_fd);
-		return 0;
-	}
-
-	if (memcpy(trg_file, src_file, sb.st_size) < 0) {
-		printf("output: copy failed\n");
-		close(src_fd);
-		close(trg_fd);
-		return 0;
-	}
-
-	if (munmap(src_file, sb.st_size) < 0) {
-		printf("output: couldn't munmap the src_ file\n");
-		close(src_fd);
-		close(trg_fd);
-		return 0;
-	}
-
-	if (munmap(trg_file, sb.st_size) < 0) {
-		printf("output: couldn't munmap the trg_ file\n");
-		close(src_fd);
-		close(trg_fd);
-		return 0;
-	}
-
-	close(src_fd);
-	close(trg_fd);
+	int i=1;
+	int ii=0;
+	mmap_write("_i.mmap", i, sizeof(i));
+	ii = *(int*)mmap_read("_i.mmap");
+	PR1(ii);
 }
