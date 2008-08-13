@@ -12,6 +12,7 @@
     #include <gsl/gsl_poly.h>
     #include "lvv.h"
     #include "math.h"
+    using lvv::powi;
 
     #define poly_order 4
 
@@ -34,15 +35,15 @@ class   Model   {                                 // gsl multifit wrapper
 
                 assert(n >= m);  
 
-                X   = gsl_matrix_alloc (n, m) ;
-                c   = gsl_vector_alloc (m   ) ;
-                cov = gsl_matrix_alloc (m, m) ;
+                X   = gsl_matrix_alloc (n, m) ;		assert(X);
+                c   = gsl_vector_alloc (m   ) ;		assert(c);
+                cov = gsl_matrix_alloc (m, m) ;		assert(cov);
                 
                 xv = gsl_vector_view_array (_x, n); 
                 yv = gsl_vector_view_array (_y, n); 
 
                 /////    INIT - PREP MATRIX for POLIFIT
-                for (i = 0; i<n; i++)    for (int p=0; p<m; ++p)     gsl_matrix_set (X, i, p, lvv::powi(_x[i], p));
+                for (i = 0; i<n; i++)    for (int p=0; p<m; ++p)     gsl_matrix_set (X, i, p, powi(_x[i], p));
 
                 /////    FIT
                 gsl_multifit_linear_workspace *work = gsl_multifit_linear_alloc (n, m); 
