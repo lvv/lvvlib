@@ -11,7 +11,7 @@
 
 	#include <boost/format.hpp>
 	using boost::format; 
-	#define FMT(f)	cout << format(f)
+	#define FMT(f)	std::cout << boost::format(f)
 
 
     #if  defined(NDEBUG) && defined(DEBUG)

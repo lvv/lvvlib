@@ -159,12 +159,13 @@ group_mean(
     double group_weight,    // Simon's K;   default ==25.  How much more we prefer group to individual mean (bigger --> prefer group)
     double group_mean,      // global mean
     double sum,             // individual measurements sum
-    double count            // individual measurements count 
+    double count,            // individual measurements count 
+    double fallback         // value for if no count==0 and group_weight==0
  ) { 
     // So intead of : mean = sum(ratings)/count(ratings)
     // He uses: bettermean = [K*global_mean + sum(ratings)] / [K+count(ratings)] and he uses K=25
-                                                                            assert (group_weight > 0);
-        return ( group_weight*group_mean + sum )  /  ( group_weight + count );
+                                                                            //assert (group_weight > 0);
+        return (group_weight*group_mean + sum + fallback/100.)  /  ( group_weight + count + 0.01 );
  } 
 
 

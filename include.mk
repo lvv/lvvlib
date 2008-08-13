@@ -31,7 +31,7 @@ iccFLAGS_DEBUG    := -debug all
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
 CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'
-CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DO2SCL_NO_RANGE_CHECK -DGSL_RANGE_CHECK_OFF
+CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
 CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz
 CXXFLAGS           = $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF)

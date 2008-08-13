@@ -11,4 +11,12 @@ t-root: CXXFLAGS +=  -I/usr/local/include/o2scl
 
 allt: t-timer t-equal t-gzstream t-gzip
 
+install:
+	cd /usr/local
+	git checkout -b lvvlib 
+	mkdir -p /usr/local/include/lvvlib/
+	cp *.h   /usr/local/include/lvvlib/
+	git commit -a -m up
+
+
 include include.mk
