@@ -14,9 +14,10 @@
     #include "math.h"
     using lvv::powi;
 
-    #define poly_order 4
 
     namespace lvv {
+
+    int  const  poly_order = 4;
 
     ////////////////////////////////////////////////////////////////////////////////// Model Data - μ² polinom fitting
 
@@ -25,7 +26,8 @@ class   Model   {                                 // gsl multifit wrapper
     public:
         Model (double _x[], double _y[], int _n, int _m=-1) : n(_n), m(_m), x(_x), y(_y)    { ////////////////////////////////   CTOR
 
-                // N, M 
+                // N - data points
+                // M - poly order 
                 assert(_n >= 3);     //  n==1 and n==2  - not implemented
                 if (_m == -1) {      //  then need autodetect
                     if      (n < 6 ) m = n-2;
@@ -77,26 +79,33 @@ class   Model   {                                 // gsl multifit wrapper
                 double xx = -1.0;
                 //PR2(yy,xx);
 
+		double *C=c->data;
+
                 if        (m>2) {
 
-                    double c0_save = gsl_vector_get(c,0);
-                    gsl_vector_set(c, 0, c0_save-yy);
+                    double c0_save = C[0];
+                    C[0] =  c0_save-yy;
 
                     double z[(poly_order-1)*2];
 
+		    int order = poly_order;	
+		    if ( C[poly_order-1] == 0 )	// reduce polinomial order of last elem == 0  
+			order = poly_order-1;
+						assert (C[poly_order-1] != 0);	// hope we don't need to do it twice
+
                     //  solve
-                    gsl_poly_complex_workspace * w = gsl_poly_complex_workspace_alloc (poly_order);
-                    gsl_poly_complex_solve (gsl_vector_ptr(c,0), poly_order, w, z);
+                    gsl_poly_complex_workspace * w = gsl_poly_complex_workspace_alloc (order);
+                    gsl_poly_complex_solve (gsl_vector_ptr(c,0), order, w, z);
                     gsl_poly_complex_workspace_free (w);
 
                     //  select root
-					double oorr_distance=numeric_limits<double>::max(); // out_of_range root distance to normal interval
+			double oorr_distance=numeric_limits<double>::max(); // out_of_range root distance to normal interval
                     bool got_root=false;
                     bool got_out_of_range_root=-20;
                     double out_of_range_root=-10;
                     double real_root=-100000;
                                                                                           	//cerr << "Y=" << yy ;  
-                    for (int i = 0; i < poly_order-1; i++)   {
+                    for (int i = 0; i < order-1; i++)   {
 																							//cerr << " \t("<<i<<") "<<  z[2*i] << "+i" << z[2*i+1];
                         if (abs(z[2*i+1]) >  0.00000001) continue;              //*imag part  2GEN
 

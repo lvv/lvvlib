@@ -165,7 +165,7 @@ group_mean(
     // So intead of : mean = sum(ratings)/count(ratings)
     // He uses: bettermean = [K*global_mean + sum(ratings)] / [K+count(ratings)] and he uses K=25
                                                                             //assert (group_weight > 0);
-        return (group_weight*group_mean + sum + fallback/100.)  /  ( group_weight + count + 0.01 );
+        return (group_weight*group_mean + sum + fallback/100000.)  /  ( group_weight + count + 0.00001 );
  } 
 
 

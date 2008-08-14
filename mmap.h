@@ -1,19 +1,19 @@
-// 
-// mmap wrapper 
 
-#include <string.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <unistd.h>
-#include <fcntl.h>
+	// mmap wrapper 
 
-#include <cstdlib>
-#include <iostream>
-using  std::cerr;
+	#include <string.h>
+	#include <errno.h>
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <sys/mman.h>
+	#include <unistd.h>
+	#include <fcntl.h>
 
-namespace lvv {
+	#include <cstdlib>
+	#include <iostream>
+	using  std::cerr;
+
+		namespace lvv {
 void * mmap_read(const char *name) {
 	int 	src_fd = open(name, O_RDONLY);
 
@@ -37,7 +37,7 @@ void * mmap_read(const char *name) {
 	}
 
 	return p;
-}
+ }
 
 			template<typename T>
 void	mmap_write(const char* name, T &obj, size_t size) {
@@ -78,5 +78,5 @@ void	mmap_write(const char* name, T &obj, size_t size) {
 		close(trg_fd);
 		exit(10);
 	}
-}
-} // namespace lvv
+ }
+ } // namespace lvv
