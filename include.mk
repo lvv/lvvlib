@@ -10,7 +10,7 @@ VPATH   := ../lvv/
 #SPEED := $(s:o=OPTIMZE)
 #SPEED := $(s:d=DEBUG)
 
-g++FLAGS          := -pipe
+g++FLAGS          := -pipe -Wno-reorder
 g++FLAGS_OPTIMIZE := -O3 -march=native 
 
 g++FLAGS_DEBUG    := -O0 -ggdb3 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
@@ -30,7 +30,7 @@ iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2
 iccFLAGS_DEBUG    := -debug all
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
-CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'
+CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"' -I ../lvv/
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
 CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz
@@ -49,5 +49,11 @@ CXXFLAGS           = $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($
 	@tput sgr0; tput setaf 4
 	$< | gp
 	@tput sgr0
+%-g: %
+	echo -e "br main\nr" > /tmp/t
+	gdb -x /tmp/t ./$<
+
+%-r: %
+	./$<
 
 # vim:noexpandtab ft=make:

@@ -17,14 +17,24 @@ int main(int argc, char *argv[]) {
 	int ii=0;
 	mmap_write("_i.mmap", i, sizeof(i));
 	ii = *(int*)mmap_read("_i.mmap");
-		cout << "ii=" << ii << endl;
+	cout << "ii=" << ii << endl;
+
 
 	// array
 	float f[3]={1.11, 2.22, 3.33};
-	float *ff;
+	float *ff, *fff;
 	mmap_write("_fa.mmap", *f, sizeof(f[0])*3);
-	ff = (float*)mmap_read("_fa.mmap");
-		cout << "ff[0]=" << ff[0] << endl;
-		cout << "ff[1]=" << ff[1] << endl;
-		cout << "ff[2]=" << ff[2] << endl;
+	ff = (float*)mmap_read("_fa.mmap", MAP_PRIVATE);
+	//ff = (float*)mmap_read("_fa.mmap");
+	cout << "ff[0]=" << ff[0] << endl;
+	cout << "ff[1]=" << ff[1] << endl;
+	cout << "ff[2]=" << ff[2] << endl;
+	ff[1] = 11;
+	cout << "map is modifiable"  << endl;
+
+	munmap(fff, sizeof(f[0])*3);
+	// mod mmap memory
+	cout << "after unmmap:"  << endl;
+	cout << "ff[1]=" << ff[1] << endl;
+
 }

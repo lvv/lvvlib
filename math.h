@@ -81,6 +81,8 @@
 	 };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////  POWI()
+
+    // TODO:  now depricated, use http://www.boost.org/doc/libs/1_36_0/libs/math/doc/sf_and_dist/html/math_toolkit/special/powers/ct_pow.html
 		double  inline  static
 powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c.  TODO: add asserts 
     double y;

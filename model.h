@@ -24,6 +24,7 @@
 class   Model   {                                 // gsl multifit wrapper
 
     public:
+        Model () : n(0), m(0), x(NULL), y(NULL), X(NULL),  cov(NULL),  c(NULL)              {}
         Model (double _x[], double _y[], int _n, int _m=-1) : n(_n), m(_m), x(_x), y(_y)    { ////////////////////////////////   CTOR
 
                 // N - data points
@@ -55,10 +56,11 @@ class   Model   {                                 // gsl multifit wrapper
         };
 
         ~Model() { ////////////////////////////////////////////////////////////////// DTOR
-                gsl_matrix_free (X);
-                gsl_vector_free (c);
-                gsl_matrix_free (cov);
+                if(cov)    gsl_matrix_free (cov);
+                if(c  )    gsl_vector_free (c);
+                if(X  )    gsl_matrix_free (X);
         };
+
 
     public:
 
@@ -205,7 +207,6 @@ class   Model   {                                 // gsl multifit wrapper
 				for (double yy=0.0;  yy<=1.0; yy+=0.05 )	cout << table		% _		 	% yy   		% _       		% inverse_estimate(yy) ;
         };
 		
-        gsl_vector          *c;
 
     private:
         int                  n         , m;
@@ -213,10 +214,13 @@ class   Model   {                                 // gsl multifit wrapper
         size_t               rank;
         int                  i;
         double               xi        , yi, ei, chisq;
-        gsl_matrix          *X         , *cov;
         gsl_vector_view      xv        , yv;
-        double     * x;
-        double     * y;
+        double    	   * x;
+        double             * y;
+        gsl_matrix          *X         , *cov;
+     
+    public:
+        gsl_vector          *c;
  };
 
     }      // namespace lvv
