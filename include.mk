@@ -13,7 +13,8 @@ VPATH   := ../lvv/
 g++FLAGS          := -pipe -Wno-reorder
 g++FLAGS_OPTIMIZE := -O3 -march=native 
 
-g++FLAGS_DEBUG    := -O0 -ggdb3 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
+g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
+#g++FLAGS_DEBUG    := -O0 -ggdb3 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
 #g++FLAGS_DEBUG    := -O0 -g3 -gstabs+ -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
 #g++FLAGS_DEBUG    := -O0 -g3 -gdwarf-2 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
 
@@ -30,11 +31,11 @@ iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2
 iccFLAGS_DEBUG    := -debug all
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
-CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"' -I ../lvv/
+CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"' -I ..
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
 CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz
-CXXFLAGS           = $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF)
+CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF)
 
 *: ../lvv/include.mk ../lvv/lvv.h
 

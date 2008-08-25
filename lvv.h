@@ -175,6 +175,8 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
     #define PR5(x1,x2,x3,x4,x5) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
     #define PR6(x1,x2,x3,x4,x5,x6) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
     #define PR7(x1,x2,x3,x4,x5,x6,x7) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
+    #define PR8(x1,x2,x3,x4,x5,x6,x7,x8) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
+    #define PR9(x1,x2,x3,x4,x5,x6,x7,x8,x9) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8) PR(x9); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
 
     
 ///////////////////////////////////////////////////////////////////////////////////// DEBUG MACROS
