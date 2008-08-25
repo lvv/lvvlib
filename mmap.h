@@ -15,8 +15,7 @@
 	namespace lvv {
 
 
-
-void * mmap_read  ( const char *name,  int flags=MAP_SHARED )   {
+void * mmap_read  ( const char *name,  int flags=MAP_SHARED)   {
 
 	int 	src_fd = open(name, O_RDONLY);
 	//int 	src_fd = open(name, O_RDWR);
@@ -46,8 +45,11 @@ void * mmap_read  ( const char *name,  int flags=MAP_SHARED )   {
 	return p;
  }
 
+template<typename T>    T&   mmap_read(const char* name, int flags=MAP_SHARED)     { return  *(T*)mmap_read(name, flags); };
+
+
 			template<typename T>
-void	mmap_write(const char* name, T &obj, size_t size) {
+void	mmap_write(const char* name, T &obj, size_t size=sizeof(T)) {
 	int	trg_fd = open(name, O_CREAT | O_RDWR, S_IRWXU);
 	if (trg_fd  < 0) {
 		cerr  << "mmap_write error: couldn't open  \"" << name << "\"  file\n";
