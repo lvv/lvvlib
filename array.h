@@ -7,9 +7,12 @@
 #include <algorithm>
 using std::size_t;
 
+#include <lvv/lvv.h>
+// FMT
+
 namespace lvv {
 
-template < class T, size_t N, int BEGIN=0> class array {
+template < class T, int N, int BEGIN=0> class array {
       public:
 	T elems[N];				
 
@@ -20,9 +23,15 @@ template < class T, size_t N, int BEGIN=0> class array {
 	typedef const T *	const_iterator;
 	typedef T &		reference;
 	typedef const T &	const_reference;
-	typedef size_t		size_type;
 
-	// iterator support
+	typedef int		size_type;
+	typedef int		index_type;
+
+	// index
+	index_type				ibegin()			{ return BEGIN; }
+	index_type				iend()				{ return BEGIN + N; }
+
+	// iterator 
 	iterator				begin()				{ return elems; }
 	iterator				end()				{ return elems + N; }
 
@@ -32,8 +41,16 @@ template < class T, size_t N, int BEGIN=0> class array {
 	std::reverse_iterator<iterator>		rbegin()			{ return reverse_iterator(end()); }
 	reverse_iterator			rend()				{ return reverse_iterator(begin()); }
 
-	reference				operator[](size_type i)		{ assert(i<N+BEGIN && i>=BEGIN && "out of range"); return elems[i-BEGIN]; }
-	reference				at(size_type i)			{ assert(i<N+BEGIN && i>=BEGIN && "out of range"); return elems[i+BEGIN]; }
+	reference				operator[](size_type i)		{
+			#ifdef CHECK_BOUNDS
+				if (i>=N+BEGIN  ||  i< BEGIN) {
+					cerr "lvv::array: out of range\n";
+					exit(33);
+				}
+			#endif 
+			return elems[i-BEGIN];
+	}
+	reference				at(size_type i)			{ assert(i<N+BEGIN && i>=BEGIN && "out of range"); return elems[i-BEGIN]; }
 	reference				front()				{ return elems[0]; }
 	reference				back()				{ return elems[N-1]; }
 	static size_type			size()				{ return N; }
@@ -49,21 +66,30 @@ template < class T, size_t N, int BEGIN=0> class array {
 	template <typename T2>	array <T, N>	&operator=(const array < T2, N > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; }
 	// assign one value to all elements
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
-
+	template <typename TT, int NN,  int BB> friend ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
 };
 
 
 // comparisons  (TODO, add BEGIN)
-template<class T, size_t N> bool operator==(const array<T, N> &x, const array<T, N> &y) { return std::equal(x.begin(), x.end(), y.begin()); }
-template<class T, size_t N> bool operator< (const array<T, N> &x, const array<T, N> &y) { return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
-template<class T, size_t N> bool operator!=(const array<T, N> &x, const array<T, N> &y) { return !(x == y); }
-template<class T, size_t N> bool operator> (const array<T, N> &x, const array<T, N> &y) { return   y < x; }
-template<class T, size_t N> bool operator<=(const array<T, N> &x, const array<T, N> &y) { return !(y < x); }
-template<class T, size_t N> bool operator>=(const array<T, N> &x, const array<T, N> &y) { return !(x < y); }
+template<class T, int N> bool operator==(const array<T, N> &x, const array<T, N> &y) { return std::equal(x.begin(), x.end(), y.begin()); }
+template<class T, int N> bool operator< (const array<T, N> &x, const array<T, N> &y) { return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
+template<class T, int N> bool operator!=(const array<T, N> &x, const array<T, N> &y) { return !(x == y); }
+template<class T, int N> bool operator> (const array<T, N> &x, const array<T, N> &y) { return   y < x; }
+template<class T, int N> bool operator<=(const array<T, N> &x, const array<T, N> &y) { return !(y < x); }
+template<class T, int N> bool operator>=(const array<T, N> &x, const array<T, N> &y) { return !(x < y); }
 
 // global swap()
 template < class T, size_t N > inline void swap(array < T, N > &x, array < T, N > &y) { x.swap(y); }
 
+
+
+		    template <typename T, int N, int B> ostream&
+ operator<<  (ostream& os, array<T,N,B> a)  {
+	FMT("[%d..%d):  ") %a.ibegin() %a.iend();
+	copy (a.begin(),  a.end(),  ostream_iterator<T>(cout, " "));
+	cout << endl;
+	return os;
+ };
 
 };	// namespace lvv
 #endif	// LVV_ARRAY
