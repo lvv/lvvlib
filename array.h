@@ -3,12 +3,15 @@
 #define LVV_ARRAY
 
 #include <cassert>
+#include <iostream>
+using std::ostream_iterator;
+
+#include <boost/format.hpp>
+using boost::format;
+
 #include <iterator>
 #include <algorithm>
 using std::size_t;
-
-#include <lvv/lvv.h>
-// FMT
 
 namespace lvv {
 
@@ -28,31 +31,52 @@ template < class T, int N, int BEGIN=0> class array {
 	typedef int		index_type;
 
 	// index
-	index_type				ibegin()			{ return BEGIN; }
-	index_type				iend()				{ return BEGIN + N; }
+	index_type				ibegin()	const		{ return BEGIN; }
+	index_type				iend()		const		{ return BEGIN + N; }
 
 	// iterator 
 	iterator				begin()				{ return elems; }
 	iterator				end()				{ return elems + N; }
+        const_iterator				begin()		const		{ return elems; }
+        const_iterator				end() 		const		{ return elems+N; }
 
-	// reverse iterator support typedef
+	// reverse iterator
 	typedef std::reverse_iterator<iterator>		reverse_iterator;
+        typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
 
-	std::reverse_iterator<iterator>		rbegin()			{ return reverse_iterator(end()); }
+	reverse_iterator			rbegin()			{ return reverse_iterator(end()); }
 	reverse_iterator			rend()				{ return reverse_iterator(begin()); }
+        const_reverse_iterator			rbegin()	const		{ return const_reverse_iterator(end()); }
+        const_reverse_iterator			rend()		const		{ return const_reverse_iterator(begin()); }
 
+	// operator[]
 	reference				operator[](size_type i)		{
-			#ifdef CHECK_BOUNDS
-				if (i>=N+BEGIN  ||  i< BEGIN) {
-					cerr "lvv::array: out of range\n";
-					exit(33);
-				}
-			#endif 
-			return elems[i-BEGIN];
+		#ifdef CHECK_BOUNDS
+			if (i>=N+BEGIN  ||  i< BEGIN) {
+				cerr "lvv::array: out of range\n";
+				exit(33);
+			}
+		#endif 
+		return elems[i-BEGIN];
 	}
+
+	const_reference				operator[](size_type i) const	{
+		#ifdef CHECK_BOUNDS
+			if (i>=N+BEGIN  ||  i< BEGIN) {
+				cerr "lvv::array: out of range\n";
+				exit(33);
+			}
+		#endif 
+		return elems[i-BEGIN];
+	}
+
 	reference				at(size_type i)			{ assert(i<N+BEGIN && i>=BEGIN && "out of range"); return elems[i-BEGIN]; }
+	const_reference				at(size_type i)	const		{ assert(i<N+BEGIN && i>=BEGIN && "out of range"); return elems[i-BEGIN]; }
 	reference				front()				{ return elems[0]; }
 	reference				back()				{ return elems[N-1]; }
+	const_reference				front()		const		{ return elems[0]; }
+	const_reference				back()		const		{ return elems[N-1]; }
+
 	static size_type			size()				{ return N; }
 	static bool				empty()				{ return false; }
 	static size_type			max_size()			{ return N; }
@@ -61,6 +85,9 @@ template < class T, int N, int BEGIN=0> class array {
 
 	void					swap(array<T, N> &y)		{ std::swap_ranges(begin(), end(), y.begin()); }
 	T *					c_array()			{ return elems; }
+
+        const T*				data()		const		{ return elems; }
+        T*					data()				{ return elems; }
 
 	// assignment with type conversion
 	template <typename T2>	array <T, N>	&operator=(const array < T2, N > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; }
@@ -85,7 +112,7 @@ template < class T, size_t N > inline void swap(array < T, N > &x, array < T, N 
 
 		    template <typename T, int N, int B> ostream&
  operator<<  (ostream& os, array<T,N,B> a)  {
-	FMT("[%d..%d):  ") %a.ibegin() %a.iend();
+	os << format("[%d..%d):  ") %a.ibegin() %a.iend();
 	copy (a.begin(),  a.end(),  ostream_iterator<T>(cout, " "));
 	cout << endl;
 	return os;

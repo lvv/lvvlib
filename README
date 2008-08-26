@@ -1,0 +1,17 @@
+array.h  - compile-time sized arrays based on boost/array.hpp 
+
+	added 3rd template param BEGIN - index starts from BEGIN, defaults to 0
+	added ostream friend ( you can do  cout << array; ) 
+	added index getter - ibegin/iend() 
+	added operator[] bounds checking:
+		dependent on define CHECK_BOUNDS and NDEBUG 
+		lower bound checked also
+	WIP removed dependency on boost
+
+	see t-array.h for sample use
+
+
+mmap.h  simple mmap(3) wrapper
+
+	
+	
