@@ -4,6 +4,10 @@
 
 #include <cassert>
 #include <iostream>
+using std::ostream;
+using std::cout;
+using std::endl;
+#include <iterator>
 using std::ostream_iterator;
 
 #include <boost/format.hpp>
@@ -30,6 +34,11 @@ template < class T, int N, int BEGIN=0> class array {
 	typedef int		size_type;
 	typedef int		index_type;
 
+	// CTOR
+	//array<T,N,BEGIN>(T init_value) { for (size_type i=0;  i<N;  i++)  elems[i]=init_value; } // TODO specialization for memset-to-0 
+	//init(T init_value) { for (size_type i=0;  i<N;  i++)  elems[i]=init_value; } // TODO specialization for memset-to-0 
+	//array<T,N,BEGIN>() {}
+
 	// index
 	index_type				ibegin()	const		{ return BEGIN; }
 	index_type				iend()		const		{ return BEGIN + N; }
@@ -51,7 +60,7 @@ template < class T, int N, int BEGIN=0> class array {
 
 	// operator[]
 	reference				operator[](size_type i)		{
-		#ifdef CHECK_BOUNDS
+		#ifdef  LVV_CHECK_BOUNDS
 			if (i>=N+BEGIN  ||  i< BEGIN) {
 				cerr "lvv::array: out of range\n";
 				exit(33);
@@ -61,7 +70,7 @@ template < class T, int N, int BEGIN=0> class array {
 	}
 
 	const_reference				operator[](size_type i) const	{
-		#ifdef CHECK_BOUNDS
+		#ifdef  LVV_CHECK_BOUNDS
 			if (i>=N+BEGIN  ||  i< BEGIN) {
 				cerr "lvv::array: out of range\n";
 				exit(33);

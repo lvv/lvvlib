@@ -10,6 +10,9 @@ array.h  - compile-time sized arrays based on boost/array.hpp
 
 	see t-array.h for sample use
 
+	vs. other
+		sizeof
+
 
 mmap.h  simple mmap(3) wrapper
 

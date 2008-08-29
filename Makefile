@@ -1,5 +1,5 @@
 
-.DEFAULT_GOAL := t-multimin-gp
+.DEFAULT_GOAL := t-iter-model-gp
 	
 t-*     : lvv.h math.h check.h
 t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
