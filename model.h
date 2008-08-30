@@ -19,6 +19,7 @@
 
     int  const  poly_order = 4;
 
+//	template<int M>
 class   Model   {     public: ///////////////////////////////////////////////////////////// Model Data - μ² polinom fitting
 
 
@@ -26,8 +27,11 @@ Model () : n(0), m(0), x(NULL), y(NULL), X(NULL),  cov(NULL),  c(NULL)          
 
 Model (double _x[], double _y[], int _n, int _m=-1) : n(_n), m(_m), x(_x), y(_y)    { ////////////////////////////////   CTOR
 
-	// N - data points ( 5 for NF )
-	// M - poly order  ( 4 for N=5) 
+        // N - data points [0..N) ( 5 for NF )
+ 	// M - number of model parameters [0..M)
+ 	// if polynomial used in model:
+ 	//      M-1 -  poly order  C[0]..C[m-1]
+
 	assert(_n >= 3 && "not implemented");    
 	if (_m == -1) {      //  then need autodetect
 	    if      (n < 6 ) m = n-2;
@@ -87,6 +91,7 @@ double  inverse_estimate (const double yy)    const {
 		struct { double real; double imag; } z[poly_order-1];
 
 		int order = poly_order;	
+		//if ( abs(C[poly_order-1]) < 0.000001 )	// reduce polinomial order of last elem == 0  
 		if ( C[poly_order-1] == 0 )	// reduce polinomial order of last elem == 0  
 			order = poly_order-1;
 		    			assert (C[poly_order-1] != 0);	// hope we don't need to do it twice
@@ -145,7 +150,7 @@ double  inverse_estimate (const double yy)    const {
 
 	    if	     (got_root)				xx = real_root;
 	    else  if (got_out_of_range_root)		xx = out_of_range_root;
-	    else					{ xx=3.6666; cerr << "root not found\n";   print(); }
+	    else					{ xx=3.66; cerr << "#model::inverse_estimate(): root not found\n";  ; }
 														//cerr << "  ROOT=" << xx << endl;
 
 	    gsl_vector_set(c, 0, c0_save);
