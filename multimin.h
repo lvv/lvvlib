@@ -1,4 +1,7 @@
 
+	#ifndef LVV_MULTIMIN_H
+	#define LVV_MULTIMIN_H
+	
 #include <stdlib.h>
 #include <iostream>
 using std::cerr;
@@ -81,3 +84,4 @@ class f_minimizer {  public:
  };
  } // namespace
  
+    #endif // LVV_MULTIMIN_H
