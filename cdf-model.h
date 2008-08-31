@@ -21,11 +21,11 @@
 
     //int  const  poly_order = 4;
 
-double  cdf_model_eval (int N, const double x, double *C)   {
+double  cdf_model_eval (int M, const double x, double *C)   {
 	double poly = C[0] ; 
         double pow_x = 1.0                 ; // x[0,0]^0
  
-        for (int i=1;  i<N;  ++i) {
+        for (int i=1;  i<M;  ++i) {
             pow_x  *=  x;
             poly   +=  C[i]*pow_x;
         }
@@ -98,9 +98,25 @@ double  estimate (const double x)   const {
 	return  y_est;
  };
 
-double  inverse_estimate (const double yy)    const {
-	double xx = -1.0;
-	return xx;
+double  inverse_estimate (const double cdf)    const {
+
+	double       r_low     = -20+1;
+	double       r_high    =  20+5;
+	int    const max_cnt   = 200;
+	double const precision = 0.0001;
+
+	for (int cnt=0; cnt < max_cnt; cnt++) {
+		double r_middle = (r_high + r_low)/2;
+		double cdf_middle = estimate(r_middle);
+
+		if (cdf_middle > cdf)	r_high = r_middle;
+		else			r_low  = r_middle;
+
+												//PR4(cdf, cdf_middle, r_low, r_high) 
+		if ( (r_high-r_low) < precision ) 
+			break;
+	}
+	return (r_high+r_low)/2.;
  };
 
 
