@@ -1,10 +1,12 @@
 
-.DEFAULT_GOAL := t-iter-model-gp
+.DEFAULT_GOAL := t-cdf-model-gp
 	
 t-*     : lvv.h math.h check.h
 t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
 
 LDFLAGS += -lgsl -lgslcblas
+
+t-cdf-model: t-cdf-model.cc *.h
 
 t-root: LDFLAGS  +=  -lgsl -lgslcblas -lm -L /usr/local/lib -lo2scl_base -lo2scl_other
 t-root: CXXFLAGS +=  -I/usr/local/include/o2scl

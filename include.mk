@@ -11,7 +11,7 @@ VPATH   := ../lvv/
 #SPEED := $(s:d=DEBUG)
 
 g++FLAGS          := -pipe -Wno-reorder
-g++FLAGS_OPTIMIZE := -O3 -march=native 
+g++FLAGS_OPTIMIZE := -O3 -march=native  -fwhole-program --combine
 
 g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
 #g++FLAGS_DEBUG    := -O0 -ggdb3 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
@@ -31,7 +31,7 @@ iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2
 iccFLAGS_DEBUG    := -debug all
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
-CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"' -I ..
+CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"' -I .. -frecord-gcc-switches
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
 CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz

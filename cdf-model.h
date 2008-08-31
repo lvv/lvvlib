@@ -19,7 +19,7 @@
 
     namespace lvv {
 
-    int  const  poly_order = 4;
+    //int  const  poly_order = 4;
 
 double  cdf_model_eval (int N, const double x, double *C)   {
 	double poly = C[0] ; 
@@ -35,21 +35,22 @@ double  cdf_model_eval (int N, const double x, double *C)   {
  };
 
 double sse(const gsl_vector *gv_param, void *var)  {        //####################################################################   Optimizee              
-	#define  GP_F "splot [-1:8] [-3:8] (1/(0.5+((x/2)**2-y)**2))/(0.5+(x/10)**2+(y/20)**2),"
-	//#define  GP_F "unset view; splot [-1:8] [-3:8] "
-	double *C = const_cast<double*>(gsl_vector_const_ptr(gv_param,0));
+	double		*C	=   const_cast<double*>(gsl_vector_const_ptr(gv_param,0));
         double		*X	=  (double *) (((void **) var) [0]);
         double		*Y	=  (double *) (((void **) var) [1]);
         int   		N	= *(int *)    (((void **) var) [2]);
 
 	double 		sum 	= 0.0;
-	for (int i=0; i < N; i++) sum +=  pow2<double> ( Y[i] - cdf_model_eval(N, X[i], C) );
-                                                                         int static    cnt = 0;
-                                                                         FMT("sse: call=%d  \t X[]: ") % cnt++;
-                                                                         copy(X, X+N, ostream_iterator<double>(cout, "  "));
-									 cout << endl;
-	return sum;
-}
+	for (int i=0; i < N; i++) {
+		sum +=  pow2<double> ( Y[i] - cdf_model_eval(N, X[i], C) );
+							//FMT("\t X[i]=%f \t Y[i]=%f \t cdf_model_eval()=%f\n")  %X[i]  %Y[i]  %cdf_model_eval(N, X[i], C);
+	}
+
+							int static    cnt = 0;
+							FMT("sse: call=%d  sse=%d \t C[]: ") % cnt++  %sum << *(array<double,4>*)C << endl;
+                                			//copy(X, X+N, ostream_iterator<double>(cout, "  "));
+	return  sum;
+ }
  
 	template<int M>
 class   Model   {     public: ///////////////////////////////////////////////////////////// Model Data - μ² polinom fitting
@@ -64,22 +65,20 @@ Model (double X[], double Y[], int n ) : n(n), X(X), Y(Y)    { /////////////////
 	// 	M-1 -  poly order  C[0]..C[m-1]
 
 	//assert(n >= 3 && "not implemented");    
-	assert(n >= M);  
+	assert	(n >= M);  
 
-	C.assign(0.0); 
-	C[0] = -3.6;
-	C[1] =	1.0; 
-	
-	X_step.assign(0.05);
-	X_step[0] = 0.5;
-	X_step[1] = 0.2; 
-
+	array<double, M> C0     = {{ -1.73996, 0.349906, -0.0125859, 0.00720428 }}; 
+	array<double, M> C_step = {{ 0.5     , 0.2     , 0.1       , 0.05       }}; 
+	C = C0;
  
 	// fit model paramS
-	void *var[] = {Y, C.elems, &n};
-        f_minimizer     fm(n, sse, X, (double *) &X_step, var);       
-        fm.find_min(1e-2, 200);
-		 if (!fm.found)  cerr << "# error model::fitting: minimum not found\n";
+	void *var[] = {X, Y, &n};
+        f_minimizer     fm(M, sse, (double *)&C, (double *) &C_step, var);       
+        fm.find_min(1e-3, 200);
+				if (!fm.found)  cerr << "# error model::fitting: minimum not found\n";
+	C = *(array<double,M>*)fm.xmin;
+				//cout << "xmin: " << *(array<double,M>*) fm.xmin << endl;
+				//cout << "C:    " <<  C       << endl;
  };
 
 ~Model() { ////////////////////////////////////////////////////////////////// DTOR
@@ -131,7 +130,7 @@ private: // member vars
         double			*X;
         double			*Y;
         array<double,M> 	C;
-        array<double,M> 	X_step;
+        array<double,M> 	C_step;
     public:
  };
 
