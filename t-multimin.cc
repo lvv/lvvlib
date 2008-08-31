@@ -44,10 +44,10 @@ double f3d(const gsl_vector * gv, void *var) {
 
 int	main(void)  {
 
-	double	x0[]    = {4.444, 6.6666, 10}         ; 
-	double	*x       = x0                      ; 
-	double	step0[] = {0.5,0.5, 1}               ; 
-	int	N        = sizeof(x0)/sizeof(x0[0]); 
+	double	x0[]    = {4.444, 6.6666, 10}; 
+	double	*x      = x0; 
+	double	step0[] = {0.5,   0.5,  1}; 
+	int	N       = sizeof(x0)/sizeof(x0[0]); 
 
 	cout << 
 		"# :gnuplot: set view 0,0,1.7;   set font \"arial,6\"; set dgrid3d;  set key off;  set contour surface;  set cntrparam levels 20;  set isosample 40;"
