@@ -1,3 +1,5 @@
+// WIP, not finished
+
 // http://www.boost.org/doc/libs/1_35_0/libs/math/doc/sf_and_dist/html/math_toolkit/toolkit/internals1/minima.html
 class   Variable { public:
         Variable (
