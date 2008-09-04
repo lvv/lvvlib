@@ -165,7 +165,7 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
  ///////////////////////////////////////////////////////////////////////////////////
 
 	// TODO replace lexica_cast with boost::format  
-    #define STR(x)              (string(" " #x "=")+lexical_cast<string>(x))
+    #define _STR(x)              (string(" " #x "=")+lexical_cast<string>(x))
     #define PR(x)               cerr << " " #x " = " << (x) << "  "<< flush;
 
     #define PR1(x1)             cerr << "-- "; PR(x1)                            ; cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 

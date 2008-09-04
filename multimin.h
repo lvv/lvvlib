@@ -45,7 +45,7 @@ class f_minimizer {  public:
 
 		if (trace)  FMT("# Itr  %10t Y   %20t Step  %30t X[0..]\n");
 	
-		for  ( int iter=0;  iter<max_iter && (test_status==GSL_CONTINUE);   ++iter )   {
+		for  ( iter=0;  iter<max_iter && (test_status==GSL_CONTINUE);   ++iter )   {
 
 			int  iterate_status = gsl_multimin_fminimizer_iterate(minimizer);
 
@@ -81,6 +81,7 @@ class f_minimizer {  public:
 	double                              fmin;
 	gsl_vector                         *gv_x;
 	gsl_vector                         *gv_ss;
+	int					iter;
  };
  } // namespace
  

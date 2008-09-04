@@ -10,15 +10,16 @@ VPATH   := ../lvv/
 #SPEED := $(s:o=OPTIMZE)
 #SPEED := $(s:d=DEBUG)
 
+#######################################################################################  COMPILE SPECIFIC
 g++FLAGS          := -pipe -Wno-reorder
 g++FLAGS_OPTIMIZE := -O3 -march=native  -fwhole-program --combine
 
+g++FLAGS_CHECK    := -O3 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check
 g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
 #g++FLAGS_DEBUG    := -O0 -ggdb3 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
 #g++FLAGS_DEBUG    := -O0 -g3 -gstabs+ -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
 #g++FLAGS_DEBUG    := -O0 -g3 -gdwarf-2 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
 
-g++FLAGS_STATS    := -O3           -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check -DSTATS
 #g++FLAGS_DEBUG    += -Wfloat-equal -Weffc++
 #g++FLAGS_DEBUG    += -fmudflap
 #g++FLAGS_OPTIMIZE += -fast-math -fstrict-overflow 
@@ -31,10 +32,14 @@ iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2
 iccFLAGS_DEBUG    := -debug all
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
-CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"' -I .. -frecord-gcc-switches
-CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF
+#######################################################################################  NOT COMPILE SPECIFIC
+CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'  -I . -I .. -I ../..  -frecord-gcc-switches
+CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
-CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz
+CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_OFF 
+CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEBUG  
+
+#######################################################################################  EVALUATE CXXFLAGS
 CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF)
 
 *: ../lvv/include.mk ../lvv/lvv.h

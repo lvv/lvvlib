@@ -60,9 +60,9 @@ template < class T, int N, int BEGIN=0> class array {
 
 	// operator[]
 	reference				operator[](size_type i)		{
-		#ifdef  LVV_CHECK_BOUNDS
-			if (i>=N+BEGIN  ||  i< BEGIN) {
-				cerr "lvv::array: out of range\n";
+		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
+			if (i < ibegin()  ||  iend() <= i) {
+				cerr << "lvv::array::operator[] error: index=" << i  << " out of range [" << ibegin() << ".." << iend() << ")\n";
 				exit(33);
 			}
 		#endif 
@@ -70,9 +70,9 @@ template < class T, int N, int BEGIN=0> class array {
 	}
 
 	const_reference				operator[](size_type i) const	{
-		#ifdef  LVV_CHECK_BOUNDS
-			if (i>=N+BEGIN  ||  i< BEGIN) {
-				cerr "lvv::array: out of range\n";
+		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
+			if (i < ibegin()  ||  iend() <= i) {
+				cerr << "lvv::array::operator[] error: index=" << i  << " out of range [" << ibegin() << ".." << iend() << ")\n";
 				exit(33);
 			}
 		#endif 
@@ -99,7 +99,8 @@ template < class T, int N, int BEGIN=0> class array {
         T*					data()				{ return elems; }
 
 	// assignment with type conversion
-	template <typename T2>	array <T, N>	&operator=(const array < T2, N > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; }
+	template <typename T2>	array <T, N>	&operator=(const array < T2, N > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
+	
 	// assign one value to all elements
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
 	template <typename TT, int NN,  int BB> friend ostream& operator<< (ostream& os, array<TT,NN,BB>  a);

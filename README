@@ -4,8 +4,11 @@ array.h  - compile-time sized arrays based on boost/array.hpp
 	added ostream friend ( you can do  cout << array; ) 
 	added index getter - ibegin/iend() 
 	added operator[] bounds checking:
-		dependent on define CHECK_BOUNDS and NDEBUG 
-		lower bound checked also
+		check is done if compiled with -g (macro NDEBUG is defined)
+		I like to split debug compile into to subtipes: CHECK and DEBUG
+		So there are two more controling macros CHECK and NOCHECK
+		if CHECK is defined bounds check is done.
+		if NOCHECK is defined bounds check is not done (NDEBUG ignored)
 	WIP removed dependency on boost
 
 	see t-array.h for sample use

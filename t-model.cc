@@ -15,7 +15,7 @@ int main (int argc, char **argv) {
     //double Y[] = {0.1     , 0.3   , 0.4   , 0.7   , 0.9}    ; 
     
     int n = sizeof(X)/(sizeof(*X));
-	Model<4>  m(X, Y, n);
+	Model  m(X, Y, n);
 	//Model<4>  m_empty;  // to test default dtor/ctor
 
 	m.print("t-model.cc");

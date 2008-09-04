@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 	typedef array<double, 3> array_t;
 	array_t  d={{0.11, 0.22, 0.33}};
 	mmap_write<array_t> ("/tmp/_da.mmap", d); 	// size is taken from array_t 
-	array_t  dd = mmap_read<array_t> ("/tmp/_da.mmap"); 
+	array_t&  dd = mmap_read<array_t> ("/tmp/_da.mmap"); 
 	cout << "array<double,3> d   " << d ;
 
 	return 0;
