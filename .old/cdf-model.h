@@ -19,7 +19,6 @@
 	using   std::max;
 	using   std::min;
 
-	
 	#include <lvv/array.h>
 	using lvv::array;
 	

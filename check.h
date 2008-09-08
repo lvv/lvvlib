@@ -1,6 +1,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////////// TEST MACROS
-static __attribute__((unused) bool all_pass=true; // volatile to remove gcc warning of not used var
+static __attribute__((unused) bool all_pass=true;
 static __attribute__((unused) bool result=false;
 #define PASS "    pass   "
 #define FAIL ">>> FAIL <<<"

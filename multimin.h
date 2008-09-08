@@ -8,8 +8,8 @@ using std::cerr;
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_multimin.h>
-#include "../lvv/lvv.h"
-#include "../lvv/math.h"
+#include <lvv/lvv.h>
+#include <lvv/math.h>
 
 namespace lvv {
  

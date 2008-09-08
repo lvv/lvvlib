@@ -12,7 +12,29 @@
 	#include <boost/format.hpp>
 	using boost::format; 
 	#define FMT(f)	std::cout << boost::format(f)
+	#define MSG(f)	std::cerr << boost::format(f)
+	#define LOG(f)	std::clog << boost::format(f)
+	
 
+
+	#define TABLE2(x)	(x x)
+	#define TABLE3(x)	(x x x)
+	#define TABLE4(x)	(x x x x)
+	#define TABLE5(x)	(x x x x x)
+	#define TABLE6(x)	(x x x x x x)
+	#define TABLE7(x)	(x x x x x x x)
+	#define TABLE8(x)	(x x x x x x x x)
+	#define TABLE9(x)	(x x x x x x x x x)
+	#define TABLE10(x)	(x x x x x x x x x x)
+	#define TABLE11(x)	TABLE(10) ( x )
+	#define TABLE12(x)	TABLE(10) ( x x)
+	#define TABLE13(x)	TABLE(10) ( x x x)
+	#define TABLE14(x)	TABLE(10) ( x x x x)
+	#define TABLE15(x)	TABLE(10) ( x x x x x)
+	#define TABLE16(x)	TABLE(10) ( x x x x x x)
+	#define TABLE17(x)	TABLE(10) ( x x x x x x x)
+	#define TABLE18(x)	TABLE(10) ( x x x x x x x x)
+	#define TABLE19(x)	TABLE(10) ( x x x x x x x x x)
 
     #if  defined(NDEBUG) && defined(DEBUG)
         #undef DEBUG
@@ -163,8 +185,11 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
  }
 
  ///////////////////////////////////////////////////////////////////////////////////
+	#define STR(x) REAL_STR(x)                                                                                                                         
+	#define REAL_STR(x) #x
 
 	// TODO replace lexica_cast with boost::format  
+	
     #define _STR(x)              (string(" " #x "=")+lexical_cast<string>(x))
     #define PR(x)               cerr << " " #x " = " << (x) << "  "<< flush;
 

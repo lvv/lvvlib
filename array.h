@@ -59,21 +59,25 @@ template < class T, int N, int BEGIN=0> class array {
         const_reverse_iterator			rend()		const		{ return const_reverse_iterator(begin()); }
 
 	// operator[]
-	reference				operator[](size_type i)		{
+	reference				operator[](int i) throw(char *)	{
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				cerr << "lvv::array::operator[] error: index=" << i  << " out of range [" << ibegin() << ".." << iend() << ")\n";
-				exit(33);
+				format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":" STR(__LINE__) );    
+				msg %i %ibegin() %iend();
+				throw  msg.str().c_str();
 			}
 		#endif 
 		return elems[i-BEGIN];
+		// TODO __OPTIMIZE__ - is defined in all optimizing compilations,
 	}
 
-	const_reference				operator[](size_type i) const	{
+	const_reference				operator[](int i) const	 throw(char *) {
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				cerr << "lvv::array::operator[] error: index=" << i  << " out of range [" << ibegin() << ".." << iend() << ")\n";
-				exit(33);
+				format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":" STR(__LINE__) );    
+				msg %i %ibegin() %iend();
+				cerr << msg << endl;
+				throw  msg.str().c_str();
 			}
 		#endif 
 		return elems[i-BEGIN];
@@ -123,7 +127,7 @@ template < class T, size_t N > inline void swap(array < T, N > &x, array < T, N 
 		    template <typename T, int N, int B> ostream&
  operator<<  (ostream& os, array<T,N,B> a)  {
 	os << format("[%d..%d):  ") %a.ibegin() %a.iend();
-	copy (a.begin(),  a.end(),  ostream_iterator<T>(cout, " "));
+	copy (a.begin(),  a.end(),  ostream_iterator<T>(os, " "));
 	cout << endl;
 	return os;
  };
