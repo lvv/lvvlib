@@ -11,7 +11,7 @@ VPATH   := ../lvv/
 #SPEED := $(s:d=DEBUG)
 
 #######################################################################################  COMPILE SPECIFIC
-g++FLAGS          := -pipe -Wno-reorder
+g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare 
 g++FLAGS_OPTIMIZE := -O3 -march=native  -fwhole-program --combine
 
 g++FLAGS_CHECK    := -O3 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check

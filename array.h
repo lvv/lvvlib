@@ -108,6 +108,11 @@ template < class T, int N, int BEGIN=0> class array {
 	// assign one value to all elements
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
 	template <typename TT, int NN,  int BB> friend ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
+
+
+	// kitchen sink
+	T					sum() 		const		{ return accumulate(begin(), end(), 0); };
+	
 };
 
 
