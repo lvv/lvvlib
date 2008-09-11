@@ -158,17 +158,15 @@ eq (T1 n1,T2 n2, ulp_t ulps=100, typename promote_trait<T1,T2>::T_promote charac
  //////////////////////////////////////////////////////////////////////////////////////  SIMON_MEAN
                     double static inline  
 group_mean(
-    double group_weight,    // Simon's K;   default ==25.  How much more we prefer group to individual mean (bigger --> prefer group)
-    double group_mean,      // global mean
-    double sum,             // individual measurements sum
-    double count,            // individual measurements count 
-    double fallback         // value for if no count==0 and group_weight==0
+    double sample_value,
+    double samples,
+    double gloable_value,
+    double eq_N	// K
  ) { 
     // So intead of : mean = sum(ratings)/count(ratings)
     // He uses: bettermean = [K*global_mean + sum(ratings)] / [K+count(ratings)] and he uses K=25
                                                                             //assert (group_weight > 0);
-        return (group_weight*group_mean + sum )  /  ( group_weight + count );
-        //return (group_weight*group_mean + sum + fallback/100000.)  /  ( group_weight + count + 0.00001 );
+        return (eq_N*gloable_value + sample_value*samples  )  /  ( eq_N + samples );
  } 
 
 
@@ -210,7 +208,8 @@ void fpe_signal_handler(int signum, siginfo_t *info, void *context) {
  }
 
 void setup_fpe() {
-    feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW); // do not enable all
+    //feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW); // do not enable all
+    feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW ); // do not enable all
     struct sigaction fpe_sigaction;
     memset(&fpe_sigaction, 0, sizeof(fpe_sigaction));
     fpe_sigaction.sa_sigaction = &fpe_signal_handler;
@@ -221,6 +220,33 @@ void setup_fpe() {
         exit(111); // after exception control comes here
  }
 
+		template<typename ARRAY_t>
+double		polynomial_eval	(const double x, ARRAY_t C)	{
+ 
+	double poly = *C.begin() ; 
+	double pow_x = 1.0; // x[0,0]^0
+	for ( int i=C.ibegin()+1;   i < C.iend();   ++i )   {
+	    pow_x  *=  x;
+	    poly   +=  C[i]*pow_x;
+	}
+
+	return poly;
+ };
+
+// x  = a + b*x + c*x^2
+// dx = 0 + b   + 2c*x
+		template<typename ARRAY_t>
+double		polynomial_derivative_eval	(const double x, ARRAY_t C)	{
+ 
+	double	sum = *(C.begin()+1) ;  // 1st nonomial == 0, this is second
+	double	pow_x = 1.0; // x[0,0]^0
+	for ( int i = C.ibegin()+2;   i < C.iend();   ++i )   {
+	    pow_x  *=  x;
+	    sum    += i*C[i]*pow_x;
+	}
+
+	return sum;
+ };
 
     ////////////////////////////////////////////////////////////////////////////////// END
     }

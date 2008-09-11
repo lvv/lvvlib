@@ -204,6 +204,11 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
     #define PR9(x1,x2,x3,x4,x5,x6,x7,x8,x9) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8) PR(x9); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
 
     
+///////////////////////////////////////////////////////////////////////////////////// MACROS
+
+#define  FOR_ARRAY_I(i,A)   for(int i  = A.ibegin(); i  <  A.iend();  i++)
+#define  FOR_CNTR_IT(it,A) for(typeof(A)::iterator it = A.begin() ; it != A.end() ;  it++)
+
 ///////////////////////////////////////////////////////////////////////////////////// DEBUG MACROS
  #ifdef DEBUG
     #define DBG             ;

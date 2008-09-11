@@ -9,6 +9,8 @@ using std::cout;
 using std::endl;
 #include <iterator>
 using std::ostream_iterator;
+#include <numeric>
+using std::accumulate;
 
 #include <boost/format.hpp>
 using boost::format;
