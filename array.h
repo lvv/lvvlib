@@ -131,9 +131,15 @@ template < class T, size_t N > inline void swap(array < T, N > &x, array < T, N 
 
 
 
+// lvv
+template<typename C, typename D>  C&  operator+=(C &A, D d) { typedef C T; for(typename T::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
+template<typename C, typename D>  C&  operator-=(C &A, D d) { typedef C T; for(typename T::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
+template<typename C, typename D>  C&  operator*=(C &A, D d) { typedef C T; for(typename T::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
+template<typename C, typename D>  C&  operator/=(C &A, D d) { typedef C T; for(typename T::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
+
 		    template <typename T, int N, int B> ostream&
  operator<<  (ostream& os, array<T,N,B> a)  {
-	os << format("[%d..%d):  ") %a.ibegin() %a.iend();
+	os << format("[%d..%d)=") %a.ibegin() %a.iend();
 	copy (a.begin(),  a.end(),  ostream_iterator<T>(os, " "));
 	cout << endl;
 	return os;

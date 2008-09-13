@@ -207,7 +207,7 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
 ///////////////////////////////////////////////////////////////////////////////////// MACROS
 
 #define  FOR_ARRAY_I(i,A)   for(int i  = A.ibegin(); i  <  A.iend();  i++)
-#define  FOR_CNTR_IT(it,A) for(typeof(A)::iterator it = A.begin() ; it != A.end() ;  it++)
+#define  FOR_ARRAY(a,A)   for(typeof(A)::iterator a = A.begin(); a != A.end();  a++)
 
 ///////////////////////////////////////////////////////////////////////////////////// DEBUG MACROS
  #ifdef DEBUG

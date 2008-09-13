@@ -5,6 +5,7 @@ using namespace std;
 #include <boost/foreach.hpp>
 
 #include <lvv/array.h>
+#include <lvv/lvv.h>
 using lvv::array;
 
 
@@ -25,4 +26,25 @@ int main() {
 
 	cout << "a1: " << a1;
 	cout << "an: " << an;
+
+	cout << "an+10  " << (an += 10);
+	cout << "an-1   " << (an -= 1);
+	cout << "an*2   " << (an *= 2);
+	cout << "an/4   " << (an /= 4.0);
+
+	
+	cout << "FOR_ARRAY "; 
+	//FOR_ARRAY(a,an) cout << *a ;
+	typedef typeof(an) T;
+	for(
+		//array<int,5,-2>::iterator a=an.begin();
+		T::iterator a=an.begin();
+		a != an.end(); 
+		a++
+	)
+		cout << *a << " ";
+
+
+
+	cout << endl;
 }
