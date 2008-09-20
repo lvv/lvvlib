@@ -11,15 +11,11 @@ VPATH   := ../lvv/
 #SPEED := $(s:d=DEBUG)
 
 #######################################################################################  COMPILE SPECIFIC
-g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare 
+g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare  # -Wmissing-braces
 g++FLAGS_OPTIMIZE := -O3 -march=native  -fwhole-program --combine
 
-g++FLAGS_CHECK    := -O3 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check
+g++FLAGS_CHECK    := -O3 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG 
 g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
-#g++FLAGS_DEBUG    := -O0 -ggdb3 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
-#g++FLAGS_DEBUG    := -O0 -g3 -gstabs+ -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
-#g++FLAGS_DEBUG    := -O0 -g3 -gdwarf-2 -p -fdelete-null-pointer-checks  -Wpacked -fsignaling-nans -fstack-protector -ftrapv -D_GLIBCXX_DEBUG  -fbounds-check
-
 #g++FLAGS_DEBUG    += -Wfloat-equal -Weffc++
 #g++FLAGS_DEBUG    += -fmudflap
 #g++FLAGS_OPTIMIZE += -fast-math -fstrict-overflow 
@@ -43,6 +39,8 @@ CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEB
 CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF)
 
 *: ../lvv/include.mk ../lvv/lvv.h
+
+.SUFFIXES: .cc -r -c -g  -gp
 
 % : %.cc
 	@tput sgr0; tput setaf 4

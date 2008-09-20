@@ -27,14 +27,21 @@ int main() {
 	cout << "a1: " << a1;
 	cout << "an: " << an;
 
+	/*
 	cout << "an+10  " << (an += 10);
 	cout << "an-1   " << (an -= 1);
 	cout << "an*2   " << (an *= 2);
 	cout << "an/4   " << (an /= 4.0);
+	*/
 
 	
+	//cout << "FOR_EACH "; 
+	//array<int,3> A={{1,2,3}};
+	//FOR_EACH(a,A) cout << a << endl;
+
+
+
 	cout << "FOR_ARRAY "; 
-	//FOR_ARRAY(a,an) cout << *a ;
 	typedef typeof(an) T;
 	for(
 		//array<int,5,-2>::iterator a=an.begin();
@@ -44,6 +51,7 @@ int main() {
 	)
 		cout << *a << " ";
 
+	//#define FOR_ARRAY(p,A) 		typedef typeof(A) T;       for( T::iterator p=A.begin();   p != A.end();   p++)
 
 
 	cout << endl;

@@ -64,8 +64,8 @@ template < class T, int N, int BEGIN=0> class array {
 	reference				operator[](int i) throw(char *)	{
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":" STR(__LINE__) );    
-				msg %i %ibegin() %iend();
+				format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":%d" );    
+				msg %i %ibegin() %iend() %__LINE__;
 				throw  msg.str().c_str();
 			}
 		#endif 
@@ -76,8 +76,8 @@ template < class T, int N, int BEGIN=0> class array {
 	const_reference				operator[](int i) const	 throw(char *) {
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":" STR(__LINE__) );    
-				msg %i %ibegin() %iend();
+				format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":%d" );    
+				msg %i %ibegin() %iend() %__LINE__;
 				cerr << msg << endl;
 				throw  msg.str().c_str();
 			}
@@ -92,13 +92,14 @@ template < class T, int N, int BEGIN=0> class array {
 	const_reference				front()		const		{ return elems[0]; }
 	const_reference				back()		const		{ return elems[N-1]; }
 
-	static size_type			size()				{ return N; }
+	static size_type const			size()				{ return N; }
 	static bool				empty()				{ return false; }
 	static size_type			max_size()			{ return N; }
 
 	enum { static_size = N };
 
 	void					swap(array<T, N> &y)		{ std::swap_ranges(begin(), end(), y.begin()); }
+	const T *				c_array()	const		{ return elems; }
 	T *					c_array()			{ return elems; }
 
         const T*				data()		const		{ return elems; }
@@ -141,9 +142,8 @@ template<typename C, typename D>  C&  operator/=(C &A, D d) { typedef C T; for(t
 
 		    template <typename T, int N, int B> ostream&
  operator<<  (ostream& os, array<T,N,B> a)  {
-	os << format("[%d..%d)=") %a.ibegin() %a.iend();
+	os << format("[%d..%d]=") %a.ibegin() %a.iend()-1;
 	copy (a.begin(),  a.end(),  ostream_iterator<T>(os, " "));
-	cout << endl;
 	return os;
  };
 

@@ -58,16 +58,17 @@
     #endif
     
     // FIXME add || http://developer.apple.com/documentation/DeveloperTools/gcc-4.0.1/cpp/Defined.html#Defined
-    #ifndef     MAP
-        // SPARSE HASH (default)
-        #include    <google/sparse_hash_map>
-        #define     MAP    google::sparse_hash_map
-    #endif
 
-    #ifndef     SET
-        #include    <google/sparse_hash_set>
-        #define     SET    google::sparse_hash_set
-    #endif
+	#ifndef     MAP
+	 	//SPARSE HASH (default)
+	       #include    <google/sparse_hash_map>
+	       #define     MAP    google::sparse_hash_map
+	#endif
+	
+	#ifndef     SET
+		#include    <google/sparse_hash_set>
+		#define     SET    google::sparse_hash_set
+	#endif
 
     using std::flush;
     using std::string;
@@ -207,7 +208,18 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
 ///////////////////////////////////////////////////////////////////////////////////// MACROS
 
 #define  FOR_ARRAY_I(i,A)   for(int i  = A.ibegin(); i  <  A.iend();  i++)
-#define  FOR_ARRAY(a,A)   for(typeof(A)::iterator a = A.begin(); a != A.end();  a++)
+
+// from BOOST mailing list.  Not works with breakes
+#define FOR_EACH(a, A) \
+	for(typeof(A.begin()) _for_each_i = A.begin(), _for_each_e = A.end();\
+	_for_each_i != _for_each_e; ++_for_each_i)\
+	if(bool _for_each_continue = false) {}\
+	else\
+	for(typeof(*A.begin()) var = *_for_each_i; !_for_each_continue; _for_each_continue=true) 
+
+
+#define SKIP continue
+
 
 ///////////////////////////////////////////////////////////////////////////////////// DEBUG MACROS
  #ifdef DEBUG
