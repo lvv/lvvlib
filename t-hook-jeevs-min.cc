@@ -10,12 +10,15 @@ using lvv::powi;
 
 int iter_cnt;
 
-#include "hook-jeevs-min.cc"
+#include <lvv/hook-jeevs-min.h>
 
 double f1(const array<double,2,1> & X) { 		//  Rosenbroke function
 	iter_cnt++;
 	double y = 100 * powi(X[2] - X[1] * X[1], 2) + powi(1 - X[1], 2);
-	MSG("y=%f	%15t X%d ") %y  %X;
+								int static    cnt = 0;
+								FMT("%7d %24.20g  %30t") % ++cnt  % y  ;
+								for (int i=X.ibegin(); i<X.iend(); ++i) FMT("%24.20g") %X[i];
+								cout << endl;
 	return y;
 }
 
@@ -29,10 +32,13 @@ void test1() {
 	b =  b0;
 	iter_cnt = 0;
 	class hook_jeevs_min<vector_t> minimizer;
-	cout << "\n\tRosenbroke function:  f = 100*(x2-x1^2)^2 + (1-x1)^2\n"
-		"\nInitial guess          b0" <<	b0 << 
-		"\nFunction value at it  f0 = " << 	f1(b0) << 
-		"\nInitial steps          h0" <<	h0 << endl << 
+
+	cout << "# :gnuplot: set view 0,0,1.7;   set font \"arial,6\"; set dgrid3d;  set key off;  set contour surface;  set cntrparam levels 20;  set isosample 40;splot [-2:1.5][-0.5:2] log(100 * (y - x*x)**2 + (1 - x)**2),  \"pipe\" using 3:4:2:1 with labels;\n" ;
+
+	cout << "\n\tRosenbroke function:  f = 100*(x2-x1^2)^2 + (1-x1)^2\n" 
+		"\nInitial guess          b0" <<	b0;
+	cout << "\nFunction value at it  f0 = " << 	f1(b0) << 
+		"\nInitial steps          h0" <<	h0 << 
 		"\nMinimum f value found f  = " << minimizer.min(b, h0, f1) << "     at  b" << b << 
 		"\nExact min location    bm" << bm;
 	cout << "\nNo. of iterations     ni = " << iter_cnt << endl;
