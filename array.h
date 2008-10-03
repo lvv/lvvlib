@@ -141,6 +141,26 @@ template<typename C, typename D>  C&  operator/=(C &A, D d) { typedef C T; for(t
 */
 
 
+// CONDOR
+#ifdef  _INCLUDE_VECTOR_H
+	
+			template <typename T, int N>
+			array<T,N>&
+	operator<<  (array<T,N>& A, CONDOR::Vector& cV)  {        // operator= should be member, so we are using operator<<
+								assert(A.size()==cV.sz());  assert(A.ibegin()==0);  
+		for (int i=A.ibegin(); i<A.iend(); i++)    A[i] = cV[i];
+		return A;
+	 };
+
+			template <typename T, int N>
+			CONDOR::Vector&
+	 operator<<  (CONDOR::Vector& cV, const array<T,N>& A)  {
+								assert(A.size()==cV.sz());  assert(A.ibegin()==0);  
+		for (int i=A.ibegin(); i<A.iend(); i++)    cV[i] = A[i];
+		return cV;
+	 };
+#endif
+
 #ifdef __GSL_VECTOR_H__
 	// this comment was inside class
 	//array <T, N>	&operator=(const gsl_vector*  rhs)       { assert(N==rhs->size);   for (int i=ibegin(); i<iend(); i++)  elems[i-BEGIN] = gsl_vector_get(rhs, i); return *this; };

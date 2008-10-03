@@ -1,1 +1,0 @@
-nelder-mead-min.h
