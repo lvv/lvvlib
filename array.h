@@ -107,18 +107,18 @@ template < class T, int N, int BEGIN=0> class array {
 
 	// assignment with type conversion
 	template <typename T2>	array <T, N>	&operator=(const array < T2, N > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
-	
+
 	// assign one value to all elements
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
-	template <typename TT, int NN,  int BB> friend ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
-
+	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
+	//template <typename TT, int NN, int BB> 	friend   gsl_vector* operator<<  (gsl_vector* gV, array<TT,NN,BB> A);
 
 	// kitchen sink
 	T					sum() 		const		{ return accumulate(begin(), end(), 0); };
 	
 };
 
-
+/*
 // comparisons  (TODO, add BEGIN)
 template<class T, int N> bool operator==(const array<T, N> &x, const array<T, N> &y) { return std::equal(x.begin(), x.end(), y.begin()); }
 template<class T, int N> bool operator< (const array<T, N> &x, const array<T, N> &y) { return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
@@ -126,7 +126,7 @@ template<class T, int N> bool operator!=(const array<T, N> &x, const array<T, N>
 template<class T, int N> bool operator> (const array<T, N> &x, const array<T, N> &y) { return   y < x; }
 template<class T, int N> bool operator<=(const array<T, N> &x, const array<T, N> &y) { return !(y < x); }
 template<class T, int N> bool operator>=(const array<T, N> &x, const array<T, N> &y) { return !(x < y); }
-
+*/
 // global swap()
 template < class T, size_t N > inline void swap(array < T, N > &x, array < T, N > &y) { x.swap(y); }
 
@@ -140,10 +140,41 @@ template<typename C, typename D>  C&  operator*=(C &A, D d) { typedef C T; for(t
 template<typename C, typename D>  C&  operator/=(C &A, D d) { typedef C T; for(typename T::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
 */
 
-		    template <typename T, int N, int B> ostream&
- operator<<  (ostream& os, array<T,N,B> a)  {
-	os << format("[%d..%d]=") %a.ibegin() %a.iend()-1;
-	copy (a.begin(),  a.end(),  ostream_iterator<T>(os, " "));
+
+#ifdef __GSL_VECTOR_H__
+	// this comment was inside class
+	//array <T, N>	&operator=(const gsl_vector*  rhs)       { assert(N==rhs->size);   for (int i=ibegin(); i<iend(); i++)  elems[i-BEGIN] = gsl_vector_get(rhs, i); return *this; };
+
+	/*  if(?) we will have constructor we can not use {{}} initilizer;
+	array<T,N,BEGIN>(const gsl_vector*  rhs)   {
+						assert(N==rhs->size);   
+						assert(ibegin()==gsl_vector_min_index(rhs));   
+						assert(iend()-1==gsl_vector_max_index(rhs));   
+		for (int i=ibegin(); i<iend(); i++)  elems[i-BEGIN] = gsl_vector_get(rhs, i);
+	}*/
+
+	
+			template <typename T, int N>
+			array<T,N>&
+	 operator<<  (array<T,N>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
+								assert(A.size()==gV->size);  assert(A.ibegin()==0);  
+		for (int i=A.ibegin(); i<A.iend(); i++)  A[i] = gsl_vector_get(gV, i);
+		return A;
+	 };
+
+			template <typename T, int N, int B>
+			gsl_vector*
+	 operator<<  (gsl_vector* gV, array<T,N,B>& A)  {
+								assert(A.size()==gV->size);  assert(A.ibegin()==0);  
+		for (int i=A.ibegin(); i<A.iend(); i++)  gsl_vector_set(gV, i, A[i]);
+		return gV;
+	 };
+#endif
+		template <typename T, int N, int B>
+		ostream&
+ operator<<  (ostream& os, array<T,N,B> A)  {
+	os << format("[%d..%d]=") %A.ibegin() %(A.iend()-1);
+	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, " "));
 	return os;
  };
 
