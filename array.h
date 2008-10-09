@@ -142,7 +142,19 @@ template<typename T,int N, int B, typename D>  array<T,N,B>&  operator/=(array<T
 
 
 // array op= array  
-//template<typename LT,typename RT,int N, int B>  array<LT,N,B>&  operator+=(array<LT,N,B> &LA, array<RT,N,B> &LR) { for(typename array<LT,N,B>::iterator lit =  LA.begin(), typename array<RT,N,B>::iterator rit =  RA.begin(); lit != LA.end();)  *lit++  +=  *rit++; return LA; }
+template<typename T,int N, int B> array<T,N,B>& operator+=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  +=  *rit++; return LA; }
+template<typename T,int N, int B> array<T,N,B>& operator-=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  -=  *rit++; return LA; }
+template<typename T,int N, int B> array<T,N,B>& operator*=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  *=  *rit++; return LA; }
+template<typename T,int N, int B> array<T,N,B>& operator/=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  /=  *rit++; return LA; }
+/*
+		template<typename LT,typename RT,int N, int B> 
+		typename lvv::array<LT,N,B>& 
+operator+=(lvv::array<LT,N,B>& LA, lvv::array<RT,N,B>& RA) {
+	typename lvv::array<LT,N,B>::iterator lit =  LA.begin();
+	typename lvv::array<RT,N,B>::iterator rit =  RA.begin();
+	for(; lit != LA.end();)  *lit++  +=  *rit++;
+	return LA;
+}*/
 //template<typename LT,int N, int B, typename T2>  array<T,N,B>&  operator-=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
 //template<typename LT,int N, int B, typename T2>  array<T,N,B>&  operator*=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
 //template<typename LT,int N, int B, typename T2>  array<T,N,B>&  operator/=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
@@ -208,7 +220,7 @@ template<typename T,int N, int B, typename D>  array<T,N,B>&  operator/=(array<T
 
 
 //		template <T, N1, N2>
-//class matrix: public array<array<T,N1,1>,N1,1> { enum { sz1 = N1, sz2=N2, sz0=N1*N2 }; }
+//class matrix: public array<array<T,N1,1>,N2,1> { enum { sz1 = N1, sz2=N2, sz0=N1*N2 }; }
 
 
 };	// namespace lvv
