@@ -1,12 +1,12 @@
 
 #include <iostream>
-using namespace std;
+	using namespace std;
 
 #include <boost/foreach.hpp>
 
 #include <lvv/array.h>
 #include <lvv/lvv.h>
-using lvv::array;
+	using lvv::array;
 
 
 int main() { 
@@ -27,17 +27,16 @@ int main() {
 	cout << "a1: " << a1;
 	cout << "an: " << an;
 
-	/*
+	
 	cout << "an+10  " << (an += 10);
-	cout << "an-1   " << (an -= 1);
-	cout << "an*2   " << (an *= 2);
-	cout << "an/4   " << (an /= 4.0);
-	*/
+	//cout << "an-1   " << (an -= 1);
+	//cout << "an*2   " << (an *= 2);
+	//cout << "an/4   " << (an /= 4.0);
 
 	
-	//cout << "FOR_EACH "; 
-	//array<int,3> A={{1,2,3}};
-	//FOR_EACH(a,A) cout << a << endl;
+	cout << "FOR_EACH "; 
+	array<int,3> A={{1,2,3}};
+	FOR_EACH(a,A) cout << a << endl;
 
 
 
@@ -50,9 +49,6 @@ int main() {
 		a++
 	)
 		cout << *a << " ";
-
-	//#define FOR_ARRAY(p,A) 		typedef typeof(A) T;       for( T::iterator p=A.begin();   p != A.end();   p++)
-
 
 	cout << endl;
 }

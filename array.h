@@ -1,6 +1,7 @@
-
 #ifndef LVV_ARRAY
 #define LVV_ARRAY
+
+// TODO  tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
 
 #include <cassert>
 #include <iostream>
@@ -24,6 +25,7 @@ namespace lvv {
 template < class T, int N, int BEGIN=0> class array {
       public:
 	T elems[N];				
+	enum { sz = N, ibg=BEGIN, ien=BEGIN+N };  // gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
 
       public:
 	// type definitions
@@ -132,13 +134,19 @@ template < class T, size_t N > inline void swap(array < T, N > &x, array < T, N 
 
 
 
-// lvv
-/*  CONFLICT WITH GOOGLE SPARSEHASH
-template<typename C, typename D>  C&  operator+=(C &A, D d) { typedef C T; for(typename T::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
-template<typename C, typename D>  C&  operator-=(C &A, D d) { typedef C T; for(typename T::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
-template<typename C, typename D>  C&  operator*=(C &A, D d) { typedef C T; for(typename T::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
-template<typename C, typename D>  C&  operator/=(C &A, D d) { typedef C T; for(typename T::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
-*/
+// array op= scallar  ( conflict with google sparsehash if we not spell out type)
+template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
+template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
+template<typename T,int N, int B, typename D>  array<T,N,B>&  operator*=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
+template<typename T,int N, int B, typename D>  array<T,N,B>&  operator/=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
+
+
+// array op= array  
+//template<typename LT,typename RT,int N, int B>  array<LT,N,B>&  operator+=(array<LT,N,B> &LA, array<RT,N,B> &LR) { for(typename array<LT,N,B>::iterator lit =  LA.begin(), typename array<RT,N,B>::iterator rit =  RA.begin(); lit != LA.end();)  *lit++  +=  *rit++; return LA; }
+//template<typename LT,int N, int B, typename T2>  array<T,N,B>&  operator-=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
+//template<typename LT,int N, int B, typename T2>  array<T,N,B>&  operator*=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
+//template<typename LT,int N, int B, typename T2>  array<T,N,B>&  operator/=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
+
 
 
 // CONDOR
@@ -155,7 +163,7 @@ template<typename C, typename D>  C&  operator/=(C &A, D d) { typedef C T; for(t
 			template <typename T, int N>
 			CONDOR::Vector&
 	 operator<<  (CONDOR::Vector& cV, const array<T,N>& A)  {
-								assert(A.size()==cV.sz());  assert(A.ibegin()==0);  
+		cV.setSize(A.size());				assert(A.size()==cV.sz());  assert(A.ibegin()==0);  
 		for (int i=A.ibegin(); i<A.iend(); i++)    cV[i] = A[i];
 		return cV;
 	 };
@@ -197,6 +205,11 @@ template<typename C, typename D>  C&  operator/=(C &A, D d) { typedef C T; for(t
 	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, " "));
 	return os;
  };
+
+
+//		template <T, N1, N2>
+//class matrix: public array<array<T,N1,1>,N1,1> { enum { sz1 = N1, sz2=N2, sz0=N1*N2 }; }
+
 
 };	// namespace lvv
 #endif	// LVV_ARRAY
