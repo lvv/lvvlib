@@ -210,7 +210,7 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
 #define  FOR_ARRAY_I(i,A)   for(int i  = A.ibegin(); i  <  A.iend();  i++)
 
 // from BOOST mailing list.  Not works with breakes
-#define FOR_EACH(a, A) \
+#define XXX_FOR_EACH(a, A) \
 	for(typeof(A.begin()) _for_each_i = A.begin(), _for_each_e = A.end();\
 	_for_each_i != _for_each_e; ++_for_each_i)\
 	if(bool _for_each_continue = false) {}\

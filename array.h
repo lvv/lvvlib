@@ -3,18 +3,23 @@
 
 // TODO  tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
 
-#include <cassert>
-#include <iostream>
-using std::ostream;
-using std::cout;
-using std::endl;
-#include <iterator>
-using std::ostream_iterator;
-#include <numeric>
-using std::accumulate;
+#include	<cassert>
+#include	<cmath>
+		using std::sqrt;
 
-#include <boost/format.hpp>
-using boost::format;
+#include	<iostream>
+		using std::ostream;
+		using std::cout;
+		using std::endl;
+
+#include	<iterator>
+		using std::ostream_iterator;
+
+#include	<numeric>
+		using std::accumulate;
+
+#include	<boost/format.hpp>
+		using boost::format;
 
 #include <iterator>
 #include <algorithm>
@@ -146,6 +151,40 @@ template<typename T,int N, int B> array<T,N,B>& operator+=(array<T,N,B>& LA, con
 template<typename T,int N, int B> array<T,N,B>& operator-=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  -=  *rit++; return LA; }
 template<typename T,int N, int B> array<T,N,B>& operator*=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  *=  *rit++; return LA; }
 template<typename T,int N, int B> array<T,N,B>& operator/=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  /=  *rit++; return LA; }
+
+
+			template<typename T,int N, int B>  T
+dot_prod 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
+	typename array<T,N,B>::const_iterator lit =  LA.begin();
+	typename array<T,N,B>::const_iterator rit =  RA.begin();
+	T sum = 0;
+	while(lit != LA.end())  sum += (*lit++  *  *rit++);
+	return  sum;
+}
+
+			template<typename T,int N, int B>   array<T,N,B>
+operator-		(array<T,N,B> A) { // A passed by value
+	typename array<T,N,B>::iterator  it =  A.begin();
+	for(;it != A.end(); it++)     *it = -*it;
+	return  A;
+}
+			template<typename T,int N, int B>  T
+norm2 		(const array<T,N,B>& A) {
+	typename array<T,N,B>::const_iterator  it =  A.begin();
+	T sum = 0;
+	for(;it != A.end(); it++)    sum  +=  *it * *it;
+	return  sqrt(sum);
+}
+
+			template<typename T,int N, int B>  T
+distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
+	typename array<T,N,B>::const_iterator lit =  LA.begin();
+	typename array<T,N,B>::const_iterator rit =  RA.begin();
+	T sum = 0;
+	while(lit != LA.end())  sum  +=  *lit++  *  *rit++ ;
+	return  sqrt(sum);
+}
+
 /*
 		template<typename LT,typename RT,int N, int B> 
 		typename lvv::array<LT,N,B>& 
@@ -219,7 +258,8 @@ operator+=(lvv::array<LT,N,B>& LA, lvv::array<RT,N,B>& RA) {
  };
 
 
-template <typename T, int N1, int N2> class matrix: public array<array<T,N1,1>,N2,1> { enum { sz1 = N1, sz2=N2, sz0=N1*N2 }; };
+template <typename T, int N> 		class vector: public array<T,N,1> {}; // index start from 1
+template <typename T, int N1, int N2>	class matrix: public array<array<T,N1,1>,N2,1> { enum { sz1 = N1, sz2=N2, sz0=N1*N2 }; };
 
 
 };	// namespace lvv
