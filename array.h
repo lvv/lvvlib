@@ -219,8 +219,7 @@ operator+=(lvv::array<LT,N,B>& LA, lvv::array<RT,N,B>& RA) {
  };
 
 
-//		template <T, N1, N2>
-//class matrix: public array<array<T,N1,1>,N2,1> { enum { sz1 = N1, sz2=N2, sz0=N1*N2 }; }
+template <typename T, int N1, int N2> class matrix: public array<array<T,N1,1>,N2,1> { enum { sz1 = N1, sz2=N2, sz0=N1*N2 }; };
 
 
 };	// namespace lvv
