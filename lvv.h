@@ -215,7 +215,7 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
 	_for_each_i != _for_each_e; ++_for_each_i)\
 	if(bool _for_each_continue = false) {}\
 	else\
-	for(typeof(*A.begin()) var = *_for_each_i; !_for_each_continue; _for_each_continue=true) 
+	for(typeof(*A.begin()) a = *_for_each_i; !_for_each_continue; _for_each_continue=true) 
 
 
 #define SKIP continue
