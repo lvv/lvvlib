@@ -3,6 +3,10 @@
 
 // TODO  tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
 
+// According to the language definition, aggregate initialization only works
+// for aggregate types. An array or class type is not an aggregate if it has
+// any user-declared constructors, any private or protected nonstatic data
+// members, any base classes, or any virtual functions.
 #include	<cassert>
 #include	<cmath>
 		using std::sqrt;
@@ -185,35 +189,22 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 	return  sqrt(sum);
 }
 
-/*
-		template<typename LT,typename RT,int N, int B> 
-		typename lvv::array<LT,N,B>& 
-operator+=(lvv::array<LT,N,B>& LA, lvv::array<RT,N,B>& RA) {
-	typename lvv::array<LT,N,B>::iterator lit =  LA.begin();
-	typename lvv::array<RT,N,B>::iterator rit =  RA.begin();
-	for(; lit != LA.end();)  *lit++  +=  *rit++;
-	return LA;
-}*/
-//template<typename LT,int N, int B, typename T2>  array<T,N,B>&  operator-=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
-//template<typename LT,int N, int B, typename T2>  array<T,N,B>&  operator*=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
-//template<typename LT,int N, int B, typename T2>  array<T,N,B>&  operator/=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
-
 
 
 // CONDOR
 #ifdef  _INCLUDE_VECTOR_H
 	
-			template <typename T, int N>
-			array<T,N>&
-	operator<<  (array<T,N>& A, CONDOR::Vector& cV)  {        // operator= should be member, so we are using operator<<
+			template <typename T, int N, int B>
+			array<T,N,B>&
+	operator<<  (array<T,N,B>& A, CONDOR::Vector& cV)  {        // operator= should be member, so we are using operator<<
 								assert(A.size()==cV.sz());  assert(A.ibegin()==0);  
 		for (int i=A.ibegin(); i<A.iend(); i++)    A[i] = cV[i];
 		return A;
 	 };
 
-			template <typename T, int N>
+			template <typename T, int N, int B>
 			CONDOR::Vector&
-	 operator<<  (CONDOR::Vector& cV, const array<T,N>& A)  {
+	 operator<<  (CONDOR::Vector& cV, const array<T,N,B>& A)  {
 		cV.setSize(A.size());				assert(A.size()==cV.sz());  assert(A.ibegin()==0);  
 		for (int i=A.ibegin(); i<A.iend(); i++)    cV[i] = A[i];
 		return cV;
@@ -221,21 +212,10 @@ operator+=(lvv::array<LT,N,B>& LA, lvv::array<RT,N,B>& RA) {
 #endif
 
 #ifdef __GSL_VECTOR_H__
-	// this comment was inside class
-	//array <T, N>	&operator=(const gsl_vector*  rhs)       { assert(N==rhs->size);   for (int i=ibegin(); i<iend(); i++)  elems[i-BEGIN] = gsl_vector_get(rhs, i); return *this; };
-
-	/*  if(?) we will have constructor we can not use {{}} initilizer;
-	array<T,N,BEGIN>(const gsl_vector*  rhs)   {
-						assert(N==rhs->size);   
-						assert(ibegin()==gsl_vector_min_index(rhs));   
-						assert(iend()-1==gsl_vector_max_index(rhs));   
-		for (int i=ibegin(); i<iend(); i++)  elems[i-BEGIN] = gsl_vector_get(rhs, i);
-	}*/
-
 	
-			template <typename T, int N>
-			array<T,N>&
-	 operator<<  (array<T,N>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
+			template <typename T, int N, int B>
+			array<T,N,B>&
+	 operator<<  (array<T,N,B>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
 								assert(A.size()==gV->size);  assert(A.ibegin()==0);  
 		for (int i=A.ibegin(); i<A.iend(); i++)  A[i] = gsl_vector_get(gV, i);
 		return A;
@@ -259,7 +239,10 @@ operator+=(lvv::array<LT,N,B>& LA, lvv::array<RT,N,B>& RA) {
 
 
 template <typename T, int N> 		class vector: public array<T,N,1> {}; // index start from 1
-template <typename T, int N1, int N2>	class matrix: public array<array<T,N1,1>,N2,1> { enum { sz1 = N1, sz2=N2, sz0=N1*N2 }; };
+template <typename T, int N1, int N2>	class matrix: public array<array<T,N1,1>,N2,1> {
+	enum { sz1 = N1, sz2=N2, sz0=N1*N2 };
+	// operator()(int i, int j) { return elems[i][j]; }
+};
 
 
 };	// namespace lvv
