@@ -4,10 +4,13 @@
 
 #include <boost/foreach.hpp>
 
+#include <lvv/math.h>
+	using lvv::eq;
 #include <lvv/array.h>
 #include <lvv/lvv.h>
 	using lvv::array;
 
+#include <gsl/gsl_vector.h>
 
 #define BOOST_TEST_MODULE lvv_array
 #include <boost/test/included/unit_test.hpp>
@@ -15,65 +18,71 @@
 BOOST_AUTO_TEST_CASE( lvv_array )  { 
 
 	typedef array<int,5> a5_t;
-	array <int, 5   >       a0 = {{0,1,2,3,4}}; 			// index starts from 0 
-	array <int, 5, 1>	a1 = {{1,2,3,4,5}}; 			// index starts from 1
 
-	{
-		array <int, 5   >       a0 = {{0,1,2,3,4}}; 			// index starts from 0 
-	        BOOST_CHECK( a0.ibegin()==0);
-	        BOOST_CHECK( a0.iend()==5);
-	        BOOST_CHECK( a0.size()==6);
-		
-		array <int, 5, 1>	a1 = {{1,2,3,4,5}}; 			// index starts from 1
-	        BOOST_CHECK( a1.ibegin()==1);
-	        BOOST_CHECK( a1.iend()==6);
-	        BOOST_CHECK( a1.size()==5);
-	}
+	// CTOR
+	array <int, 5   >       a0 = {{0,1,2,3,4}}; 			// index starts from 0 
+		BOOST_CHECK( a0.ibegin()==0);
+		BOOST_CHECK( a0.iend()==5);
+		BOOST_CHECK( a0.size()==5);
+	
+	array <int, 5, 1>	a1 = {{1,2,3,4,5}}; 			// index starts from 1
+		BOOST_CHECK( a1.ibegin()==1);
+		BOOST_CHECK( a1.iend()==6);
+		BOOST_CHECK( a1.size()==5);
+	array <int, 5, -2>	an = {{-2,-1,0,1,2}}; 			// index starts from -2
+		BOOST_CHECK( an.ibegin()==-2);
+		BOOST_CHECK( an.iend()==3);
+		BOOST_CHECK( an.size()==5);
 
 	array <int, 5, 1> const b1 = {{10,20,30,40,50}}; 			// index starts from 1
-	array <int, 5, -2>      an = *new array <int, 5, -2>;		// test new
 
-	for (int i = a1.ibegin(); i < a1.iend(); ++i)	{           cout << format("i=%d   a1[i]=%d") %i  % (a1[i]) << endl; };
-	for (int i = an.ibegin(); i < an.iend(); ++i)	{ an[i]=i;  cout << format("i=%d   an[i]=%d") %i  % (an[i]) << endl; };
-
-	cout << "a0: "       << a0 << endl;
-	BOOST_FOREACH(int &elem, a0)  { elem+=10; };
-	cout << "a0 += 10: " << a0 << endl;
-
-	cout << "a1: " << a1 << endl;
-	cout << "an: " << an << endl;
-
+	//	cout << "a0: "       << a0 << endl;
 	
-	cout << "\n array op= scalar : an+10  " << (an += 10) << endl;
+	////////////////////////////////////////////////////  vector ops 
+	//  array op= scalar : an+10 
+	an += 10;
+		BOOST_CHECK( *an.begin()	== -2+10 );
+		BOOST_CHECK( an[-1]		== -1+10 );
+		BOOST_CHECK( an[an.iend()-1]	==  2+10 );
 
-	cout << "\n array op= array \n";
-	cout << "a1+=b1  " << (a1 += b1)<< endl;
-
-	cout << "-a1  " << -a1 << endl;
-	
+	//  array op= array 
+	a1 += b1;
+		BOOST_CHECK( a1[1]		== 1+10 );
+		BOOST_CHECK( a1[5]		== 5+50 );
 
 	// vector ops
 	array<float,2> c1={{1,2}};
 	array<float,2> c2={{2,2}};
-	cout << "dot prod:  {1,2} x {2,2} = " << dot_prod(c1,c2) << endl;
-	cout << "norm2: : |{2,2}| = " << norm2(c2) << endl;
-	cout << "distance_norm2: : |{1,2}-{2,2}| = " << distance_norm2(c1,c2) << endl;
 
+	// dot prod:  {1,2} x {2,2} = "
+	BOOST_CHECK(	dot_prod(c1,c2) == 6 );
 
-	//#define FOR_EACH(x,A)  for(A::value_type& it=*A.begin();  ....
-	//FOR_EACH(a,A) cout << a << endl;
+	// norm2: : |{2,2}|
+	BOOST_CHECK(	eq(norm2(c2), 2.82843f) );
 
+	//distance_norm2: : |{1,2}-{2,2}| =
+	BOOST_CHECK(	eq(distance_norm2(c1,c2), 2.44949f));
 
+	////////////////////////////////////////////////////  gsl  convertion
+	gsl_vector* gV; // 1st index == 0 
+	gV  = gsl_vector_alloc(a0.size()); 
+	gV <<= a0; 
+	BOOST_CHECK( gsl_vector_get(gV,0) == a0[0]);
+	BOOST_CHECK( gsl_vector_get(gV,2) == a0[2]);
 
-	cout << "FOR_ARRAY "; 
-	typedef typeof(an) T;
-	for(
-		//array<int,5,-2>::iterator a=an.begin();
-		T::iterator a=an.begin();
-		a != an.end(); 
-		a++
-	)
-		cout << *a << " ";
+	array<int,5> b0;
+	b0 <<= gV;
+	BOOST_CHECK( b0[2]== a0[2]);
+	BOOST_CHECK( b0 == a0);
 
-	cout << endl;
+	gV << a1;
+	BOOST_CHECK( gsl_vector_get(gV,0) == a1[1]);
+	BOOST_CHECK( gsl_vector_get(gV,2) == a1[3]);
+	BOOST_CHECK( gsl_vector_get(gV,4) == a1[5]);
+
+	array<int,5,-2> b_m2;
+	b_m2 << gV;
+	BOOST_CHECK( b_m2[-2]== a1[1]);
+	BOOST_CHECK( b_m2[2] == a1[5]);
+
 }

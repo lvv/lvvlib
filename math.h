@@ -165,6 +165,7 @@ group_mean(
  ) { 
     // So intead of : mean = sum(ratings)/count(ratings)
     // He uses: bettermean = [K*global_mean + sum(ratings)] / [K+count(ratings)] and he uses K=25
+    //  http://en.wikipedia.org/wiki/Bayesian_average
                                                                             //assert (group_weight > 0);
         return (eq_N*gloable_value + sample_value*samples  )  /  ( eq_N + samples );
  } 

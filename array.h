@@ -129,15 +129,14 @@ template < class T, int N, int BEGIN=0> class array {
 	
 };
 
-/*
-// comparisons  (TODO, add BEGIN)
-template<class T, int N> bool operator==(const array<T, N> &x, const array<T, N> &y) { return std::equal(x.begin(), x.end(), y.begin()); }
-template<class T, int N> bool operator< (const array<T, N> &x, const array<T, N> &y) { return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
-template<class T, int N> bool operator!=(const array<T, N> &x, const array<T, N> &y) { return !(x == y); }
-template<class T, int N> bool operator> (const array<T, N> &x, const array<T, N> &y) { return   y < x; }
-template<class T, int N> bool operator<=(const array<T, N> &x, const array<T, N> &y) { return !(y < x); }
-template<class T, int N> bool operator>=(const array<T, N> &x, const array<T, N> &y) { return !(x < y); }
-*/
+// comparisons
+template<class T, int N, int B> bool operator==(const array<T, N, B> &x, const array<T, N, B> &y) { return std::equal(x.begin(), x.end(), y.begin()); }
+template<class T, int N, int B> bool operator< (const array<T, N, B> &x, const array<T, N, B> &y) { return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
+template<class T, int N, int B> bool operator!=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(x == y); }
+template<class T, int N, int B> bool operator> (const array<T, N, B> &x, const array<T, N, B> &y) { return   y < x; }
+template<class T, int N, int B> bool operator<=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(y < x); }
+template<class T, int N, int B> bool operator>=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(x < y); }
+
 // global swap()
 template < class T, size_t N > inline void swap(array < T, N > &x, array < T, N > &y) { x.swap(y); }
 
@@ -215,19 +214,36 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 	
 			template <typename T, int N, int B>
 			array<T,N,B>&
-	 operator<<  (array<T,N,B>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
+	 operator<<=  (array<T,N,B>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
 								assert(A.size()==gV->size);  assert(A.ibegin()==0);  
 		for (int i=A.ibegin(); i<A.iend(); i++)  A[i] = gsl_vector_get(gV, i);
 		return A;
 	 };
 
 			template <typename T, int N, int B>
+			array<T,N,B>&
+	 operator<<  (array<T,N,B>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
+								assert(A.size()==gV->size); 
+		for (int i=0; i<N; i++)  A[i+B] = gsl_vector_get(gV, i);
+		return A;
+	 };
+
+			template <typename T, int N, int B>
 			gsl_vector*
-	 operator<<  (gsl_vector* gV, array<T,N,B>& A)  {
+	 operator<<=  (gsl_vector* gV, array<T,N,B>& A)  {
 								assert(A.size()==gV->size);  assert(A.ibegin()==0);  
 		for (int i=A.ibegin(); i<A.iend(); i++)  gsl_vector_set(gV, i, A[i]);
 		return gV;
 	 };
+
+			template <typename T, int N, int B>
+			gsl_vector*
+	 operator<<   (gsl_vector* gV, array<T,N,B>& A)  {
+								assert(A.size()==gV->size);
+		for (int i=0; i<N; i++)    gsl_vector_set(gV, i, A[i+B]);
+		return gV;
+	 };
+
 #endif
 		template <typename T, int N, int B>
 		ostream&

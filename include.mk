@@ -67,4 +67,8 @@ CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $(
 %-r: %
 	./$<
 
+%-r: %.cc
+	make $(<:.cc=)
+	./$(<:.cc=)
+
 # vim:noexpandtab ft=make:

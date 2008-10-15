@@ -1,7 +1,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////// TEST MACROS
-static __attribute__((unused) bool all_pass=true;
-static __attribute__((unused) bool result=false;
+static __attribute__((unused)) bool all_pass=true;
+static __attribute__((unused)) bool result=false;
 #define PASS "    pass   "
 #define FAIL ">>> FAIL <<<"
 #define RESULT   cout << (result ? PASS : FAIL) << " "  << __LINE__ << " 	";

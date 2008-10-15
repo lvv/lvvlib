@@ -1,8 +1,8 @@
 
 #include <limits>
-#include "../lvv/lvv.h"
-#include "../lvv/lvvmath.h"
-#include "../lvv/lvvcheck.h"
+#include <lvv/lvv.h>
+#include <lvv/math.h>
+#include <lvv/check.h>
 
 using namespace std;
 //using namespace std::tr1;
@@ -45,8 +45,6 @@ main() {
     PR1(eq(i0,f0))
     PR1(eq(f0,f0))
 
-
-#include "../lvv/lvvcheck.h"
 
     cout << "\n\n *** Test eq<integral>() ***\n";
     cout << std::boolalpha;
