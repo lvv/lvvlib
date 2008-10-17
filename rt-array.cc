@@ -38,6 +38,20 @@ BOOST_AUTO_TEST_CASE( lvv_array )  {
 
 	//	cout << "a0: "       << a0 << endl;
 	
+	////////////////////////////////////////////////////  vector assignment
+	// = scalar
+	array<int,5,0> b0;
+	b0 = 0;
+	b0 = 2;
+		BOOST_CHECK( b0[0]		== 2 );
+		BOOST_CHECK( b0[3]		== 2 );
+
+	// = diffrent type vector
+	array<long,5,0> c0;
+	c0 = a0;
+		BOOST_CHECK( c0[0]		== 0 );
+		BOOST_CHECK( c0[3]		== 3 );
+
 	////////////////////////////////////////////////////  vector ops 
 	//  array op= scalar : an+10 
 	an += 10;
@@ -70,7 +84,6 @@ BOOST_AUTO_TEST_CASE( lvv_array )  {
 	BOOST_CHECK( gsl_vector_get(gV,0) == a0[0]);
 	BOOST_CHECK( gsl_vector_get(gV,2) == a0[2]);
 
-	array<int,5> b0;
 	b0 <<= gV;
 	BOOST_CHECK( b0[2]== a0[2]);
 	BOOST_CHECK( b0 == a0);

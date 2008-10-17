@@ -47,10 +47,7 @@ template < class T, int N, int BEGIN=0> class array {
 	typedef int		size_type;
 	typedef int		index_type;
 
-	// CTOR
-	//array<T,N,BEGIN>(T init_value) { for (size_type i=0;  i<N;  i++)  elems[i]=init_value; } // TODO specialization for memset-to-0 
-	//init(T init_value) { for (size_type i=0;  i<N;  i++)  elems[i]=init_value; } // TODO specialization for memset-to-0 
-	//array<T,N,BEGIN>() {}
+	// CTOR  --  imposible with having aggrigate constructor
 
 	// index
 	index_type				ibegin()	const		{ return BEGIN; }
@@ -117,7 +114,10 @@ template < class T, int N, int BEGIN=0> class array {
         T*					data()				{ return elems; }
 
 	// assignment with type conversion
-	template <typename T2>	array <T, N>	&operator=(const array < T2, N > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
+	template <typename T2>	array <T, N, BEGIN>	&operator=(const array < T2, N, BEGIN > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
+	
+	//template<typename T,int N, int B, typename D>  array<T,N,B>&  operator= (array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it  = d; return A; }
+	template<typename T2> 	array<T,N,BEGIN>&  operator= ( const  T2& value) {  std::fill_n(begin(), size(), value);  return *this; }
 
 	// assign one value to all elements
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
@@ -138,15 +138,15 @@ template<class T, int N, int B> bool operator<=(const array<T, N, B> &x, const a
 template<class T, int N, int B> bool operator>=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(x < y); }
 
 // global swap()
-template < class T, size_t N > inline void swap(array < T, N > &x, array < T, N > &y) { x.swap(y); }
+template < class T, size_t N, int B > inline void swap(array < T, N, B > &x, array < T, N, B > &y) { x.swap(y); }
 
 
 
 // array op= scallar  ( conflict with google sparsehash if we not spell out type)
-template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
-template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
-template<typename T,int N, int B, typename D>  array<T,N,B>&  operator*=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
-template<typename T,int N, int B, typename D>  array<T,N,B>&  operator/=(array<T,N,B> &A, D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
+template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
+template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
+template<typename T,int N, int B, typename D>  array<T,N,B>&  operator*=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
+template<typename T,int N, int B, typename D>  array<T,N,B>&  operator/=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
 
 
 // array op= array  
@@ -184,7 +184,7 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 	typename array<T,N,B>::const_iterator lit =  LA.begin();
 	typename array<T,N,B>::const_iterator rit =  RA.begin();
 	T sum = 0;
-	while(lit != LA.end())  sum  +=  *lit++  *  *rit++ ;
+	while(lit != LA.end())  sum  +=  pow2(*lit++  -  *rit++) ;
 	return  sqrt(sum);
 }
 
@@ -212,34 +212,30 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 
 #ifdef __GSL_VECTOR_H__
 	
-			template <typename T, int N, int B>
-			array<T,N,B>&
+			template <typename T, int N, int B> array<T,N,B>&
 	 operator<<=  (array<T,N,B>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
-								assert(A.size()==gV->size);  assert(A.ibegin()==0);  
+		assert(A.size()==gV->size);  assert(A.ibegin()==0);  
 		for (int i=A.ibegin(); i<A.iend(); i++)  A[i] = gsl_vector_get(gV, i);
 		return A;
 	 };
 
-			template <typename T, int N, int B>
-			array<T,N,B>&
+			template <typename T, int N, int B> array<T,N,B>&
 	 operator<<  (array<T,N,B>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
-								assert(A.size()==gV->size); 
+		assert(A.size()==gV->size); 
 		for (int i=0; i<N; i++)  A[i+B] = gsl_vector_get(gV, i);
 		return A;
 	 };
 
-			template <typename T, int N, int B>
-			gsl_vector*
+			template <typename T, int N, int B> gsl_vector*
 	 operator<<=  (gsl_vector* gV, array<T,N,B>& A)  {
-								assert(A.size()==gV->size);  assert(A.ibegin()==0);  
+		assert(A.size()==gV->size);  assert(A.ibegin()==0);  
 		for (int i=A.ibegin(); i<A.iend(); i++)  gsl_vector_set(gV, i, A[i]);
 		return gV;
 	 };
 
-			template <typename T, int N, int B>
-			gsl_vector*
+			template <typename T, int N, int B> gsl_vector*
 	 operator<<   (gsl_vector* gV, array<T,N,B>& A)  {
-								assert(A.size()==gV->size);
+		assert(A.size()==gV->size);
 		for (int i=0; i<N; i++)    gsl_vector_set(gV, i, A[i+B]);
 		return gV;
 	 };
