@@ -9,26 +9,25 @@
 	#include <csignal>
 	#include <csetjmp>
 	#include <limits>
+		using std::numeric_limits;
 	
 	//#include <sys/resource.h>
 	#include <cassert>
 	#include <cstring>
 	
 	#include <string>
+		using std::string;
 	#include <iostream>
 	#include <iomanip>
-	using std::string;
-	
-	using std::cout;
-	using std::cerr;
-	using std::flush;
-	using std::endl;
-	using std::setw;
-	using std::boolalpha;
-	using std::ostream;
-	using std::setprecision;
-	
-	using std::numeric_limits;
+		using std::cout;
+		using std::cerr;
+		using std::flush;
+		using std::endl;
+		using std::setw;
+		using std::boolalpha;
+		using std::ostream;
+		using std::setprecision;
+		
 
 	#include <gsl/gsl_vector.h>
 
@@ -132,7 +131,7 @@ template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
     typedef  unsigned long long int                     ulp_t;
 
     ///type_trait overloded 
-    template<typename T1, typename T2, typename T>   bool static inline   eq_impl (T1 n1, T2 n2, true_type  integral_flag, ulp_t ulps, T characteristic_value) {  // integral
+    template<typename T1, typename T2, typename T>   bool static inline   eq_impl (T1 n1, T2 n2, boost::true_type  integral_flag, ulp_t ulps, T characteristic_value) {  // integral
             return (T)n1==(T)n2;
      };  
 

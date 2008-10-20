@@ -155,6 +155,22 @@ template<typename T,int N, int B> array<T,N,B>& operator-=(array<T,N,B>& LA, con
 template<typename T,int N, int B> array<T,N,B>& operator*=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  *=  *rit++; return LA; }
 template<typename T,int N, int B> array<T,N,B>& operator/=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  /=  *rit++; return LA; }
 
+/*  
+// array op array  
+template<typename T,int N, int B>
+const array<T,N,B>&
+operator+ (const array<T,N,B>& LA, const array<T,N,B>& RA) {
+	//shared_array<array<T,N,B> > Rp((array<T,N,B>*) new T[N]); 
+	//shared_array<array<T,N,B> > Rp(new array<T,N,B>); 
+	//shared_ptr<array<T,N,B> > Rp(new const array<T,N,B> ); 
+	//shared_ptr<array<T,N,B> > Rp(const shared_ptr<array<T,N,B>>(new array<T,N,B> )); 
+	//shared_ptr<array<T,N,B> > Rp((array<T,N,B>*) new char[sizeof(T)*N]); 
+	//shared_ptr<array<T,N,B> > Rp = new array<T,N,B>; 
+	shared_ptr<const array<T,N,B> > Rp(new const array<T,N,B>); 
+	//for(int i=B; i<B+N; i++)  (*(array<T,N,B>*) Rp.get())[i] = LA[i]+RA[i];  
+	for(int i=B; i<B+N; i++)  (*const_cast<T*>(Rp))[i] = LA[i]+RA[i];  
+	return Rp;
+}*/
 
 			template<typename T,int N, int B>  T
 dot_prod 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
@@ -189,62 +205,10 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 }
 
 
-
-// CONDOR
-#ifdef  _INCLUDE_VECTOR_H
-	
-			template <typename T, int N, int B>
-			array<T,N,B>&
-	operator<<  (array<T,N,B>& A, CONDOR::Vector& cV)  {        // operator= should be member, so we are using operator<<
-								assert(A.size()==cV.sz());  assert(A.ibegin()==0);  
-		for (int i=A.ibegin(); i<A.iend(); i++)    A[i] = cV[i];
-		return A;
-	 };
-
-			template <typename T, int N, int B>
-			CONDOR::Vector&
-	 operator<<  (CONDOR::Vector& cV, const array<T,N,B>& A)  {
-		cV.setSize(A.size());				assert(A.size()==cV.sz());  assert(A.ibegin()==0);  
-		for (int i=A.ibegin(); i<A.iend(); i++)    cV[i] = A[i];
-		return cV;
-	 };
-#endif
-
-#ifdef __GSL_VECTOR_H__
-	
-			template <typename T, int N, int B> array<T,N,B>&
-	 operator<<=  (array<T,N,B>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
-		assert(A.size()==gV->size);  assert(A.ibegin()==0);  
-		for (int i=A.ibegin(); i<A.iend(); i++)  A[i] = gsl_vector_get(gV, i);
-		return A;
-	 };
-
-			template <typename T, int N, int B> array<T,N,B>&
-	 operator<<  (array<T,N,B>& A, const gsl_vector* gV)  {	// operator= should be member, so we are using operator<<
-		assert(A.size()==gV->size); 
-		for (int i=0; i<N; i++)  A[i+B] = gsl_vector_get(gV, i);
-		return A;
-	 };
-
-			template <typename T, int N, int B> gsl_vector*
-	 operator<<=  (gsl_vector* gV, array<T,N,B>& A)  {
-		assert(A.size()==gV->size);  assert(A.ibegin()==0);  
-		for (int i=A.ibegin(); i<A.iend(); i++)  gsl_vector_set(gV, i, A[i]);
-		return gV;
-	 };
-
-			template <typename T, int N, int B> gsl_vector*
-	 operator<<   (gsl_vector* gV, array<T,N,B>& A)  {
-		assert(A.size()==gV->size);
-		for (int i=0; i<N; i++)    gsl_vector_set(gV, i, A[i+B]);
-		return gV;
-	 };
-
-#endif
 		template <typename T, int N, int B>
-		ostream&
+		std::ostream&
  operator<<  (ostream& os, array<T,N,B> A)  {
-	os << format("[%d..%d]=") %A.ibegin() %(A.iend()-1);
+	//os << format("[%d..%d]=") %A.ibegin() %(A.iend()-1);
 	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, " "));
 	return os;
  };
