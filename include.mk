@@ -10,10 +10,23 @@ FC	= gfortran
 ########################################################################################
 #SPEED := $(s:o=OPTIMZE)
 #SPEED := $(s:d=DEBUG)
-# TOTRY -fprefetch-loop-arrays
 #######################################################################################  COMPILE SPECIFIC
 g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare  # -Wmissing-braces
-g++FLAGS_OPTIMIZE := -O3 -march=native  -fwhole-program --combine
+
+# SAFE
+#g++FLAGS_OPTIMIZE := -ggdb3 -O2 -march=native 
+#g++FLAGS_OPTIMIZE := -ggdb3 -O2 -march=native  -fwhole-program --combine
+g++FLAGS_OPTIMIZE :=        -O3 -march=native  -fwhole-program --combine  -fopenmp -fomit-frame-pointer -funsafe-loop-optimizations
+# FAST
+#g++FLAGS_OPTIMIZE :=        -O3 -march=native  -fwhole-program --combine  -fopenmp -fomit-frame-pointer -fargument-noalias-anything -ffast-math -funsafe-loop-optimizations -fassociative-math -fassociative-math  -mfpmath=sse,387 -fno-builtin -fargument-noalias-anything  -fassociative-math
+
+# DO NOT USE
+#-fargument-noalias-anything   (newuoa segfalts at the end)
+#-fast-math
+
+# 2try(but deps on libs with exception?): -DBOOST_NO_EXCEPTIONS -fno-exceptions -fno-enforce-eh-specs  -freorder-blocks-and-partition
+# -fprefetch-loop-arrays  // no improov
+# -ftree-vectorizer-verbose=3 -fdump-tree-vect 
 
 g++FLAGS_CHECK    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK
 g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
@@ -23,22 +36,22 @@ g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans
 
 iccFLAGS          :=  -wd1418 -wd981         -wd424 -wd810 -wd383 
 #-gxx-name=/usr/libexec/gcc/x86_64-pc-linux-gnu/4.2.4/
-iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2 
+iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2  -openmp -xT
 #iccFLAGS_OPTIMIZE := -ipo  -march=core2  -fomit-frame-pointer -parallel
 #iccFLAGS_OPTIMIZE := -ipo  -msse3  -march=core2  -fomit-frame-pointer -parallel
 iccFLAGS_DEBUG    := -debug all
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
 #######################################################################################  NOT COMPILE SPECIFIC
-CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'  -I . -I .. -I ../.. -I /usr/local/ 
+CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'  -I . -I .. -I ../.. -I /usr/local/include
 #-frecord-gcc-switches
-CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK
+CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK 
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
 CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_OFF 
-CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEBUG  
+CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DNOSTATS   -D_GLIBCXX_DEBUG  
 
 #######################################################################################  EVALUATE CXXFLAGS
-CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF)
+CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF) $(CFLAGS) 
 
 #*: ../lvv/include.mk ../lvv/lvv.h
 

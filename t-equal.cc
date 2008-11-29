@@ -1,11 +1,10 @@
 
 #include <limits>
 #include <lvv/lvv.h>
-#include <lvv/math.h>
 #include <lvv/check.h>
 
+#include <lvv/math.h>
 using namespace std;
-//using namespace std::tr1;
 using namespace lvv;
 
 ///////////////////////////////////////////////////////////////////
@@ -22,6 +21,9 @@ main() {
     float f2 = 2.0;
     float f3 = 3.0;
     double d2= 2.0;
+    float	f1_nlp = std::numeric_limits<float>::epsilon();
+    float	d1_nlp = std::numeric_limits<double>::epsilon();
+
     cerr << setprecision(numeric_limits<double>::digits10+4) << boolalpha;
     cout << setprecision(numeric_limits<double>::digits10+4) << boolalpha;
 
@@ -69,7 +71,7 @@ main() {
     CHECK(!eq(f1,f0));
     CHECK( eq(f0,f0));
 
-    // compile time
+    // compile time const evaluation
     CHECK( eq(1/3.0l,0.5l/1.5l));
     CHECK( eq(1/7.0l,2.0l/14.0l));
 
@@ -86,10 +88,10 @@ main() {
     float f=1e20;
     CHECK(!eq(f*0.0001     , f*(-0.0001)                                       )); 
     CHECK( eq(f*(f1*f2)/f3 , f*(1/(f3/2))                                      )); 
-    CHECK(!eq(f*0.0f       , f*(0.1*numeric_limits<float>::epsilon())          )); 
-    CHECK( eq(f*d2         , f*(d2+    numeric_limits<typeof(d2)>::epsilon())  )); 
-    CHECK( eq(f*d2         , f*(d2+0.5*numeric_limits<typeof(d2)>::epsilon())  )); 
-    CHECK( eq(f*d2         , f*(d2+  2*numeric_limits<typeof(d2)>::epsilon())  )); 
+    CHECK(!eq(f*0.0f       , f*(0.1*    f1_nlp)          )); 
+    CHECK( eq(f*d2         , f*(d2+     numeric_limits<typeof(d2)>::epsilon())  )); 
+    CHECK( eq(f*d2         , f*(d2+0.5* numeric_limits<typeof(d2)>::epsilon())  )); 
+    CHECK( eq(f*d2         , f*(d2+  2* numeric_limits<typeof(d2)>::epsilon())  )); 
     CHECK( eq(f*d2         , f*(d2+  10*numeric_limits<typeof(d2)>::epsilon()) )); 
     CHECK( eq(f*d2         , f*(d2+  20*numeric_limits<typeof(d2)>::epsilon()) )); 
     CHECK(!eq(f*d2         , f*(d2+ 500*numeric_limits<typeof(d2)>::epsilon()) )); 

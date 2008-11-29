@@ -29,7 +29,6 @@
 		using std::setprecision;
 		
 
-	#include <gsl/gsl_vector.h>
 
 	#include <boost/type_traits.hpp>
 	using boost::true_type;
@@ -108,18 +107,6 @@ powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/
 	template<typename T>  T static inline pow4(T x)  { return x*x*x*x; };
 	template<typename T>  T static inline pow5(T x)  { return x*x*x*x*x; };
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////  GSL
- 
-  // double[]  to  gsl_vector  wrapper
-  struct mk_gsl_vector: public gsl_vector {
-  	 mk_gsl_vector(double *a, int n) {
-	 	size = n;
-		stride = 1;
-		data = a;
-		block = NULL;
-		owner = 0;
-	 };
-  };
  
     ////////////////////////////////////////////////////////////////////////////////////////////////////  ABS()
 template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
@@ -138,12 +125,12 @@ template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
     template<typename T1, typename T2, typename T>   bool static inline   eq_impl (T1 n1, T2 n2, false_type integral_flag, ulp_t ulps, T characteristic_value) {  // floating point
             // algorithm taken from: http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
             if (n1==n2)   return true;
-            T diff      = n1-n2 > 0 ? n1-n2 : n2-n1;   // |n1-n2|
+            T abs_diff      = n1-n2 > 0 ? n1-n2 : n2-n1;   // |n1-n2|
             if  ( characteristic_value == 0 ) 
                   characteristic_value   =  (lvv::abs(n1)+  lvv::abs(n2)) / 2.0;   // (|n1| + |n2|) /2
-            T max_error = std::numeric_limits<T>::epsilon() * ulps;
+            T max_error = std::numeric_limits<T>::epsilon() * ulps * characteristic_value ;
                                                                                                         //PR(diff/divider); PR(max_error);
-            return diff/characteristic_value < max_error;
+            return abs_diff < max_error;
      }
 
                                 template<typename T1, typename T2> static inline   bool

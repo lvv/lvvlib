@@ -3,10 +3,11 @@
 
 // TODO  tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
 
-// According to the language definition, aggregate initialization only works
-// for aggregate types. An array or class type is not an aggregate if it has
-// any user-declared constructors, any private or protected nonstatic data
-// members, any base classes, or any virtual functions.
+						// According to the language definition, aggregate initialization only works
+						// for aggregate types. An array or class type is not an aggregate if it has
+						// any user-declared constructors, any private or protected nonstatic data
+						// members, any base classes, or any virtual functions.
+#include	<lvv/math.h>
 #include	<cassert>
 #include	<cmath>
 		using std::sqrt;
@@ -116,15 +117,13 @@ template < class T, int N, int BEGIN=0> class array {
 	// assignment with type conversion
 	template <typename T2>	array <T, N, BEGIN>	&operator=(const array < T2, N, BEGIN > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
 	
-	//template<typename T,int N, int B, typename D>  array<T,N,B>&  operator= (array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it  = d; return A; }
-	template<typename T2> 	array<T,N,BEGIN>&  operator= ( const  T2& value) {  std::fill_n(begin(), size(), value);  return *this; }
 
 	// assign one value to all elements
+	template<typename T2> 	array<T,N,BEGIN>&  operator= ( const  T2 value) {  std::fill_n(begin(), size(), value);  return *this; }
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
-	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
-	//template <typename TT, int NN, int BB> 	friend   gsl_vector* operator<<  (gsl_vector* gV, array<TT,NN,BB> A);
 
-	// kitchen sink
+	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
+
 	T					sum() 		const		{ return accumulate(begin(), end(), 0); };
 	
 };
@@ -147,7 +146,7 @@ template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator*=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator/=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
-
+//template<typename T,int N, int B, typename D>  array<T,N,B>&  operator= (array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it  = d; return A; }
 
 // array op= array  
 template<typename T,int N, int B> array<T,N,B>& operator+=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  +=  *rit++; return LA; }
@@ -214,8 +213,8 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
  };
 
 
-template <typename T, int N> 		class vector: public array<T,N,1> {}; // index start from 1
-template <typename T, int N1, int N2>	class matrix: public array<array<T,N1,1>,N2,1> {
+template <typename T, int N> 		class vector: public lvv::array<T,N,1> {}; // index start from 1
+template <typename T, int N1, int N2, int B1=1, int B2=1>	class matrix: public array<array<T,N1,B1>,N2,B2> {
 	enum { sz1 = N1, sz2=N2, sz0=N1*N2 };
 	// operator()(int i, int j) { return elems[i][j]; }
 };

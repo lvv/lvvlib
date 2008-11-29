@@ -3,8 +3,6 @@
 
     #include <iostream> 
     #include <iomanip>
-    #include <sys/time.h>
-    #include <sys/resource.h>
 
 	#include <boost/lexical_cast.hpp>
 	using boost::lexical_cast; 
@@ -81,110 +79,6 @@
 
     namespace lvv {
 
- ////////////////////////////////////////////////////////////////////////////////////////////////////   
-                    
-class Timer { //=========================================== TIMER
-                        // ther is similar impl at http://www.boost.org/doc/libs/1_35_0/libs/timer/timer.htm
-						// article about hi-res timers: http://www.devx.com/cplus/Article/35375/0/page/2
-    private: 
-        timeval  creator_tv; 
-        timeval  tv; 
-
-        struct rusage creator_ru;        
-        struct rusage ru;        
-
-        double cpu_s(struct rusage ru) {
-            return 
-                ru.ru_utime.tv_sec + ru.ru_utime.tv_usec / 1000000. +
-                ru.ru_stime.tv_sec + ru.ru_stime.tv_usec / 1000000.; 
-        };
-
-    public:
-        Timer()     {
-            // FIXME add prefix lable
-            gettimeofday(&tv, NULL);        creator_tv=tv;
-            getrusage(RUSAGE_SELF, &ru);    creator_ru=ru;
-        };
-
-        ~Timer()    {
-            // calc real time 
-            timeval  now_tv; 
-            gettimeofday(&now_tv, NULL);
-            double real_sec =
-                    (now_tv.tv_sec  - creator_tv.tv_sec) +
-                    (now_tv.tv_usec - creator_tv.tv_usec)/1000000.;
-
-            // calc cpu time 
-            ru=creator_ru;
-            double cpu_sec=(*this)(); 
-            // print
-            cout  << "(*) on exit: cpu time: "  << cpu_sec  << "s "
-                  << "real time: " << real_sec << "s " << flush; 
-            // memory report
-            //system("egrep -r '^Vm(Peak|Size|RSS|Data|Stk|Exe|Lib)' /proc/$PPID/status |sed 's/^Vm//; s/ kB/k/; s/  *//'|tr '	\n' ' '");
-                // amount of unrequested memory  -   CommitLimit - Committed_AS
-            cout << endl;
-        };
-
-                double
-        operator() (){ 
-            struct rusage  before_ru=ru; 
-            getrusage(RUSAGE_SELF, &ru);
-            return cpu_s(ru) - cpu_s(before_ru); 
-        }
-
-                void
-        print(string msg="") {
-            if (msg=="") 
-                cout << setw(13) << "timer: ";
-            else {
-                cout <<"          ⌛ " << msg << ":  "; 
-            };
-            cout  << (*this)() << "s " << endl; 
-        };
-
-        friend ostream& operator<< (ostream& os, Timer& t);
- };
-
-ostream& operator<< (ostream& os, Timer& t) {
-    os << setprecision(5) << " " << t() << "s ";
-    return os;
- }
-
-
-        #include <stdlib.h>
-        void
-progress_dots(long var, long first, long last, string msg="" ) { //========================================================= progress_dots()
-
-    static bool first_time = true;
-    static int  columns = 0; 
-    static int  width;
-
-    if (first_time) {
-
-        first_time=false;
-        char* columns_str=getenv("COLUMNS");
-
-        if (columns_str)
-            columns=atoi(columns_str);
-            
-        width = columns - msg.length();
-    }
-
-    if (!columns) 
-        return;
-
-    if ( var==first)
-        cout << msg; 
-
-    int div=(last-first)/width;
-    if ( (var-first) % (div+1) == 0 )
-        cout << "." << flush;
-
-    if ( var == last )
-        cout << endl;
- }
-
  ///////////////////////////////////////////////////////////////////////////////////
 	#define STR(x) REAL_STR(x)                                                                                                                         
 	#define REAL_STR(x) #x
@@ -192,17 +86,17 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
 	// TODO replace lexica_cast with boost::format  
 	
     #define _STR(x)              (string(" " #x "=")+lexical_cast<string>(x))
-    #define PR(x)               cerr << " " #x " = " << (x) << "  "<< flush;
+    #define PR(x)               std::cerr << " " #x " = " << (x) << "  "<< flush;
 
-    #define PR1(x1)             cerr << "-- "; PR(x1)                            ; cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
-    #define PR2(x1,x2)          cerr << "-- "; PR(x1) PR(x2)                     ; cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
-    #define PR3(x1,x2,x3)       cerr << "-- "; PR(x1) PR(x2) PR(x3)              ; cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
-    #define PR4(x1,x2,x3,x4)    cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4)       ; cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
-    #define PR5(x1,x2,x3,x4,x5) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
-    #define PR6(x1,x2,x3,x4,x5,x6) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
-    #define PR7(x1,x2,x3,x4,x5,x6,x7) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
-    #define PR8(x1,x2,x3,x4,x5,x6,x7,x8) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
-    #define PR9(x1,x2,x3,x4,x5,x6,x7,x8,x9) cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8) PR(x9); cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<"\n"<<flush; 
+    #define PR1(x1)             std::cerr << "-- "; PR(x1)                            ; std::cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<std::endl; 
+    #define PR2(x1,x2)          std::cerr << "-- "; PR(x1) PR(x2)                     ; std::cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<std::endl; 
+    #define PR3(x1,x2,x3)       std::cerr << "-- "; PR(x1) PR(x2) PR(x3)              ; std::cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<std::endl;
+    #define PR4(x1,x2,x3,x4)    std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4)       ; std::cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<std::endl;
+    #define PR5(x1,x2,x3,x4,x5) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5); std::cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<std::endl;
+    #define PR6(x1,x2,x3,x4,x5,x6) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6); std::cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<std::endl;
+    #define PR7(x1,x2,x3,x4,x5,x6,x7) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7); std::cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__<<std::endl;
+    #define PR8(x1,x2,x3,x4,x5,x6,x7,x8) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8); std::cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__std::endl;
+    #define PR9(x1,x2,x3,x4,x5,x6,x7,x8,x9) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8) PR(x9); std::cerr <<"   --- "<<__PRETTY_FUNCTION__<< ":" <<__LINE__std::endl;
 
     
 ///////////////////////////////////////////////////////////////////////////////////// MACROS
