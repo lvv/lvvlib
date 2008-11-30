@@ -1,5 +1,7 @@
 
 #.DEFAULT_GOAL := t-cdf-model-gp
+
+include include.mk
 	
 t-*     : lvv.h math.h check.h
 t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
@@ -17,5 +19,7 @@ install:
 	mkdir -p /usr/local/include/lvvlib/
 	cp *.h   /usr/local/include/lvvlib/
 
+clean:
+	rm -f *.html
+	git clean
 
-include include.mk

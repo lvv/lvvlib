@@ -109,6 +109,12 @@ powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/
 
  
     ////////////////////////////////////////////////////////////////////////////////////////////////////  ABS()
+    // TODO add specialisation for FP
+    // 
+    // We can take the absolute value by setting the sign bit to zero:
+    //       float f;
+    //       *(int*)&f &= 0x7FFFFFFF; // set sign bit to zero
+   
 template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
  //template<typename T>  T static inline max(T x, T y){ return x > y ? x  : y; };
  //template<typename T>  T static inline mix(T x, T y){ return x < y ? x  : y; };
