@@ -21,5 +21,5 @@ install:
 
 clean:
 	rm -f *.html
-	git clean
+	git clean -df
 

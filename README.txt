@@ -63,9 +63,9 @@ For integers: If one of arguments is `unsigned` then other argument converted to
 [width="80%",cols="3,3,6",frame="none",options="header"]
 |==========================
 | Header                                                    | Sample Use                                                      | Description
-| http://github.com/lvv/lvvlib/tree/master/check.h[check.h] | http://github.com/lvv/lvvlib/tree/master/t-equal.h[`t-equal.cc`]| simple unit testing.        
-| http://github.com/lvv/lvvlib/tree/master/mmap.h[mmap.h]   | http://github.com/lvv/lvvlib/tree/master/t-mmap.h[`t-mmap.cc`]  | simplified mmap files ops.  
-| http://github.com/lvv/lvvlib/tree/master/timer.h[timer.h] | http://github.com/lvv/lvvlib/tree/master/t-timer.h[`t-timer.cc`]| interval and wall timer.        
+| http://github.com/lvv/lvvlib/tree/master/check.h[check.h] | http://github.com/lvv/lvvlib/tree/master/t-equal.cc[`t-equal.cc`]| simple unit testing.        
+| http://github.com/lvv/lvvlib/tree/master/mmap.h[mmap.h]   | http://github.com/lvv/lvvlib/tree/master/t-mmap.cc[`t-mmap.cc`]  | simplified mmap files ops.  
+| http://github.com/lvv/lvvlib/tree/master/timer.h[timer.h] | http://github.com/lvv/lvvlib/tree/master/t-timer.cc[`t-timer.cc`]| interval and wall timer.        
 |==========================
 
 
