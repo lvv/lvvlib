@@ -3,13 +3,15 @@
 
 # to set speed run as:  make s=o
 CXX 	?=  g++
-SPEED  	?= DEBUG
 VPATH   := ../lvv/
 FC	= gfortran
 
 ########################################################################################
 #SPEED := $(s:o=OPTIMZE)
-#SPEED := $(s:d=DEBUG)
+SPEED := $(s:d=DEBUG)
+#SPEED := $(c:d=CHECK)
+#SPEED = $($($(s:d=DEBUG):c=CHECK):o=OPTIMIZE)
+SPEED  	?= DEBUG
 #######################################################################################  COMPILE SPECIFIC
 g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare  # -Wmissing-braces
 
@@ -25,14 +27,18 @@ g++FLAGS_OPTIMIZE :=        -O3 -march=native  -fwhole-program --combine  -fopen
 #-fast-math
 
 # 2try(but deps on libs with exception?): -DBOOST_NO_EXCEPTIONS -fno-exceptions -fno-enforce-eh-specs  -freorder-blocks-and-partition
-# -fprefetch-loop-arrays  // no improov
 # -ftree-vectorizer-verbose=3 -fdump-tree-vect 
 
-g++FLAGS_CHECK    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK
-g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
-#g++FLAGS_DEBUG    += -Wfloat-equal -Weffc++
-#g++FLAGS_DEBUG    += -fmudflap
 #g++FLAGS_OPTIMIZE += -fast-math -fstrict-overflow 
+##################################################################################33
+
+# CHECK+DEBUG
+g++FLAGS_DEBUG    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK -ggdb3 -p -Wpacked -fsignaling-nans 
+
+#g++FLAGS_CHECK    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK
+#g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
+	#g++FLAGS_DEBUG    += -Wfloat-equal -Weffc++
+	#g++FLAGS_DEBUG    += -fmudflap
 
 iccFLAGS          :=  -wd1418 -wd981         -wd424 -wd810 -wd383 
 #-gxx-name=/usr/libexec/gcc/x86_64-pc-linux-gnu/4.2.4/
