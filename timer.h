@@ -6,6 +6,7 @@
 	#include <sys/resource.h>
 
 	#include <stdlib.h>
+	#include <unistd.h>
                     
 	namespace lvv {
 
@@ -24,13 +25,20 @@ class Timer { //=========================================== TIMER
 			// article about hi-res timers: http://www.devx.com/cplus/Article/35375/0/page/2
 			// see also OpenMP timer: http://gcc.gnu.org/onlinedocs/libgomp/omp_005fget_005fwtime.html#omp_005fget_005fwtime
     private: 
-	// RU - CPU time
-	// TV - wall clock time
 
+	#ifdef ASMLIB
+	// Tick (cpu cycle)
+	uint64_t ctor_tick;
+	uint64_t interval_start_tick;
+	uint64_t now_tick;
+	#endif
+	
+	// TV - wall clock time
         timeval		ctor_tv; 
         timeval		interval_start_tv; 
         timeval		now_tv; 
 
+	// RU - CPU time
         struct rusage	ctor_ru;        
         struct rusage	interval_start_ru;        
         struct rusage	now_ru;        
@@ -46,7 +54,10 @@ double cpu_time_at(struct rusage ru) {
 public:
 
 Timer()     {
-	gettimeofday(&now_tv, NULL);	ctor_tv = interval_start_tv = now_tv;
+	#ifdef ASMLIB
+	ctor_tick = interval_start_tick = ReadTSC();
+	#endif
+	gettimeofday(&now_tv, NULL);		ctor_tv = interval_start_tv = now_tv;
 	getrusage(RUSAGE_SELF, &now_ru);	ctor_ru = interval_start_ru = now_ru;
  };
 
@@ -57,6 +68,15 @@ Timer()     {
 	    // amount of unrequested memory  -   CommitLimit - Committed_AS
 };
 
+#ifdef ASMLIB
+			uint64_t
+interval_ticks()		{ 
+	now_tick = ReadTSC();
+	uint64_t ticks = now_tick - interval_start_tick;
+	interval_start_tick = now_tick;
+	return  ticks;
+ }
+#endif
 			double
 interval_wall()		{ 
 	gettimeofday(&now_tv, NULL);
@@ -73,6 +93,9 @@ interval_cpu()		{
  }
 
 
+#ifdef ASMLIB
+double	total_ticks	()	{ return  ReadTSC() - ctor_tick; }
+#endif
 double	total_wall	()	{ gettimeofday(&now_tv, NULL);		return  wall_time_at(now_tv) - wall_time_at(ctor_tv); }
 double	total_cpu	()	{ getrusage(RUSAGE_SELF, &now_ru);	return  cpu_time_at (now_ru) - cpu_time_at (ctor_ru); }
 double	operator() 	()	{ return interval_wall(); }
@@ -86,8 +109,10 @@ print(string msg="") {
 		cout <<"          ⌛ " << msg << "    "; 
 	};
 
+	cout << "interval-ticks:" << interval_ticks() << "t   " ;
 	cout << "interval-wall:" << interval_wall() << "s   " ;
 	cout << "interval-cpu: " << interval_cpu( ) << "s   " ;
+	cout << "total-ticks:   " << total_ticks(   ) << "t   " ;
 	cout << "total-wall:   " << total_wall(   ) << "s   " ;
 	cout << "total-cpu:    " << total_cpu(    ) << "s   " ;
 	cout << endl;

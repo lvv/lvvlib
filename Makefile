@@ -6,9 +6,11 @@ include include.mk
 t-*     : lvv.h math.h check.h
 t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
 
-LDFLAGS += -lgsl -lgslcblas
+CXXFLAGS=  -D ASMLIB -I .. -I /usr/local/include
+LDFLAGS=  -L /usr/local/lib/ -l:alibelf64o.a
 
-t-cdf-model: t-cdf-model.cc *.h
+t-timer: t-timer.cc
+        $(CXX) $(CXXFLAGS) $< $(LDFLAGS) -o $@ 
 
 t-root: LDFLAGS  +=  -lgsl -lgslcblas -lm -L /usr/local/lib -lo2scl_base -lo2scl_other
 t-root: CXXFLAGS +=  -I/usr/local/include/o2scl

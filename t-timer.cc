@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include <lvv/lvv.h>
+#include <asmlib.h>
 using namespace std;
 using namespace lvv;
 
@@ -18,9 +19,10 @@ int main() {
     FMT("timer()=%d\n") % t();
 
     double sum =0;
-    for (long i = 0; i< 100000000; i++)
+    for (long i = 0; i< 1000000; i++)
     	sum += sqrt(i);
 
+    cout << t.interval_ticks() / 1000000. << flush << endl;
     t.print("2nd print()");
 
     for (long i = 0; i< 100000000; i++)
