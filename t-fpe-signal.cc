@@ -1,6 +1,6 @@
 #include <iostream>
-#include "lvv.h"
-#include "lvvmath.h"
+#include <lvv/lvv.h>
+#include <lvv/math.h>
 
 
 using namespace std;

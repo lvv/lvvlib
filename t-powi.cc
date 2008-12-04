@@ -1,7 +1,8 @@
 
 #include <limits>
-#include "../lvv/lvv.h"
-#include "../lvv/lvvmath.h"
+#include <lvv/lvv.h>
+#include <lvv/math.h>
+#include <lvv/check.h>
 using namespace std;
 using namespace lvv;
 ///////////////////////////////////////////////////////////////////
@@ -11,7 +12,6 @@ main() {
     cerr << setprecision(numeric_limits<double>::digits10+4) << boolalpha;
     cout << setprecision(numeric_limits<double>::digits10+4) << boolalpha;
 
-#include "../lvv/lvvcheck.h"
 
     cout << "\n\n *** Test POWI() ***\n";
     cout << std::boolalpha;

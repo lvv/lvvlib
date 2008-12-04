@@ -1,6 +1,3 @@
-// Demonstrates how to use mmap
-//
-// Copyright (c) Michael Still 2004, released under the terms of the GNU GPL
 
 #include <iostream>
 using  namespace std;

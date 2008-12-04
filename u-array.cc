@@ -10,7 +10,7 @@
 #include <lvv/lvv.h>
 	using lvv::array;
 
-#include <gsl/gsl_vector.h>
+#include <lopti/convert-gsl.h>
 
 #define BOOST_TEST_MODULE lvv_array
 #include <boost/test/included/unit_test.hpp>
@@ -75,9 +75,12 @@ BOOST_AUTO_TEST_CASE( lvv_array )  {
 	BOOST_CHECK(	eq(norm2(c2), 2.82843f) );
 
 	//distance_norm2: : |{1,2}-{2,2}| =
-	BOOST_CHECK(	eq(distance_norm2(c1,c2), 2.44949f));
+	array<double,2> v1 = {{3., 0.}};
+	array<double,2> v2 = {{0., 4.}};
+	BOOST_CHECK(	eq(distance_norm2(v1,v2), 5.));
 
 	////////////////////////////////////////////////////  gsl  convertion
+	#ifdef CONVERT_GSl_H
 	gsl_vector* gV; // 1st index == 0 
 	gV  = gsl_vector_alloc(a0.size()); 
 	gV <<= a0; 
@@ -97,5 +100,6 @@ BOOST_AUTO_TEST_CASE( lvv_array )  {
 	b_m2 << gV;
 	BOOST_CHECK( b_m2[-2]== a1[1]);
 	BOOST_CHECK( b_m2[2] == a1[5]);
+	#endif
 
 }

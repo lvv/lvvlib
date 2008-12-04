@@ -2,8 +2,6 @@
 	#ifndef LVVMATH_H
 	#define LVVMATH_H
 	
-	// TODO:  2 check boost: typedef typename tools::promote_args<T>::type result_type;
-	#include <blitz/promote-old.h>
 	
 	#include <fenv.h>
 	#include <csignal>
@@ -35,21 +33,15 @@
 	using boost::false_type;
 	using boost::is_integral;
 	
-	namespace lvv {
+        #ifdef __GNUC__
+                #define PURE         __attribute__((const))                                                                                                    
+        #else
+                #define PURE
+        #endif
 
-///////////////////////////////////////////////////////////////////////////////////////////////  SUPERIOR TYPE type_trait
-    // this is promote_trait class to provide summator type
-    //    typename Type<T>::SuperiorType       sum;
-    // if T if float then sum will be double
-    // if T if   int then sum will be long
-    template <typename Default> struct   Type                   { typedef long            SuperiorType; };
-    template <>                 struct   Type<  signed char>    { typedef   signed long   SuperiorType; };
-    template <>                 struct   Type<unsigned char>    { typedef unsigned long   SuperiorType; };
-    template <>                 struct   Type<unsigned short>   { typedef unsigned long   SuperiorType; };
-    template <>                 struct   Type<unsigned int>     { typedef unsigned long   SuperiorType; };
-    template <>                 struct   Type<unsigned long>    { typedef unsigned long   SuperiorType; };
-    template <>                 struct   Type<float>            { typedef double          SuperiorType; };
-    template <>                 struct   Type<double>           { typedef double          SuperiorType; };
+	#include <lvv/meta.h>
+
+	namespace lvv {
 
 ////////////////////////////////////////////////////////////////////////////////////////  Average
 
@@ -81,8 +73,10 @@
     ////////////////////////////////////////////////////////////////////////////////////////////////////  POWI()
 
     // TODO:  now depricated, use http://www.boost.org/doc/libs/1_36_0/libs/math/doc/sf_and_dist/html/math_toolkit/special/powers/ct_pow.html
+    // TODO:  type specialization
+    // TODO:  add asserts 
 		double  inline  static
-powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c.  TODO: add asserts 
+powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c
     double y;
     if( n & 1 )
 	y = x;

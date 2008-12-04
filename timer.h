@@ -7,6 +7,16 @@
 
 	#include <stdlib.h>
 	#include <unistd.h>
+
+	#ifdef ASMLIB
+		//#ifndef		INT64_DEFINED
+		//	#define INT64_DEFINED
+		//#endif
+		//#define uint64 uint64_t
+		//#include <asmlib.h>
+		//typedef long uint64_t;
+		extern "C" uint64_t ReadTSC (void);
+	#endif
                     
 	namespace lvv {
 
@@ -31,6 +41,7 @@ class Timer { //=========================================== TIMER
 	uint64_t ctor_tick;
 	uint64_t interval_start_tick;
 	uint64_t now_tick;
+	uint64_t overhead;
 	#endif
 	
 	// TV - wall clock time
@@ -56,6 +67,7 @@ public:
 Timer()     {
 	#ifdef ASMLIB
 	ctor_tick = interval_start_tick = ReadTSC();
+	overhead = interval_ticks();
 	#endif
 	gettimeofday(&now_tv, NULL);		ctor_tv = interval_start_tv = now_tv;
 	getrusage(RUSAGE_SELF, &now_ru);	ctor_ru = interval_start_ru = now_ru;
@@ -71,7 +83,7 @@ Timer()     {
 #ifdef ASMLIB
 			uint64_t
 interval_ticks()		{ 
-	now_tick = ReadTSC();
+	uint64_t now_tick = ReadTSC();
 	uint64_t ticks = now_tick - interval_start_tick;
 	interval_start_tick = now_tick;
 	return  ticks;
@@ -109,6 +121,7 @@ print(string msg="") {
 		cout <<"          ⌛ " << msg << "    "; 
 	};
 
+	cout << "timer-overhead-ticks:" << overhead << "t   " ;
 	cout << "interval-ticks:" << interval_ticks() << "t   " ;
 	cout << "interval-wall:" << interval_wall() << "s   " ;
 	cout << "interval-cpu: " << interval_cpu( ) << "s   " ;

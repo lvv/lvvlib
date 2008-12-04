@@ -1,7 +1,8 @@
 
 #include <limits>
-#include "../lvv/lvv.h"
-#include "../lvv/lvvmath.h"
+#include <lvv/lvv.h>
+#include <lvv/math.h>
+
 using namespace std;
 using namespace lvv;
 ///////////////////////////////////////////////////////////////////
