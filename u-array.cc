@@ -102,4 +102,6 @@ BOOST_AUTO_TEST_CASE( lvv_array )  {
 	BOOST_CHECK( b_m2[2] == a1[5]);
 	#endif
 
+
+
 }

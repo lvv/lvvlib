@@ -20,10 +20,14 @@
                 #define PURE
         #endif
 
+	#include  <boost/type_traits/promote.hpp>
+
 	namespace lvv {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////  SUPERIOR TYPE type_trait
+	/*  DEPRICATED, use boost::promote
 	// this is promote_trait class to provide summator type
+	// use:
 	//    typename Type<T>::SuperiorType       sum;
 	// if T if float then sum will be double
 	// if T if   int then sum will be long
@@ -35,6 +39,7 @@
 	template <>                 struct   Type<unsigned long>    { typedef unsigned long   SuperiorType; };
 	template <>                 struct   Type<float>            { typedef double          SuperiorType; };
 	template <>                 struct   Type<double>           { typedef double          SuperiorType; };
+	*/
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////  META  IF

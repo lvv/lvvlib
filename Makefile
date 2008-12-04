@@ -9,8 +9,9 @@ t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
 CXXFLAGS +=  -D ASMLIB -I .. -I /usr/local/include
 LDFLAGS  +=  -L /usr/local/lib/ -l:alibelf64o.a -lgsl
 
-test:	u-array
+test:	u-array u-powi
 	./u-array
+	./u-powi
 
 t-timer: t-timer.cc
 	$(CXX) $(CXXFLAGS) $< $(LDFLAGS) -o $@ 

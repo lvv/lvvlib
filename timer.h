@@ -121,11 +121,13 @@ print(string msg="") {
 		cout <<"          ⌛ " << msg << "    "; 
 	};
 
+	#ifdef ASMLIB
 	cout << "timer-overhead-ticks:" << overhead << "t   " ;
 	cout << "interval-ticks:" << interval_ticks() << "t   " ;
+	cout << "total-ticks:   " << total_ticks(   ) << "t   " ;
+	#endif
 	cout << "interval-wall:" << interval_wall() << "s   " ;
 	cout << "interval-cpu: " << interval_cpu( ) << "s   " ;
-	cout << "total-ticks:   " << total_ticks(   ) << "t   " ;
 	cout << "total-wall:   " << total_wall(   ) << "s   " ;
 	cout << "total-cpu:    " << total_cpu(    ) << "s   " ;
 	cout << endl;

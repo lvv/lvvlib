@@ -1,6 +1,6 @@
 	
-	#ifndef LVVMATH_H
-	#define LVVMATH_H
+	#ifndef LVV_MATH_H
+	#define LVV_MATH_H
 	
 	
 	#include <fenv.h>
@@ -15,6 +15,7 @@
 	
 	#include <string>
 		using std::string;
+
 	#include <iostream>
 	#include <iomanip>
 		using std::cout;
@@ -54,7 +55,8 @@
 		template <typename U> friend ostream& operator<< (ostream& os, Average<U>  s);
 	    private:
 		long        count;
-		typename Type<T>::SuperiorType       sum;
+		//typename Type<T>::SuperiorType       sum;
+		typename  boost::promote<T>::type         sum;
 		string      lable;
 	 };
 
@@ -237,5 +239,5 @@ double		polynomial_derivative_eval	(const double x, ARRAY_t C)	{
 
     ////////////////////////////////////////////////////////////////////////////////// END
     }
-    #endif // LVVMATH_H
+    #endif // LVV_MATH_H
     
