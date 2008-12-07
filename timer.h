@@ -7,6 +7,9 @@
 
 	#include <stdlib.h>
 	#include <unistd.h>
+	#include <iostream>
+	#include <iomanip>
+
 
 	#ifdef ASMLIB
 		//#ifndef		INT64_DEFINED
@@ -35,6 +38,7 @@ class Timer { //=========================================== TIMER
 			// article about hi-res timers: http://www.devx.com/cplus/Article/35375/0/page/2
 			// see also OpenMP timer: http://gcc.gnu.org/onlinedocs/libgomp/omp_005fget_005fwtime.html#omp_005fget_005fwtime
     private: 
+    	bool		verbose_dtor;
 
 	#ifdef ASMLIB
 	// Tick (cpu cycle)
@@ -64,7 +68,7 @@ double cpu_time_at(struct rusage ru) {
 
 public:
 
-Timer()     {
+Timer(bool dtor=false) : verbose_dtor(dtor)     {
 	#ifdef ASMLIB
 	ctor_tick = interval_start_tick = ReadTSC();
 	overhead = interval_ticks();
@@ -74,7 +78,8 @@ Timer()     {
  };
 
 ~Timer()    {
-	cout  << "(*) on exit: cpu time: "  << total_cpu()  << "s    " << "wall time: " << total_wall() << "s " << endl; 
+	if (verbose_dtor)
+		cout  << "(*) on exit: cpu time: "  << total_cpu()  << "s    " << "wall time: " << total_wall() << "s " << endl; 
 	// memory report
 	//system("egrep -r '^Vm(Peak|Size|RSS|Data|Stk|Exe|Lib)' /proc/$PPID/status |sed 's/^Vm//; s/ kB/k/; s/  *//'|tr '	\n' ' '");
 	    // amount of unrequested memory  -   CommitLimit - Committed_AS
@@ -116,21 +121,22 @@ double	operator() 	()	{ return interval_wall(); }
 print(string msg="") {
 
 	if (msg=="") 
-		cout << setw(13) << "(timer)   ";
+		std::cout << std::setw(13) << "(timer)   ";
 	else {
-		cout <<"          ⌛ " << msg << "    "; 
+		std::cout <<"   ⌛ " << msg << "    "; 
 	};
 
+	std::cout << std::setprecision(4);
 	#ifdef ASMLIB
-	cout << "timer-overhead-ticks:" << overhead << "t   " ;
-	cout << "interval-ticks:" << interval_ticks() << "t   " ;
-	cout << "total-ticks:   " << total_ticks(   ) << "t   " ;
+	std::cout << "overhead:" << overhead << "t   " ;
+	std::cout << "interval:" << interval_ticks() << "t   " ;
+	std::cout << "total:   " << total_ticks(   ) << "t   " ;
 	#endif
-	cout << "interval-wall:" << interval_wall() << "s   " ;
-	cout << "interval-cpu: " << interval_cpu( ) << "s   " ;
-	cout << "total-wall:   " << total_wall(   ) << "s   " ;
-	cout << "total-cpu:    " << total_cpu(    ) << "s   " ;
-	cout << endl;
+	std::cout << "interval-wall:" << interval_wall() << "s   " ;
+	std::cout << "interval-cpu: " << interval_cpu( ) << "s   " ;
+	std::cout << "total-wall:   " << total_wall(   ) << "s   " ;
+	std::cout << "total-cpu:    " << total_cpu(    ) << "s   " ;
+	std::cout << std::endl;
  };
 
         friend ostream& operator<< (ostream& os, Timer& t);
