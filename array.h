@@ -23,8 +23,8 @@
 #include	<numeric>
 		using std::accumulate;
 
-#include	<boost/format.hpp>
-		using boost::format;
+//#include	<boost/format.hpp>
+		//using boost::format;
 
 #include <iterator>
 #include <algorithm>
@@ -73,9 +73,12 @@ template < class T, int N, int BEGIN=0> class array {
 	reference				operator[](int i) throw(char *)	{
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":%d" );    
-				msg %i %ibegin() %iend() %__LINE__;
-				throw  msg.str().c_str();
+				//format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":%d" );    
+				cerr << "lvv::array::operator[] error: index=" << i <<  "out of range [" << ibegin() << ".." << iend()
+					<< ")  at " << __FILE__ << ":" << __LINE__ ;    
+				//msg %i %ibegin() %iend() %__LINE__;
+				//throw  msg.str().c_str();
+				assert(false);
 			}
 		#endif 
 		return elems[i-BEGIN];
@@ -85,10 +88,12 @@ template < class T, int N, int BEGIN=0> class array {
 	const_reference				operator[](int i) const	 throw(char *) {
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":%d" );    
-				msg %i %ibegin() %iend() %__LINE__;
-				cerr << msg << endl;
-				throw  msg.str().c_str();
+				//format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":%d" );    
+				cerr << "lvv::array::operator[] error: index=" << i <<  "out of range [" << ibegin() << ".." << iend() <<")  at " << __FILE__ << ":" << __LINE__;    
+				//msg %i %ibegin() %iend() %__LINE__;
+				//cerr << msg << endl;
+				//throw  msg.str().c_str();
+				assert(false);
 			}
 		#endif 
 		return elems[i-BEGIN];
@@ -117,14 +122,17 @@ template < class T, int N, int BEGIN=0> class array {
 	// assignment with type conversion
 	template <typename T2>	array <T, N, BEGIN>	&operator=(const array < T2, N, BEGIN > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
 	
+	//TODO memcpy assignment (without type conversion)
 
 	// assign one value to all elements
 	template<typename T2> 	array<T,N,BEGIN>&  operator= ( const  T2 value) {  std::fill_n(begin(), size(), value);  return *this; }
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
+	//TODO memset scalar assignment
 
 	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
 
-	T					sum() 		const		{ return accumulate(begin(), end(), 0); };
+	T					sum() 		const		{ return std::accumulate(begin(), end(), 0); };
+	T					max() 		const		{ return *std::max_element(begin(), end()); };
 	
 };
 
