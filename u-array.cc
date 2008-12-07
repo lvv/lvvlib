@@ -2,7 +2,7 @@
 #include <iostream>
 	using namespace std;
 
-#include <boost/foreach.hpp>
+//#include <boost/foreach.hpp>
 
 #include <lvv/math.h>
 	using lvv::eq;
