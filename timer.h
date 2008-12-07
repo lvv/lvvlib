@@ -11,16 +11,6 @@
 	#include <iomanip>
 
 
-	#ifdef ASMLIB
-		//#ifndef		INT64_DEFINED
-		//	#define INT64_DEFINED
-		//#endif
-		//#define uint64 uint64_t
-		//#include <asmlib.h>
-		//typedef long uint64_t;
-		extern "C" uint64_t ReadTSC (void);
-	#endif
-                    
 	namespace lvv {
 
 /*  OpenMP thread time?
@@ -33,6 +23,23 @@
          MSG("(%d/%.1fs ? :%.1fs elapsed)%8t") % cnt++  %timer() %(omp_time-last_omp_time);  
 */
 
+		#if defined(__x86_64) 
+uint64_t	read_tick() {	// tested with 
+	uint64_t now_tick;
+       	asm volatile (	"subl	%%eax,%%eax;"
+		"cpuid;"
+		"rdtsc;"
+		"shlq	$32, %%rdx;"
+		"orq	%%rdx, %%rax;"		// combine into 64 bit register        
+		"movq	%%rax,	%0;"
+                         :"=m"(now_tick)        // output
+                         :
+                         :"rbx","rcx", "rdx"         // clobbered register
+         );  
+	return now_tick;
+}
+		#endif
+
 class Timer { //=========================================== TIMER
                         // too late, I've found almost the same impl at http://www.boost.org/doc/libs/1_35_0/libs/timer/timer.htm
 			// article about hi-res timers: http://www.devx.com/cplus/Article/35375/0/page/2
@@ -40,7 +47,7 @@ class Timer { //=========================================== TIMER
     private: 
     	bool		verbose_dtor;
 
-	#ifdef ASMLIB
+	#if defined(__x86_64)
 	// Tick (cpu cycle)
 	uint64_t ctor_tick;
 	uint64_t interval_start_tick;
@@ -68,9 +75,11 @@ double cpu_time_at(struct rusage ru) {
 
 public:
 
+
+
 Timer(bool dtor=false) : verbose_dtor(dtor)     {
-	#ifdef ASMLIB
-	ctor_tick = interval_start_tick = ReadTSC();
+	#if defined(__x86_64)
+	ctor_tick = interval_start_tick = read_tick();
 	overhead = interval_ticks();
 	#endif
 	gettimeofday(&now_tv, NULL);		ctor_tv = interval_start_tv = now_tv;
@@ -85,15 +94,16 @@ Timer(bool dtor=false) : verbose_dtor(dtor)     {
 	    // amount of unrequested memory  -   CommitLimit - Committed_AS
 };
 
-#ifdef ASMLIB
-			uint64_t
-interval_ticks()		{ 
-	uint64_t now_tick = ReadTSC();
+			#if defined(__x86_64)
+                        uint64_t
+interval_ticks()                { 
+	uint64_t now_tick = read_tick();
 	uint64_t ticks = now_tick - interval_start_tick;
 	interval_start_tick = now_tick;
 	return  ticks;
  }
-#endif
+			 #endif
+
 			double
 interval_wall()		{ 
 	gettimeofday(&now_tv, NULL);
@@ -110,8 +120,8 @@ interval_cpu()		{
  }
 
 
-#ifdef ASMLIB
-double	total_ticks	()	{ return  ReadTSC() - ctor_tick; }
+#if defined(__x86_64)
+double	total_ticks	()	{ return  read_tick() - ctor_tick; }
 #endif
 double	total_wall	()	{ gettimeofday(&now_tv, NULL);		return  wall_time_at(now_tv) - wall_time_at(ctor_tv); }
 double	total_cpu	()	{ getrusage(RUSAGE_SELF, &now_ru);	return  cpu_time_at (now_ru) - cpu_time_at (ctor_ru); }
@@ -127,7 +137,7 @@ print(string msg="") {
 	};
 
 	std::cout << std::setprecision(4);
-	#ifdef ASMLIB
+	#if defined(__x86_64) 
 	std::cout << "overhead:" << overhead << "t   " ;
 	std::cout << "interval:" << interval_ticks() << "t   " ;
 	std::cout << "total:   " << total_ticks(   ) << "t   " ;

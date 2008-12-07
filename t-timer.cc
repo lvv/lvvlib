@@ -15,6 +15,16 @@ using lvv::Timer;
 
 int main() {
 
+	
+	cout << lvv::read_tick() << "  -- 1 \n";
+	cout << lvv::read_tick() << "  -- 1 \n";
+	cout << lvv::read_tick() << "  -- 1 \n";
+	cout << lvv::read_tick() << "  -- 1 \n";
+	cout << lvv::read_tick() << "  -- 1 \n";
+	cout << lvv::read_tick() << "  -- 1 \n";
+	cout << lvv::read_tick() << "  -- 1 \n";
+	cout << lvv::read_tick() << "  -- 1 \n";
+	cout << lvv::read_tick() << "  -- 1 \n";
 	cout << "Timer CTOR\n";
 	Timer verboze_t(true);
 	Timer t;
