@@ -77,6 +77,7 @@
     // TODO:  now depricated, use http://www.boost.org/doc/libs/1_36_0/libs/math/doc/sf_and_dist/html/math_toolkit/special/powers/ct_pow.html
     // TODO:  type specialization
     // TODO:  add asserts 
+    // TODO:  fast pow with lookup table: http://www.hxa7241.org/articles/content/fast-pow-adjustable_hxa7241_2007.html
 		double  inline  static
 powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c
     double y;
