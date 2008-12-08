@@ -29,10 +29,12 @@
 		
 
 
-	#include <boost/type_traits.hpp>
-	using boost::true_type;
-	using boost::false_type;
-	using boost::is_integral;
+	//#include <boost/type_traits.hpp>
+	#include <boost/type_traits/integral_constant.hpp>
+	#include <boost/type_traits/is_integral.hpp>
+		using boost::true_type;
+		using boost::false_type;
+		using boost::is_integral;
 	
         #ifdef __GNUC__
                 #define PURE         __attribute__((const))                                                                                                    
@@ -125,7 +127,7 @@ template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
             return (T)n1==(T)n2;
      };  
 
-    template<typename T1, typename T2, typename T>   bool static inline   eq_impl (T1 n1, T2 n2, false_type integral_flag, ulp_t ulps, T characteristic_value) {  // floating point
+    template<typename T1, typename T2, typename T>   bool static inline   eq_impl (T1 n1, T2 n2, boost::false_type integral_flag, ulp_t ulps, T characteristic_value) {  // floating point
             // algorithm taken from: http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
             if (n1==n2)   return true;
             T abs_diff      = n1-n2 > 0 ? n1-n2 : n2-n1;   // |n1-n2|

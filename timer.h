@@ -2,11 +2,16 @@
 	#ifndef  LVV_TIMER_H
 	#define  LVV_TIMER_H
 
+	// this is for uint64_t on gcc-4.4
+	//#define _GLIBCXX_USE_C99_STDINT_TR1
+
 	#include <sys/time.h>
 	#include <sys/resource.h>
 
 	#include <stdlib.h>
-	#include <unistd.h>
+	//#include <unistd.h>
+	//#include <stdint.h>
+	//typedef unsigned long long int uint64_t;
 	#include <iostream>
 	#include <iomanip>
 
@@ -23,22 +28,34 @@
          MSG("(%d/%.1fs ? :%.1fs elapsed)%8t") % cnt++  %timer() %(omp_time-last_omp_time);  
 */
 
-		#if defined(__x86_64) 
+/////////////////////////////////////////////////////////////////////////////////////  READ_TICK
+#if defined(__x86_64) || defined (__i386)
 uint64_t	read_tick() {	// tested with 
 	uint64_t now_tick;
        	asm volatile (	"subl	%%eax,%%eax;"
 		"cpuid;"
 		"rdtsc;"
-		"shlq	$32, %%rdx;"
-		"orq	%%rdx, %%rax;"		// combine into 64 bit register        
-		"movq	%%rax,	%0;"
-                         :"=m"(now_tick)        // output
+		#if defined(__x86_64) 
+			"shlq	$32, %%rdx;"
+			"orq	%%rdx, %%rax;"		// combine into 64 bit register        
+			"movq	%%rax,	%[now_tick];"
+		#endif
+		#if defined(__i386) 
+			"movl	%%eax,	%[now_tick];"
+			"lea	%0, 	%%eax;"
+			"movl	%%edx,	4(%%eax);"
+		#endif
+                         :[now_tick] "=m"(now_tick)        // output
                          :
+		#if defined(__x86_64) 
                          :"rbx","rcx", "rdx"         // clobbered register
+		#else
+                         :"ebx","ecx", "edx"         // clobbered register
+		#endif
          );  
 	return now_tick;
 }
-		#endif
+#endif
 
 class Timer { //=========================================== TIMER
                         // too late, I've found almost the same impl at http://www.boost.org/doc/libs/1_35_0/libs/timer/timer.htm
@@ -47,8 +64,8 @@ class Timer { //=========================================== TIMER
     private: 
     	bool		verbose_dtor;
 
-	#if defined(__x86_64)
 	// Tick (cpu cycle)
+	#if defined(__x86_64) || defined (__i386)
 	uint64_t ctor_tick;
 	uint64_t interval_start_tick;
 	uint64_t now_tick;
@@ -78,7 +95,7 @@ public:
 
 
 Timer(bool dtor=false) : verbose_dtor(dtor)     {
-	#if defined(__x86_64)
+	#if defined(__x86_64) || defined (__i386)
 	ctor_tick = interval_start_tick = read_tick();
 	overhead = interval_ticks();
 	#endif
@@ -94,7 +111,7 @@ Timer(bool dtor=false) : verbose_dtor(dtor)     {
 	    // amount of unrequested memory  -   CommitLimit - Committed_AS
 };
 
-			#if defined(__x86_64)
+			#if defined(__x86_64) || defined (__i386)
                         uint64_t
 interval_ticks()                { 
 	uint64_t now_tick = read_tick();
@@ -120,9 +137,9 @@ interval_cpu()		{
  }
 
 
-#if defined(__x86_64)
+			#if defined(__x86_64) || defined (__i386)
 double	total_ticks	()	{ return  read_tick() - ctor_tick; }
-#endif
+			#endif
 double	total_wall	()	{ gettimeofday(&now_tv, NULL);		return  wall_time_at(now_tv) - wall_time_at(ctor_tv); }
 double	total_cpu	()	{ getrusage(RUSAGE_SELF, &now_ru);	return  cpu_time_at (now_ru) - cpu_time_at (ctor_ru); }
 double	operator() 	()	{ return interval_wall(); }
@@ -137,11 +154,11 @@ print(string msg="") {
 	};
 
 	std::cout << std::setprecision(4);
-	#if defined(__x86_64) 
+			#if defined(__x86_64) || defined (__i386)
 	std::cout << "overhead:" << overhead << "t   " ;
 	std::cout << "interval:" << interval_ticks() << "t   " ;
 	std::cout << "total:   " << total_ticks(   ) << "t   " ;
-	#endif
+			#endif
 	std::cout << "interval-wall:" << interval_wall() << "s   " ;
 	std::cout << "interval-cpu: " << interval_cpu( ) << "s   " ;
 	std::cout << "total-wall:   " << total_wall(   ) << "s   " ;

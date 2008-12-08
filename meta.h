@@ -9,10 +9,12 @@
 	// local copy of blitz promote-old.h 
 	#include <lvv/blitz-promote-old.h>
 	
-	#include <boost/type_traits.hpp>
-	using boost::true_type;
-	using boost::false_type;
-	using boost::is_integral;
+	#include <boost/type_traits/integral_constant.hpp>
+		using boost::true_type;
+		using boost::false_type;
+	#include <boost/type_traits/is_integral.hpp>
+		//#include <boost/type_traits.hpp>
+		using boost::is_integral;
 	
         #ifdef __GNUC__
                 #define PURE         __attribute__((const))                                                                                                    
@@ -44,15 +46,14 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////  META  IF
 
-	template <bool condition, class Then, class Else>
-	struct IF { typedef Then RET; };
+	// also in /usr/include/boost/detail/select_type.hpp
+	template <bool CONDITION, class THEN, class ELSE>	struct IF { typedef THEN type; };
 
-	template  <class Then, class Else>
-	struct IF<false, Then, Else> 	{ typedef Else RET; };
+	template  <class THEN, class ELSE>			struct IF<false, THEN, ELSE> 	{ typedef ELSE type; };
 
-	// USE like this:
-	// if sizeof(int) < sizeof(long) then use long else use int
-	// IF< sizeof(int)<sizeof(long), long, int>::RET  i;
+				// USE like this:
+				//	if sizeof(int) < sizeof(long) then use long else use int
+				//	IF< sizeof(int)<sizeof(long), long, int>::type  i;
 
 
 

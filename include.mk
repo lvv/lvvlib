@@ -62,6 +62,7 @@ CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $(
 #*: ../lvv/include.mk ../lvv/lvv.h
 
 .SUFFIXES: .cc -r -c -g  -gp
+.PHONY  = %-r %-g %-gr  %-gp
 
 % : %.cc
 	@tput sgr0; tput setaf 4
@@ -82,6 +83,7 @@ CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $(
 %-gr: %
 	echo -e "r" > /tmp/t
 	gdb -x /tmp/t $<
+
 
 %-r: %
 	./$<
