@@ -99,8 +99,14 @@ main() {
 	CHECK( b_m2[-2]== a1[1]);
 	CHECK( b_m2[2] == a1[5]);
 	#endif
+	//////////////////////////////////////////////////////
+
+	cout << "SUM: " << c1.sum() << endl;
+	cout << "MAX: " << c1.max() << endl;
+	cout << "MAX: " << c1.max<sse>() << endl;
 
 	cout << (all_pass ? "\n------------ all pass ------------\n" : "\n!!!!!!!!!  SOME FAILED  !!!!!!!!\n");
 	exit(all_pass ? 0 : 1);
+
 
 }

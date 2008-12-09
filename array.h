@@ -42,7 +42,7 @@ namespace lvv {
 	struct plain {};
 	struct sse   {};
 
-	template<typename T, int N>	struct	select_method			{typedef	plain					type;};
+	template<typename T, int N>	struct	select_method			{typedef	plain		type;}; // default method
 	template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>128), sse, plain>::type 	type;};
 
 
@@ -149,7 +149,16 @@ template < class T, int N, int BEGIN=0> class array {
 	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
 
 	T					sum() 		const		{ return std::accumulate(begin(), end(), 0); };
-	T					max() 		const		{ return *std::max_element(begin(), end()); };
+	//T					max() 		const		{ return *std::max_element(begin(), end()); };
+			template<typename method_selector_type>
+	T	max(){ return max_impl(method_selector_type()); } 			// explicit template selecton	
+	T	max(){ return max_impl(typename select_method<T,N>::type()); }		// auto-selection
+						// default template paramter:  Due to an unfortunate oversight, the standard simply bans
+						// default arguments for template parameters for a function template. Voted
+						// to be corrected in the next standard
+
+	T max_impl (plain)  { cout <<"i am plain()" << N  << "\n"; return 0; }
+	T max_impl (sse)    { cout <<"i am sse()  " << N  << "\n"; return 0; }
 	
 };
 
