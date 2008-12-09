@@ -4,13 +4,15 @@
 #include <lvv/math.h>
 	using lvv::eq;
 #include <lvv/array.h>
-//#include <lvv/lvv.h>
+#include <lvv/lvv.h>
 	using lvv::array;
 
 #include <lvv/check.h>
 //#include <lopti/convert-gsl.h>
 	using namespace std;
 	using namespace lvv;
+ #include  <boost/type_traits/alignment_of.hpp>
+ 	using boost::alignment_of;
 
                 int
 main() {
@@ -65,6 +67,7 @@ main() {
 	// vector ops
 	array<float,2> c1={{1,2}};
 	array<float,2> c2={{2,2}};
+	array<float,201> c201={};
 
 	// dot prod:  {1,2} x {2,2} = "
 	CHECK(	dot_prod(c1,c2) == 6 );
@@ -101,9 +104,46 @@ main() {
 	#endif
 	//////////////////////////////////////////////////////
 
+#define CHK(var)	cout << #var << " \t " << &var << " \t " <<  reinterpret_cast<size_t>(&var) % 16 << endl; 
+
 	cout << "SUM: " << c1.sum() << endl;
 	cout << "MAX: " << c1.max() << endl;
-	cout << "MAX: " << c1.max<sse>() << endl;
+	cout << "MAX: " << c1.max<sse>() << " \t " << &c1 << "\t addr % 16 = " << (*(size_t *)&c1) % 16 << endl;
+	cout << "MAX: " << c2.max<sse>() << " \t " << &c2 << "\t addr % 16 = " << (*(size_t *)&c2) % 16 << endl;
+	CHK(c2);
+
+	//PR1((alignment_of<array<int,3>::elem_t>::value));
+	//PR1((alignment_of<array<char,1>::elem_t>::value));
+	//PR1((alignment_of<array<char,3>::elem_t>::value));
+	//PR1((alignment_of<array<float,3>::elem_t>::value));
+	//PR1((alignment_of<array<float,3>::elem_align_t>::value));
+	//PR1((alignment_of<typeof(c1)>::value));
+	CHK(c0);
+	CHK(c1);
+	CHK(b0);
+	array<float,1> f1;  CHK(f1);
+	array<char,3> ch3;  CHK(ch3);
+	array<float,7> f7;  CHK(f7);
+	array<char,1> ch10;  CHK(ch10);
+	array<char,1> ch11;  CHK(ch11);
+	array<char,1> ch12;  CHK(ch12);
+	array<char,1> ch13;  CHK(ch13);
+	array<double,1> d1;  CHK(d1);
+	array<char,1> ch14;  CHK(ch14);
+	array<char,2> ch2;  CHK(ch2);
+	array<float,4> f4; 
+	CHK(f4);
+	CHK(f4[1]);
+	CHK(f4[2]);
+	CHK(f4[3]);
+
+	CHK(c201);
+
+	typedef int       i4_t[101]; // __attribute__((aligned(16)));
+	i4_t	i4;	
+	PR1((alignment_of<typeof(i4)>::value));
+	CHK(i4);
+
 
 	cout << (all_pass ? "\n------------ all pass ------------\n" : "\n!!!!!!!!!  SOME FAILED  !!!!!!!!\n");
 	exit(all_pass ? 0 : 1);

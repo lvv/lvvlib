@@ -33,8 +33,14 @@
 	#include	<cmath> 
 			using std::sqrt;
 
-	#include <immintrin.h>
-	#include <lvv/meta.h>
+		
+	#ifdef __SSE__
+		#include <emmintrin.h>
+	#endif		// immitrin doesn't need ifdef, but it is only in gcc44
+	
+	//#include <lvv/meta.h>
+	#include <boost/detail/select_type.hpp>
+		using boost::detail::if_true;
 
 namespace lvv {
 
@@ -43,12 +49,22 @@ namespace lvv {
 	struct sse   {};
 
 	template<typename T, int N>	struct	select_method			{typedef	plain		type;}; // default method
-	template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>128), sse, plain>::type 	type;};
+	template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>127), sse, plain>::type 	type;};
 
 
 template < class T, int N, int BEGIN=0> class array {
+
       public:
-	T elems[N];				
+
+	typedef T	elem_t[N]; 
+	typedef T	elem_align_t[N] __attribute__((aligned(16))); 
+
+	#ifdef __SSE__
+		typename if_true<(N>127)>::template then<elem_align_t, elem_t>::type  elems;
+	#else
+		elem_t	elems;				
+	#endif
+
 	enum { sz = N, ibg=BEGIN, ien=BEGIN+N };  // gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
 
       public:
@@ -150,8 +166,8 @@ template < class T, int N, int BEGIN=0> class array {
 
 	T					sum() 		const		{ return std::accumulate(begin(), end(), 0); };
 	//T					max() 		const		{ return *std::max_element(begin(), end()); };
-			template<typename method_selector_type>
-	T	max(){ return max_impl(method_selector_type()); } 			// explicit template selecton	
+			template<typename method_type>
+	T	max(){ return max_impl(method_type()); } 				// explicit template selecton	
 	T	max(){ return max_impl(typename select_method<T,N>::type()); }		// auto-selection
 						// default template paramter:  Due to an unfortunate oversight, the standard simply bans
 						// default arguments for template parameters for a function template. Voted

@@ -22,7 +22,6 @@ int main() {
 	for (int i = an.ibegin(); i < an.iend(); ++i)	{ an[i]=i;  cout << format("i=%d   an[i]=%d") %i  % (an[i]) << endl; };
 
 	cout << "a0: "       << a0 << endl;
-	BOOST_FOREACH(int &elem, a0)  { elem+=10; };
 	cout << "a0 += 10: " << a0 << endl;
 
 	cout << "a1: " << a1 << endl;
