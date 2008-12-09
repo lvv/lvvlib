@@ -1,36 +1,50 @@
 #ifndef LVV_ARRAY
 #define LVV_ARRAY
 
-// TODO  tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
+// TODO 
+// tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
+// memcpy : file:///tr/boost-trunk.svn/libs/type_traits/doc/html/boost_typetraits/examples/copy.html
 
 						// According to the language definition, aggregate initialization only works
 						// for aggregate types. An array or class type is not an aggregate if it has
 						// any user-declared constructors, any private or protected nonstatic data
 						// members, any base classes, or any virtual functions.
-#include	<lvv/math.h>
-#include	<cassert>
-#include	<cmath>
-		using std::sqrt;
+	#include	<lvv/math.h>
+	#include	<cassert>
 
-#include	<iostream>
-		using std::ostream;
-		using std::cout;
-		using std::endl;
+	#include	<iostream>
+			using std::ostream;
+			using std::cout;
+			using std::endl;
 
-#include	<iterator>
-		using std::ostream_iterator;
+	#include	<iterator>
+			using std::ostream_iterator;
 
-#include	<numeric>
-		using std::accumulate;
+	#include	<numeric>
+			using std::accumulate;
 
-//#include	<boost/format.hpp>
-		//using boost::format;
+	//#include	<boost/format.hpp>
+			//using boost::format;
 
-#include <iterator>
-#include <algorithm>
-using std::size_t;
+	#include <iterator>
+	#include <algorithm>
+	using std::size_t;
+
+	#include	<cmath> 
+			using std::sqrt;
+
+	#include <immintrin.h>
+	#include <lvv/meta.h>
 
 namespace lvv {
+
+	/////  spcialization for SSE/OpenMP
+	struct plain {};
+	struct sse   {};
+
+	template<typename T, int N>	struct	select_method			{typedef	plain					type;};
+	template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>128), sse, plain>::type 	type;};
+
 
 template < class T, int N, int BEGIN=0> class array {
       public:
@@ -48,7 +62,10 @@ template < class T, int N, int BEGIN=0> class array {
 	typedef int		size_type;
 	typedef int		index_type;
 
-	// CTOR  --  imposible with having aggrigate constructor
+	// CTOR 
+	
+	// n/a (imposible with having aggrigate constructor)
+
 
 	// index
 	index_type				ibegin()	const		{ return BEGIN; }
@@ -148,7 +165,6 @@ template<class T, int N, int B> bool operator>=(const array<T, N, B> &x, const a
 template < class T, size_t N, int B > inline void swap(array < T, N, B > &x, array < T, N, B > &y) { x.swap(y); }
 
 
-
 // array op= scallar  ( conflict with google sparsehash if we not spell out type)
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
@@ -162,22 +178,6 @@ template<typename T,int N, int B> array<T,N,B>& operator-=(array<T,N,B>& LA, con
 template<typename T,int N, int B> array<T,N,B>& operator*=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  *=  *rit++; return LA; }
 template<typename T,int N, int B> array<T,N,B>& operator/=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  /=  *rit++; return LA; }
 
-/*  
-// array op array  
-template<typename T,int N, int B>
-const array<T,N,B>&
-operator+ (const array<T,N,B>& LA, const array<T,N,B>& RA) {
-	//shared_array<array<T,N,B> > Rp((array<T,N,B>*) new T[N]); 
-	//shared_array<array<T,N,B> > Rp(new array<T,N,B>); 
-	//shared_ptr<array<T,N,B> > Rp(new const array<T,N,B> ); 
-	//shared_ptr<array<T,N,B> > Rp(const shared_ptr<array<T,N,B>>(new array<T,N,B> )); 
-	//shared_ptr<array<T,N,B> > Rp((array<T,N,B>*) new char[sizeof(T)*N]); 
-	//shared_ptr<array<T,N,B> > Rp = new array<T,N,B>; 
-	shared_ptr<const array<T,N,B> > Rp(new const array<T,N,B>); 
-	//for(int i=B; i<B+N; i++)  (*(array<T,N,B>*) Rp.get())[i] = LA[i]+RA[i];  
-	for(int i=B; i<B+N; i++)  (*const_cast<T*>(Rp))[i] = LA[i]+RA[i];  
-	return Rp;
-}*/
 
 			template<typename T,int N, int B>  T
 dot_prod 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
@@ -210,7 +210,6 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 	while(lit != LA.end())  sum  +=  pow2(*lit++  -  *rit++) ;
 	return  sqrt(sum);
 }
-
 
 		template <typename T, int N, int B>
 		std::ostream&

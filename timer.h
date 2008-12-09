@@ -9,9 +9,7 @@
 	#include <sys/resource.h>
 
 	#include <stdlib.h>
-	//#include <unistd.h>
-	//#include <stdint.h>
-	//typedef unsigned long long int uint64_t;
+	#include <stdint.h>
 	#include <iostream>
 	#include <iomanip>
 

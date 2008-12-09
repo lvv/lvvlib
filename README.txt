@@ -45,7 +45,7 @@ absolutes of compared values (1st and 2nd argument).  But in chain of calculatio
 value can be different.  For example in: `x=1000.1;  y=x-1000.` characteristic
 value of `y` is `1000` even though it is approximately equal `0.1`
 
-Type-precision is expressed as http://docs.sun.com/source/806-3568/ncg_goldberg.html[ULP]
+Type-precision is expressed as http://en.wikipedia.org/wiki/Unit_in_the_last_place[ULP]
 for value `1.0`  (`== std::numeric_limits<T>::epsilon()`).  This is only possible way to make it
 invariant to type used. That is error expressed in ULP is about the same when
 we change type (needed for generic programming).
@@ -61,15 +61,21 @@ For integers: If one of arguments is `unsigned` then other argument converted to
 We assume that if someone compares with `unsigned` then he guarantees that other value is positive.
 
 
+=== check.h
+
+Very basic unit testing. I had to write my own unit testing because gcc44 can not
+compile BOOST_CHECK. Implemented mostly in macros. Shows at execution log
+evaluated expression. 
+
 === Other
 
 
 [width="80%",cols="3,3,6",frame="none",options="header"]
 |==========================
 | Header                 | Sample Use                    | Description
-| {gh-ll}check.h[check.h]| {gh-ll}t-equal.cc[t-equal.cc] | simple unit testing.
+| {gh-ll}check.h[check.h]| {gh-ll}t-equal.cc[t-equal.cc] | basic unit testing.
 | {gh-ll}mmap.h[mmap.h]  | {gh-ll}t-mmap.cc[t-mmap.cc]   | simplified mmap files ops.
-| {gh-ll}timer.h[timer.h]| {gh-ll}t-timer.cc[t-timer.cc] | interval and wall timer.
+| {gh-ll}timer.h[timer.h]| {gh-ll}t-timer.cc[t-timer.cc] | interval/total for  cpu/wall/tick  timer.
 |==========================
 
 // vim:ft=asciidoc:

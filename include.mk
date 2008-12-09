@@ -3,8 +3,9 @@
 
 # to set speed run as:  make s=o
 CXX 	?=  g++
-VPATH   := ../lvv/
 FC	= gfortran
+
+TMPDIR ?=/v
 
 ########################################################################################
 #SPEED := $(s:o=OPTIMZE)
@@ -12,6 +13,7 @@ SPEED := $(s:d=DEBUG)
 #SPEED := $(c:d=CHECK)
 #SPEED = $($($(s:d=DEBUG):c=CHECK):o=OPTIMIZE)
 SPEED  	?= DEBUG
+
 #######################################################################################  COMPILE SPECIFIC
 g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare  # -Wmissing-braces
 
@@ -49,7 +51,7 @@ iccFLAGS_DEBUG    := -debug all
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
 #######################################################################################  NOT COMPILE SPECIFIC
-CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'  -I . -I .. -I ../.. -I /usr/local/include
+CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'   -I ~/p/  -I /usr/local/include
 #-frecord-gcc-switches
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK 
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
@@ -59,7 +61,6 @@ CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DNOSTATS   -D_GLIBCXX_DEB
 #######################################################################################  EVALUATE CXXFLAGS
 CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF) $(CFLAGS) 
 
-#*: ../lvv/include.mk ../lvv/lvv.h
 
 .SUFFIXES: .cc -r -c -g  -gp
 .PHONY  = %-r %-g %-gr  %-gp

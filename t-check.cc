@@ -22,6 +22,7 @@ main() {
 
     cout << std::boolalpha;
 
+    CHECK(1 == 1);
     CHECK(!equal(f1,f2));
     CHECK( equal(f1,f1));
     CHECK(!equal(f0,f1));
