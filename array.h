@@ -1,69 +1,61 @@
 #ifndef LVV_ARRAY
 #define LVV_ARRAY
 
-// TODO 
-// tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
-// memcpy : file:///tr/boost-trunk.svn/libs/type_traits/doc/html/boost_typetraits/examples/copy.html
+		// TODO 
+		// tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
+		// memcpy specialization: file:///tr/boost-trunk.svn/libs/type_traits/doc/html/boost_typetraits/examples/copy.html
 
 						// According to the language definition, aggregate initialization only works
 						// for aggregate types. An array or class type is not an aggregate if it has
 						// any user-declared constructors, any private or protected nonstatic data
 						// members, any base classes, or any virtual functions.
-	#include	<lvv/math.h>
-	#include	<cassert>
+		#include	<lvv/lvv.h>
+		#include	<lvv/math.h>
+		#include	<cassert>
 
-	#include	<iostream>
-			using std::ostream;
-			using std::cout;
-			using std::endl;
+		#include	<iostream>
+				using std::ostream;
+				using std::cout;
+				using std::endl;
 
-	#include	<iterator>
-			using std::ostream_iterator;
+		#include	<iterator>
+				using std::ostream_iterator;
 
-	#include	<numeric>
-			using std::accumulate;
+		#include	<numeric>
+				using std::accumulate;
 
-	//#include	<boost/format.hpp>
-			//using boost::format;
+		//#include	<boost/format.hpp>
+				//using boost::format;
 
-	#include <iterator>
-	#include <algorithm>
-	using std::size_t;
+		#include <iterator>
+		#include <algorithm>
+		using std::size_t;
 
-	#include	<cmath> 
-			using std::sqrt;
+		#include	<cmath> 
+				using std::sqrt;
+			
+		#include 	<lvv/sse.h>
 
-		
-	#ifdef __SSE__
-		#include <emmintrin.h>
-	#endif		// immitrin doesn't need ifdef, but it is only in gcc44
-	
-	//#include <lvv/meta.h>
-	#include <boost/detail/select_type.hpp>
-		using boost::detail::if_true;
-
-namespace lvv {
-
-	/////  spcialization for SSE/OpenMP
-	struct plain {};
-	struct sse   {};
-
-	template<typename T, int N>	struct	select_method			{typedef	plain		type;}; // default method
-	template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>127), sse, plain>::type 	type;};
+		namespace lvv {
 
 
 template < class T, int N, int BEGIN=0> class array {
 
       public:
 
+	/*
 	typedef T	elem_t[N]; 
 	typedef T	elem_align_t[N] __attribute__((aligned(16))); 
+	*/
 
+	/*
 	#ifdef __SSE__
 		typename if_true<(N>127)>::template then<elem_align_t, elem_t>::type  elems;
 	#else
 		elem_t	elems;				
 	#endif
+	*/
+	typename select_alignment<T,N>::type	elems;
 
 	enum { sz = N, ibg=BEGIN, ien=BEGIN+N };  // gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
 
@@ -166,17 +158,41 @@ template < class T, int N, int BEGIN=0> class array {
 
 	T					sum() 		const		{ return std::accumulate(begin(), end(), 0); };
 	//T					max() 		const		{ return *std::max_element(begin(), end()); };
-			template<typename method_type>
-	T	max(){ return max_impl(method_type()); } 				// explicit template selecton	
-	T	max(){ return max_impl(typename select_method<T,N>::type()); }		// auto-selection
+	template<typename method_type>	T	max(){ return max_impl(method_type()); } 			// explicit template selecton	
+					T	max(){ return max_impl(typename select_method<T,N>::type()); }	// auto-selection (no template)
 						// default template paramter:  Due to an unfortunate oversight, the standard simply bans
 						// default arguments for template parameters for a function template. Voted
 						// to be corrected in the next standard
 
-	T max_impl (plain)  { cout <<"i am plain()" << N  << "\n"; return 0; }
-	T max_impl (sse)    { cout <<"i am sse()  " << N  << "\n"; return 0; }
+	T max_impl (plain)  { cerr <<" max<plain>" << N; return *std::max_element(begin(), end()); }
+	T max_impl (sse)    { cerr <<" max<sse>" << N << "(" << N-N%8 <<")"; 
+		const unsigned	sse_size	= 4;
+		const unsigned	unroll		= 2;
+										// commented out: boost-1.37/SVN  error
+										//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
+										//STATIC_ASSERT(N>=sse_size*unroll,"sse can be used for N>=8");
+		const unsigned	prefetch	= 512;
+		const unsigned	cycle_step	= unroll * sse_size;
+		const size_t	sse_cycle	= N - N % cycle_step;
+
+		__m128 m1 = mk_m128(elems[0]);
+		__m128 m2 = mk_m128(elems[sse_size]);
+
+		for (int i= cycle_step;  i < sse_cycle; i+=cycle_step) { 			// SSE
+			PR1(i);
+			  m1 = _mm_max_ps(m1, mk_m128(elems[i]) );
+			  m2 = _mm_max_ps(m2, mk_m128(elems[i+sse_size]) );
+			 __builtin_prefetch((void*)&elems[i+prefetch],0,0);      
+		}
+
+		m1 = _mm_max_ps(m1, m2);
+		return  mk_array(m1).max<plain>();
+	}
 	
 };
+//////////////////////////////////////////////////////////////////////////////////////////////   END ARRAY
+
+
 
 // comparisons
 template<class T, int N, int B> bool operator==(const array<T, N, B> &x, const array<T, N, B> &y) { return std::equal(x.begin(), x.end(), y.begin()); }
@@ -251,6 +267,5 @@ template <typename T, int N1, int N2, int B1=1, int B2=1>	class matrix: public a
 	// operator()(int i, int j) { return elems[i][j]; }
 };
 
-
-};	// namespace lvv
-#endif	// LVV_ARRAY
+			};	// namespace lvv
+			#endif	// LVV_ARRAY

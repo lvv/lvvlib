@@ -11,8 +11,6 @@
 //#include <lopti/convert-gsl.h>
 	using namespace std;
 	using namespace lvv;
- #include  <boost/type_traits/alignment_of.hpp>
- 	using boost::alignment_of;
 
                 int
 main() {
@@ -108,16 +106,10 @@ main() {
 
 	cout << "SUM: " << c1.sum() << endl;
 	cout << "MAX: " << c1.max() << endl;
-	cout << "MAX: " << c1.max<sse>() << " \t " << &c1 << "\t addr % 16 = " << (*(size_t *)&c1) % 16 << endl;
-	cout << "MAX: " << c2.max<sse>() << " \t " << &c2 << "\t addr % 16 = " << (*(size_t *)&c2) % 16 << endl;
+	cout << "MAX: " << c1.max<sse>() << " \t " << &c1 << "\t addr % 16 = " << reinterpret_cast<size_t>(&c1) % 16 << endl;
+	cout << "MAX: " << c2.max<sse>() << " \t " << &c2 << "\t addr % 16 = " << reinterpret_cast<size_t>(&c2) % 16 << endl;
 	CHK(c2);
 
-	//PR1((alignment_of<array<int,3>::elem_t>::value));
-	//PR1((alignment_of<array<char,1>::elem_t>::value));
-	//PR1((alignment_of<array<char,3>::elem_t>::value));
-	//PR1((alignment_of<array<float,3>::elem_t>::value));
-	//PR1((alignment_of<array<float,3>::elem_align_t>::value));
-	//PR1((alignment_of<typeof(c1)>::value));
 	CHK(c0);
 	CHK(c1);
 	CHK(b0);
@@ -141,8 +133,14 @@ main() {
 
 	typedef int       i4_t[101]; // __attribute__((aligned(16)));
 	i4_t	i4;	
-	PR1((alignment_of<typeof(i4)>::value));
 	CHK(i4);
+	////////////
+	array<float,6> f6 = {{0,1,2,3,4,5}};
+	array<float,10> f10 = {{0,1,2,3,4,5,6,7,8,9}};
+	PR1(f6.max());
+	//PR1(f6.max<sse>()); // test for static assert
+	PR1(f10.max<sse>());
+	PR1(f10.max());
 
 
 	cout << (all_pass ? "\n------------ all pass ------------\n" : "\n!!!!!!!!!  SOME FAILED  !!!!!!!!\n");
