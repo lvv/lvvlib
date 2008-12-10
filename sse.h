@@ -52,8 +52,10 @@ struct C {
 
 	
 	#define mk_m128(x) *(__m128*)&(x)
-	template<typename T, int N, int BEGIN> class array;
-	array<float,4,0>& mk_array(const __m128& m128) { return *(array<float,4,0>*)&(m128); } // is there an overhead?
+	template<typename T, int N, int B> class array;
+	//template<typename T, int N, int B> const lvv::array<T,N,B>& mk_array(const __m128 m128) { return reinterpret_cast<lvv::array<T,N,B> > (m128); } // is there an overhead?
+	template<typename T, int N, int B> const lvv::array<T,N,B>& mk_array(const __m128& m128) { return *(lvv::array<T,N,B>*)&(m128); } // is there an overhead?
+	//array<float,4,0>& mk_array(const __m128& m128) { return *(array<float,4,0>*)&(m128); } // is there an overhead?
 
 				} // namespace lvv
 				#endif // LVV_SSE_H

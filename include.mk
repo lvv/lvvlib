@@ -15,7 +15,7 @@ SPEED := $(s:d=DEBUG)
 SPEED  	?= DEBUG
 
 #######################################################################################  COMPILE SPECIFIC
-g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare  # -Wmissing-braces
+g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare -fstrict-aliasing # -Wmissing-braces
 
 # SAFE
 #g++FLAGS_OPTIMIZE := -ggdb3 -O2 -march=native 

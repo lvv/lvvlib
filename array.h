@@ -156,16 +156,16 @@ template < class T, int N, int BEGIN=0> class array {
 
 	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
 
-	T					sum() 		const		{ return std::accumulate(begin(), end(), 0); };
-	//T					max() 		const		{ return *std::max_element(begin(), end()); };
-	template<typename method_type>	T	max(){ return max_impl(method_type()); } 			// explicit template selecton	
-					T	max(){ return max_impl(typename select_method<T,N>::type()); }	// auto-selection (no template)
+	T					sum() 		const	{ return std::accumulate(begin(), end(), 0); };
+	//T					max() 		const	{ return *std::max_element(begin(), end()); };
+	template<typename method_type>	T	max()		const	{ return max_impl(method_type()); } 			// explicit template selecton	
+					T	max()		const	{ return max_impl(typename select_method<T,N>::type()); }	// auto-selection (no template)
 						// default template paramter:  Due to an unfortunate oversight, the standard simply bans
 						// default arguments for template parameters for a function template. Voted
 						// to be corrected in the next standard
 
-	T max_impl (plain)  { cerr <<" max<plain>" << N; return *std::max_element(begin(), end()); }
-	T max_impl (sse)    { cerr <<" max<sse>" << N << "(" << N-N%8 <<")"; 
+	T max_impl (plain)  const { cerr <<" max<plain>" << N; return *std::max_element(begin(), end()); }
+	T max_impl (sse)    const { cerr <<" max<sse>" << N << "(" << N-N%8 <<")"; 
 		const unsigned	sse_size	= 4;
 		const unsigned	unroll		= 2;
 										// commented out: boost-1.37/SVN  error
@@ -186,7 +186,7 @@ template < class T, int N, int BEGIN=0> class array {
 		}
 
 		m1 = _mm_max_ps(m1, m2);
-		return  mk_array(m1).max<plain>();
+		return  std::max(mk_array<float,4,0>(m1).max<plain>()   ,    (*(array<float,N-sse_cycle,0> *) (&elems[sse_cycle])).max<plain>() );
 	}
 	
 };
