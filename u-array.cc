@@ -100,15 +100,18 @@ main() {
 	CHECK( b_m2[-2]== a1[1]);
 	CHECK( b_m2[2] == a1[5]);
 	#endif
-	//////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////		SSE ALIGNMENT
 
-#define CHK(var)	cout << #var << " \t " << &var << " \t " <<  reinterpret_cast<size_t>(&var) % 16 << endl; 
+//#define CHK(var)	cout << #var << " \t " << &var << " \t " <<  reinterpret_cast<size_t>(&var) % 16 << endl; 
+#define CHK(x)
 
-	cout << "SUM: " << c1.sum() << endl;
-	cout << "MAX: " << c1.max() << endl;
-	cout << "MAX: " << c1.max<sse>() << " \t " << &c1 << "\t addr % 16 = " << reinterpret_cast<size_t>(&c1) % 16 << endl;
-	cout << "MAX: " << c2.max<sse>() << " \t " << &c2 << "\t addr % 16 = " << reinterpret_cast<size_t>(&c2) % 16 << endl;
-	CHK(c2);
+#define IS_ALIGN16(var)	((reinterpret_cast<size_t>(&var) % 16) == 0)
+
+	//cout << "SUM: " << c1.sum() << endl;
+	//cout << "MAX: " << c1.max() << endl;
+	//cout << "MAX: " << c1.max<sse>() << " \t " << &c1 << "\t addr % 16 = " << reinterpret_cast<size_t>(&c1) % 16 << endl;
+	//cout << "MAX: " << c2.max<sse>() << " \t " << &c2 << "\t addr % 16 = " << reinterpret_cast<size_t>(&c2) % 16 << endl;
+	//CHK(c2);
 
 	CHK(c0);
 	CHK(c1);
@@ -129,22 +132,24 @@ main() {
 	CHK(f4[2]);
 	CHK(f4[3]);
 
-	CHK(c201);
+	CHK(c201);   CHECK(IS_ALIGN16(c201)); 
 
 	typedef int       i4_t[101]; // __attribute__((aligned(16)));
 	i4_t	i4;	
-	CHK(i4);
-	////////////
-	array<float,6> f6 = {{0,1,2,3,4,5}};
-	array<float,10> f10 = {{0,1,2,3,4,5,6,7,8,9}};
-	PR1(f6.max());
-	//PR1(f6.max<sse>()); // test for static assert
-	PR1(f10.max<sse>());
-	PR1(f10.max());
+	CHK(i4);     CHECK(IS_ALIGN16(i4)); 
 
+	//////////////////////////////////////////////////////////////////////////////////  SSE OPS
+	{  array<float,6> f6 = {{1,2,3,4,5,6}}; CHECK( f6.max() == 6 ); }
 
-	cout << (all_pass ? "\n------------ all pass ------------\n" : "\n!!!!!!!!!  SOME FAILED  !!!!!!!!\n");
-	exit(all_pass ? 0 : 1);
+	{
+	array<float,3> f3 = {{1,2,3}};
+	array<float,10> f10 = {{1,2,3,4,5,6,7,8,9,10}};
+	array<float,20> f20 = {{1,2,3,4,5,6,7,8,9,10}};
+	CHECKeq(f3.max<sse>(),3);
+	CHECKeq(f10.max<sse>(),10);
+	CHECK(f20.max<sse>()==10);
+	CHECK(f20.max()==10);
+	}
 
-
+	CHECK_EXIT;
 }

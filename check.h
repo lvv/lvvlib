@@ -23,3 +23,6 @@ static bool result=false;
 	else	    std::cout <<  "are not equal: \t" << #e1 "  !=  " #e2  << "   values: " << (e1) << ",  " << (e2) <<  std::endl;
 
 
+#define CHECK_EXIT \
+	cout << (all_pass ? "\n------------ all pass ------------\n" : "\n!!!!!!!!!  SOME FAILED  !!!!!!!!\n"); \
+	exit(all_pass ? 0 : 1);
