@@ -63,7 +63,9 @@ CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $(
 
 
 .SUFFIXES: .cc -r -c -g  -gp
-.PHONY  = %-r %-g %-gr  %-gp
+.PHONY  = %-r %-g %-gr  %-gp *-r
+
+b-%  u-%  : MAKEFLAGS	+= -B
 
 % : %.cc
 	@tput sgr0; tput setaf 4
@@ -92,5 +94,8 @@ CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS) $(
 %-r: %.cc
 	make $(<:.cc=)
 	./$(<:.cc=)
+
+u-*       : CXXFLAGS	+= -Wno-unused-variable
+b-*       : SPEED      	 = OPTIMIZE
 
 # vim:noexpandtab ft=make:

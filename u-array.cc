@@ -4,13 +4,16 @@
 #include <lvv/math.h>
 	using lvv::eq;
 #include <lvv/array.h>
-#include <lvv/lvv.h>
 	using lvv::array;
+	using lvv::sse;
+	using lvv::plain;
+	using lvv::openmp;
+
+#include <lvv/lvv.h>
 
 #include <lvv/check.h>
 //#include <lopti/convert-gsl.h>
 	using namespace std;
-	using namespace lvv;
 
                 int
 main() {

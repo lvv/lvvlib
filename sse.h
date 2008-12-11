@@ -2,7 +2,6 @@
 				#ifndef LVV_SSE_H
 				#define LVV_SSE_H
 				
-				namespace lvv {
 
 #include <lvv/meta.h>
 
@@ -14,7 +13,8 @@
 #include <boost/detail/select_type.hpp>
 	using boost::detail::if_true;
 
-
+				namespace lvv {
+/*
 // indicator what technoloty is available
 struct plain	{};	// no OpenMP, no SSE
 struct sse  	{};	// SSE, no OpenMP
@@ -34,27 +34,15 @@ struct select_alignment {
 		typedef		elem_t										type;				
 	#endif
 };
-
-/*
-		template<typename T, int N>
-struct C { 
-			template<typename method_selector_type>
-	void method(){ method_impl(             method_selector_type()); }	// explicti
-	void method(){ method_impl(typename select_method<T,N>::type()); }	// auto through select_method 
-						// default template paramter:  Due to an unfortunate oversight, the standard simply bans
-						// default arguments for template parameters for a function template. Voted
-						// to be corrected in the next standard
-
-	void method_impl (plain)  { cout <<"i am plain()" << N  << "\n"; }
-	void method_impl (sse)    { cout <<"i am sse()  " << N  << "\n"; }
-};
 */
 
 	
 	#define mk_m128(x) *(__m128*)&(x)
+	//namespace array {
 	template<typename T, int N, int B> class array;
 	//template<typename T, int N, int B> const lvv::array<T,N,B>& mk_array(const __m128 m128) { return reinterpret_cast<lvv::array<T,N,B> > (m128); } // is there an overhead?
-	template<typename T, int N, int B> const lvv::array<T,N,B>& mk_array(const __m128& m128) { return *(lvv::array<T,N,B>*)&(m128); } // is there an overhead?
+	template<typename T, int N, int B> const array<T,N,B>& mk_array(const __m128& m128) { return *(array<T,N,B>*)&(m128); } // is there an overhead?
+	//}
 	//array<float,4,0>& mk_array(const __m128& m128) { return *(array<float,4,0>*)&(m128); } // is there an overhead?
 
 				} // namespace lvv

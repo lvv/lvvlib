@@ -9,6 +9,8 @@
 						// for aggregate types. An array or class type is not an aggregate if it has
 						// any user-declared constructors, any private or protected nonstatic data
 						// members, any base classes, or any virtual functions.
+
+	
 		#include	<lvv/lvv.h>
 		#include	<lvv/math.h>
 		#include	<cassert>
@@ -35,23 +37,34 @@
 
 		namespace lvv {
 
+	// indicator what technology is available
+	struct plain	{};	// no OpenMP, no SSE
+	struct sse  	{};	// SSE, no OpenMP
+	struct openmp   {};	// OpenMP + SSE
+	const unsigned	sse_threshould = 128;
 
-template < class T, int N, int BEGIN=0> class array {
+	template<typename TT, int NN>	struct	select_method			{typedef	plain		type;}; // default method
+	template<int NN>		struct	select_method<float,NN>		{typedef	typename IF< (NN>127), sse, plain>::type 	type;};
 
-      public:
+				template<typename TT, int NN>
+	struct select_alignment {
+		typedef TT	elem_t[NN]; 
+		typedef TT	elem_align_t[NN] __attribute__((aligned(16))); 
 
-	/*
-	typedef T	elem_t[N]; 
-	typedef T	elem_align_t[N] __attribute__((aligned(16))); 
-	*/
+		#ifdef __SSE__
+			typedef		typename if_true<(NN>127)>::template then<elem_align_t, elem_t>::type		type;
+		#else
+			typedef		elem_t										type;				
+		#endif
+	};
 
-	/*
-	#ifdef __SSE__
-		typename if_true<(N>127)>::template then<elem_align_t, elem_t>::type  elems;
-	#else
-		elem_t	elems;				
-	#endif
-	*/
+		//namespace array {
+
+////////////////////////////////////////////////////////////////////////////////////////////////////   ARRAY CLASS
+template < class T, int N, int BEGIN=0> class array { public:
+
+
+
 	typename select_alignment<T,N>::type	elems;
 
 	enum { sz = N, ibg=BEGIN, ien=BEGIN+N };  // gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
@@ -69,7 +82,7 @@ template < class T, int N, int BEGIN=0> class array {
 
 	// CTOR 
 	
-	// n/a (imposible with having aggrigate constructor)
+	// n/a (impossible with having aggregate constructor)
 
 
 	// index
@@ -153,17 +166,22 @@ template < class T, int N, int BEGIN=0> class array {
 
 	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
 
-	T					sum() 		const	{ return std::accumulate(begin(), end(), 0); };
 
-	//// ----------------------------------------------------------------------------------------------------------------- MAX
-	template<typename method_type>	T	max()	const	{ return max_impl(method_type()); } 			// explicit template selecton	
+	//// ================================================================================================================ SUM
+	T					sum() 		const	{ return std::accumulate(begin(), end(), 0); };
+	//// ================================================================================================================ MAX
+	T					min() 		const	{ return *std::min_element(begin(), end()); };
+
+	template<typename method_type>	T	max()	const	{ return max_impl(method_type()); } 				// explicit template selection	
 					T	max()	const	{ return max_impl(typename select_method<T,N>::type()); }	// auto-selection (no template)
-							// default template paramter:  Due to an unfortunate oversight, the standard simply bans
+							// default template parameter:  Due to an unfortunate oversight, the standard simply bans
 							// default arguments for template parameters for a function template. Voted
 							// to be corrected in the next standard
 
-	T max_impl (plain)  const { DBG cerr <<" max<plain>" << N; return *std::max_element(begin(), end()); }
-	T max_impl (sse)    const { DBG cerr <<" max<sse>" << N << "(" << N-N%8 <<")"; 
+	//// ----------------------------------------------------------------------------------------------------------------- MAX
+	T max_impl (plain) 		const { DBG cerr <<" max<plain>" << N; return *std::max_element(begin(), end()); }
+	//T max_impl (sse, T)		const { DBG cerr <<" max<sse,T>" << N; return *std::max_element(begin(), end()); }
+	T max_impl (sse)		const { DBG cerr <<" max<sse,float>" << N << "(" << N-N%8 <<")"; 
 		const unsigned	sse_size	= 4;
 		const unsigned	unroll		= 2;
 										// commented out: boost-1.37/SVN  error
@@ -204,7 +222,7 @@ template<class T, int N, int B> bool operator>=(const array<T, N, B> &x, const a
 template < class T, size_t N, int B > inline void swap(array < T, N, B > &x, array < T, N, B > &y) { x.swap(y); }
 
 
-// array op= scallar  ( conflict with google sparsehash if we not spell out type)
+// array op= scalar  ( conflict with google sparsehash if we not spell out type)
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator*=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
@@ -259,7 +277,7 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
  };
 
 
-template <typename T, int N> 		class vector: public lvv::array<T,N,1> {}; // index start from 1
+template <typename T, int N> 		class vector: public array<T,N,1> {}; // index start from 1
 template <typename T, int N1, int N2, int B1=1, int B2=1>	class matrix: public array<array<T,N1,B1>,N2,B2> {
 	enum { sz1 = N1, sz2=N2, sz0=N1*N2 };
 	// operator()(int i, int j) { return elems[i][j]; }

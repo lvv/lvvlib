@@ -3,10 +3,8 @@
 
 include include.mk
 	
-u-*    : CXXFLAGS +=-Wno-unused-variable
 
 t-* u-*    : *.h
-t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
 
 #CXXFLAGS +=  -D ASMLIB -I .. -I /usr/local/include
 #LDFLAGS  +=  -L /usr/local/lib/ -l:alibelf64o.a -lgsl
