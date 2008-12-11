@@ -3,6 +3,8 @@
 
 include include.mk
 	
+u-*    : CXXFLAGS +=-Wno-unused-variable
+
 t-* u-*    : *.h
 t-gz*  t-gunzip : LDFLAGS  += -lgzstream -lz
 
