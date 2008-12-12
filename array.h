@@ -172,16 +172,15 @@ template < class T, int N, int BEGIN=0> class array { public:
 	//// ================================================================================================================ MAX
 	T					min() 		const	{ return *std::min_element(begin(), end()); };
 
-	template<typename method_type>	T	max()	const	{ return max_impl(method_type()); } 				// explicit template selection	
-					T	max()	const	{ return max_impl(typename select_method<T,N>::type()); }	// auto-selection (no template)
+	template<typename method_type>	T	max()	const	{ return max_impl(method_type(), T()); } 				// explicit template selection	
+					T	max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }	// auto-selection (no template)
 							// default template parameter:  Due to an unfortunate oversight, the standard simply bans
 							// default arguments for template parameters for a function template. Voted
 							// to be corrected in the next standard
 
 	//// ----------------------------------------------------------------------------------------------------------------- MAX
-	T max_impl (plain) 		const { DBG cerr <<" max<plain>" << N; return *std::max_element(begin(), end()); }
-	//T max_impl (sse, T)		const { DBG cerr <<" max<sse,T>" << N; return *std::max_element(begin(), end()); }
-	T max_impl (sse)		const { DBG cerr <<" max<sse,float>" << N << "(" << N-N%8 <<")"; 
+	T	max_impl (plain, T) 		const { DBG cerr <<" max<plain> " << N; return *std::max_element(begin(), end()); }
+	float	max_impl (sse, float)		const { DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
 		const unsigned	sse_size	= 4;
 		const unsigned	unroll		= 2;
 										// commented out: boost-1.37/SVN  error

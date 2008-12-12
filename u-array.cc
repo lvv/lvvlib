@@ -148,9 +148,9 @@ main() {
 	array<float,3> f3 = {{1,2,3}};
 	array<float,10> f10 = {{1,2,3,4,5,6,7,8,9,10}};
 	array<float,20> f20 = {{1,2,3,4,5,6,7,8,9,10}};
-	CHECKeq(f3.max<sse>(),3);
-	CHECKeq(f10.max<sse>(),10);
-	CHECK(f20.max<sse>()==10);
+	CHECKeq((f3.max<sse>()),3);
+	CHECKeq((f10.max<sse>()),10);
+	CHECK((f20.max<sse>()==10));
 	CHECK(f20.max()==10);
 	}
 
