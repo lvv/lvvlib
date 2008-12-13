@@ -37,11 +37,18 @@
 
 	template<typename T, int N>	struct	select_method			{typedef	plain		type;}; // default method
 
+	#if	defined(CANUSE_MMX)  &&  defined(__i386__)
+	template<int N>			struct	select_method<int16_t,N>	{typedef	typename IF< (N>127), mmx, plain>::type 	type;};
+	#endif
+
 	#ifdef CANUSE_SSE
 	template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>127), sse,  plain>::type 	type;};
 	#endif
 
+	#ifdef CANUSE_SSE2
 	template<int N>			struct	select_method<int16_t,N>	{typedef	typename IF< (N>127), sse2, plain>::type 	type;};
+	#endif
+
 
 				template<typename TT, int NN>
 	struct select_alignment {
@@ -105,26 +112,17 @@ template < class T, int N, int BEGIN=0> class array { public:
 	reference				operator[](int i) throw(char *)	{
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				//format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":%d" );    
-				cerr << "lvv::array::operator[] error: index=" << i <<  "out of range [" << ibegin() << ".." << iend()
-					<< ")  at " << __FILE__ << ":" << __LINE__ ;    
-				//msg %i %ibegin() %iend() %__LINE__;
-				//throw  msg.str().c_str();
+				cerr << "lvv::array::operator[] error: index=" << i <<  "out of range [" << ibegin() << ".." << iend() << ")  at " << __FILE__ << ":" << __LINE__ ;    
 				assert(false);
 			}
 		#endif 
 		return elems[i-BEGIN];
-		// TODO __OPTIMIZE__ - is defined in all optimizing compilations,
 	}
 
 	const_reference				operator[](int i) const	 throw(char *) {
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				//format msg("lvv::array::operator[] error: index=%d out of range [%d..%d)  at " __FILE__ ":%d" );    
 				cerr << "lvv::array::operator[] error: index=" << i <<  "out of range [" << ibegin() << ".." << iend() <<")  at " << __FILE__ << ":" << __LINE__;    
-				//msg %i %ibegin() %iend() %__LINE__;
-				//cerr << msg << endl;
-				//throw  msg.str().c_str();
 				assert(false);
 			}
 		#endif 
@@ -166,14 +164,14 @@ template < class T, int N, int BEGIN=0> class array { public:
 
 	//// ================================================================================================================ SUM
 	T					sum() 		const	{ return std::accumulate(begin(), end(), 0); };
+
 	//// ================================================================================================================ MAX
 	T					min() 		const	{ return *std::min_element(begin(), end()); };
 
-	template<typename method_type>	T	max()	const	{ return max_impl(method_type(), T()); } 			// explicit template selection	
-					T	max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }	// auto-selection (no template)
-							// default template parameter:  Due to an unfortunate oversight, the standard simply bans
-							// default arguments for template parameters for a function template. Voted
-							// to be corrected in the next standard
+	template<typename method_type>	T	max()	const	{ return max_impl(method_type(), T()); } 			// explicit
+					T	max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }	// auto-selection
+		// default template parameter:  Due to an unfortunate oversight, the standard simply bans
+		// default arguments for template parameters for a function template. Voted to be corrected in the next standard
 
 	//// ----------------------------------------------------------------------------------------------------------------- MAX
 	T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = ((max>elems[i]) ? max : elems[i]); return max; }
