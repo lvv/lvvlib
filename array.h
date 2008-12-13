@@ -163,22 +163,13 @@ template < class T, int N, int BEGIN=0> class array { public:
 
 
 	//// ================================================================================================================ SUM
-	T					sum() 		const	{ return std::accumulate(begin(), end(), 0); };
+	T	sum_impl(plain, T) 	const	{ return std::accumulate(begin(), end(), 0); };			// default impt
 
-	//// ================================================================================================================ MAX
-	T					min() 		const	{ return *std::min_element(begin(), end()); };
+	template<typename method_type>	T	sum()	const	{ return sum_impl(method_type(), T()); } 			// explicit
+					T	sum()	const	{ return sum_impl(typename select_method<T,N>::type(), T()); }	// auto-selection
 
-	template<typename method_type>	T	max()	const	{ return max_impl(method_type(), T()); } 			// explicit
-					T	max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }	// auto-selection
-		// default template parameter:  Due to an unfortunate oversight, the standard simply bans
-		// default arguments for template parameters for a function template. Voted to be corrected in the next standard
-
-	//// ----------------------------------------------------------------------------------------------------------------- MAX
-	T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = ((max>elems[i]) ? max : elems[i]); return max; }
-
-	
-
-	float	max_impl (sse, float)		const { DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
+	//-------------------------------------
+	float	sum_impl (sse, float)		const { DBG cerr << " max<sse,float> " << N << "(" << N-N%8 <<")"; 
 		#ifdef  CANUSE_SSE
 		const unsigned	sse_size	= 4;
 		const unsigned	unroll		= 2;
@@ -195,54 +186,95 @@ template < class T, int N, int BEGIN=0> class array { public:
 
 		for (size_t i= cycle_step;  i < sse_cycle; i+=cycle_step) { 			// SSE
 			//dPR1(i);
-			  m1 = _mm_max_ps(m1, mk_m128(elems[i]) );
-			  m2 = _mm_max_ps(m2, mk_m128(elems[i+sse_size]) );
+			  m1 = _mm_add_ps(m1, mk_m128(elems[i]) );
+			  m2 = _mm_add_ps(m2, mk_m128(elems[i+sse_size]) );
 			 __builtin_prefetch((void*)&elems[i+prefetch],0,0);      
 		}
 
-		m1 = _mm_max_ps(m1, m2);
-		T m  = mk_array<float,4,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  m = m < elems[i] ? elems[i] : m;   return  m;
+		m1 = _mm_add_ps(m1, m2);
+		T m  = mk_array<float,4,0>(m1).sum<plain>();  /* for (size_t i=sse_cycle; i<N; i++)  m += m < elems[i] ? elems[i] : m;*/   return  m;
 		#else
-		T m  = elems[0];   for (size_t i=1; i<N; i++)  m = m < elems[i] ? elems[i] : m;   return  m;
+		T m  = elems[0];   for (size_t i=1; i<N; i++)  m +=  elems[i] : m;   return  m;
 		#endif
 	}
+//// ================================================================================================================ MAX
+T					min() 		const	{ return *std::min_element(begin(), end()); };
 
+template<typename method_type>	T	max()	const	{ return max_impl(method_type(), T()); } 			// explicit
+T					max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }	// auto-selection
+		// default template parameter:  Due to an unfortunate oversight, the standard simply bans
+		// default arguments for template parameters for a function template. Voted to be corrected in the next standard
 
-	int16_t	max_impl (sse2, int16_t)		const { DBG cerr << " max<sse2,int16> " << N << "(" << N-N%8 << ")"; 
-		int16_t m;
-		#ifdef CANUSE_SSE2
-		const unsigned	sse_size	= 8;
-		const unsigned	unroll		= 2;
-										//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
-										//STATIC_ASSERT(N>=sse_size*unroll,"sse can be used for N>=8");
-										assert(N>=sse_size*unroll);
-		const unsigned	prefetch	= 512;
-		const unsigned	cycle_step	= unroll * sse_size;
-		const size_t	sse_cycle	= N - N % cycle_step;
+//// ----------------------------------------------------------------------------------------------------------------- MAX
 
-		__m128i m1 = mk_m128i(elems[0]);
-		__m128i m2 = mk_m128i(elems[sse_size]);
+T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = ((max>elems[i]) ? max : elems[i]); return max; }
 
-		for (size_t i= cycle_step;  i < sse_cycle; i+=cycle_step) { 			// SSE
-			//dPR1(i);
-			  m1 = _mm_max_epi16(m1, mk_m128i(elems[i]) );
-			  m2 = _mm_max_epi16(m2, mk_m128i(elems[i+sse_size]) );
-			 __builtin_prefetch((void*)&elems[i+prefetch],0,0);      
-		}
+	
 
-		m1 = _mm_max_epi16(m1, m2);
-		m  = mk_array<int16_t,sse_size,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  m = m < elems[i] ? elems[i] : m;
+float	max_impl (sse, float)		const { DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
+	#ifdef  CANUSE_SSE
+	const unsigned	sse_size	= 4;
+	const unsigned	unroll		= 2;
+									// commented out: boost-1.37/SVN  error
+									//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
+									//STATIC_ASSERT(N>=sse_size*unroll,"sse can be used for N>=8");
+									assert(N>=sse_size*unroll && "sse can be used for N>=8");
+	const unsigned	prefetch	= 512;
+	const unsigned	cycle_step	= unroll * sse_size;
+	const size_t	sse_cycle	= N - N % cycle_step;
 
-		#else
-		m = elems[0]; for (const int16_t* p = &elems[0]; p != &elems[N]; p++) { if (*p > m) m = *p; };
-		#endif
+	__m128 m1 = mk_m128(elems[0]);
+	__m128 m2 = mk_m128(elems[sse_size]);
 
-		return m;
+	for (size_t i= cycle_step;  i < sse_cycle; i+=cycle_step) { 			// SSE
+		//dPR1(i);
+		  m1 = _mm_max_ps(m1, mk_m128(elems[i]) );
+		  m2 = _mm_max_ps(m2, mk_m128(elems[i+sse_size]) );
+		 __builtin_prefetch((void*)&elems[i+prefetch],0,0);      
 	}
 
-};
-//////////////////////////////////////////////////////////////////////////////////////////////   END ARRAY
+	m1 = _mm_max_ps(m1, m2);
+	T m  = mk_array<float,4,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  m = m < elems[i] ? elems[i] : m;   return  m;
+	#else
+	T m  = elems[0];   for (size_t i=1; i<N; i++)  m = m < elems[i] ? elems[i] : m;   return  m;
+	#endif
+ }
 
+	
+int16_t	max_impl (sse2, int16_t)		const { DBG cerr << " max<sse2,int16> " << N << "(" << N-N%8 << ")"; 
+	int16_t m;
+	#ifdef CANUSE_SSE2
+	const unsigned	sse_size	= 8;
+	const unsigned	unroll		= 2;
+									//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
+									//STATIC_ASSERT(N>=sse_size*unroll,"sse can be used for N>=8");
+									assert(N>=sse_size*unroll);
+	const unsigned	prefetch	= 512;
+	const unsigned	cycle_step	= unroll * sse_size;
+	const size_t	sse_cycle	= N - N % cycle_step;
+
+	__m128i m1 = mk_m128i(elems[0]);
+	__m128i m2 = mk_m128i(elems[sse_size]);
+
+	for (size_t i= cycle_step;  i < sse_cycle; i+=cycle_step) { 			// SSE
+		//dPR1(i);
+		  m1 = _mm_max_epi16(m1, mk_m128i(elems[i]) );
+		  m2 = _mm_max_epi16(m2, mk_m128i(elems[i+sse_size]) );
+		 //__builtin_prefetch((void*)&elems[i+prefetch],0,0);      
+	}
+
+	m1 = _mm_max_epi16(m1, m2);
+	m  = mk_array<int16_t,sse_size,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  m = m < elems[i] ? elems[i] : m;
+
+	#else
+	m = elems[0]; for (const int16_t* p = &elems[0]; p != &elems[N]; p++) { if (*p > m) m = *p; };
+	#endif
+
+	return m;
+ }
+
+ };
+////////////////////////////////////////////////////////////////////////////////////////////////////   END ARRAY
 
 
 // comparisons

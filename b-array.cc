@@ -1,27 +1,33 @@
 	///////////////////   CONFIG
-	//#define		I16_CMP
-	#define		F32_CMP
+	//#define		I16
+	#define		F32
+	//#define 	INCLUDE		"b-cmp.h"
+	#define 	INCLUDE		"b-sum.h"
 	#define		REPEAT		7
-	#define 	INCLUDE		"b-cmp.h"
-	const static unsigned long	N =   		100000000;
+	const static unsigned long	N = 	100000000;
 
-	#ifdef	F32_CMP
+	#ifdef	F32
 		#define		TYPE		float
-		#define		DO_SIMD
 		#define		CANUSE_OMP
 		#define		CANUSE_SSE
 		#define		SSE_SIZE	4
-		#define		MM_OP 		_mm_max_ps
+		#define		MM_ADD_OP 	_mm_add_ps
+		#define		MM_CMP_OP 	_mm_max_ps
 		#define		CMP_OP 		>
 		#define		REG_T		__m128
 		#define		MK_REG		mk_m128
+
+			#define		DO_PLAIN
+			#define		DO_OO
+			#define		DO_SIMD
+			#define		DO_OMP
 	#endif
 
-	#ifdef	I16_CMP
+	#ifdef	I16
 		#define		TYPE		int16_t
 		#define		CANUSE_OMP
 		#define		SSE_SIZE	8
-		#define		MM_OP 		_mm_max_epi16
+		#define		MM_CMP_OP 		_mm_max_epi16
 		#define		CMP_OP 		>
 		#define		REG_T		__m128i
 		#define		MK_REG		mk_m128i
@@ -52,7 +58,7 @@
 int main(int argc, char *argv[]) {
 
 	///////////////////////////////////  ID
-	cout << ID << "    <<"
+	cout << ID  //<< "    << " 
 		#ifdef CANUSE_MMX
 			<< " mmx "
 		#endif
@@ -87,7 +93,7 @@ int main(int argc, char *argv[]) {
 
 	#define PRINT(NAME,EXPR)							\
 		tick[r] = ticks = t.interval_ticks() / float (N); sec = t.interval_cpu();		\
-		if (r==0)		cout	<<(EXPR) <<"  "<< sec <<"\t\t" << ticks;	\
+		if (r==0)		cout	<< setw(10) << (EXPR) <<"  " << setprecision(3) << setw(8) << sec <<"\t\t" << ticks;	\
 		else			cout	<< "\t" <<  ticks; \
 		if (r==(REPEAT-1))	cout	<< "\t\t" <<  tick.min() << "  \t" << NAME << endl;
 
