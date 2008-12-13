@@ -5,45 +5,45 @@
 
 #include <lvv/meta.h>
 
+//#include <immintrin.h>		// we can just include  immitrin instead of all these test, but it is only in gcc44
+#ifdef __MMX__
+	#include <mmintrin.h>
+#endif
+
 #ifdef __SSE__
+	#include <xmmintrin.h>
+#endif
+
+#ifdef __SSE2__
 	#include <emmintrin.h>
-	//#include <immintrin.h>		// immitrin doesn't need ifdef wrapper, but it is only in gcc44
 #endif
 
 #include <boost/detail/select_type.hpp>
 	using boost::detail::if_true;
 
 				namespace lvv {
-/*
-// indicator what technoloty is available
-struct plain	{};	// no OpenMP, no SSE
-struct sse  	{};	// SSE, no OpenMP
-struct openmp   {};	// OpenMP + SSE
-
-template<typename T, int N>	struct	select_method			{typedef	plain		type;}; // default method
-template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>127), sse, plain>::type 	type;};
-
-			template<typename T, int N>
-struct select_alignment {
-	typedef T	elem_t[N]; 
-	typedef T	elem_align_t[N] __attribute__((aligned(16))); 
-
-	#ifdef __SSE__
-		typedef		typename if_true<(N>127)>::template then<elem_align_t, elem_t>::type		type;
-	#else
-		typedef		elem_t										type;				
-	#endif
-};
-*/
 
 	
 	#define mk_m128(x) *(__m128*)&(x)
+	#define mk_m128i(x) *(__m128i*)&(x)
 	//namespace array {
 	template<typename T, int N, int B> class array;
 	//template<typename T, int N, int B> const lvv::array<T,N,B>& mk_array(const __m128 m128) { return reinterpret_cast<lvv::array<T,N,B> > (m128); } // is there an overhead?
-	template<typename T, int N, int B> const array<T,N,B>& mk_array(const __m128& m128) { return *(array<T,N,B>*)&(m128); } // is there an overhead?
-	//}
-	//array<float,4,0>& mk_array(const __m128& m128) { return *(array<float,4,0>*)&(m128); } // is there an overhead?
+	template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128&  V) { return *(array<T,N,B>*)&(V); } // is there an overhead?
+	template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128i& V) { return *(array<T,N,B>*)&(V); }
+	//template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const T* v) { return *reinterpret_cast<const array<T,N,B>*>(v); }	   
 
+
+	// indicator what technology is available
+	struct plain	{};	// no OpenMP, no SSE
+
+	struct mmx  	{};	// 
+	struct sse  	{};	// SSE, no OpenMP
+	struct sse2  	{};	// 
+	struct sse3  	{};	// 
+	struct ssse3  	{};	// 
+
+	struct openmp   {};	// OpenMP + SSE
+	const unsigned	sse_threshould = 128;
 				} // namespace lvv
 				#endif // LVV_SSE_H

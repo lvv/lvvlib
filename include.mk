@@ -15,11 +15,11 @@ SPEED := $(s:d=DEBUG)
 SPEED  	?= DEBUG
 
 #######################################################################################  COMPILE SPECIFIC
-g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare -fstrict-aliasing # -Wmissing-braces
+g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare # -fstrict-aliasing # -Wmissing-braces
 
 # SAFE
-#g++FLAGS_OPTIMIZE := -ggdb3 -O2 -march=native 
-#g++FLAGS_OPTIMIZE := -ggdb3 -O2 -march=native  -fwhole-program --combine
+#g++FLAGS_OPTIMIZE := -O2 -march=native 
+#g++FLAGS_OPTIMIZE := -O2 -march=native  -fwhole-program --combine
 g++FLAGS_OPTIMIZE :=         -O3 -march=native  -fwhole-program --combine  -fopenmp -fomit-frame-pointer -funsafe-loop-optimizations
 # FAST
 #g++FLAGS_OPTIMIZE :=        -O3 -march=native  -fwhole-program --combine  -fopenmp -fomit-frame-pointer -fargument-noalias-anything -ffast-math -funsafe-loop-optimizations -fassociative-math -fassociative-math  -mfpmath=sse,387 -fno-builtin -fargument-noalias-anything  -fassociative-math

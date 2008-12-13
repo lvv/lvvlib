@@ -1,8 +1,8 @@
 
 	// template metaprogramming and conveniance macros
 	
-	#ifndef LVVLIB_META_H
-	#define LVVLIB_META_H
+	#ifndef LVV_META_H
+	#define LVV_META_H
 
 	
 	// TODO:  2 check boost: typedef typename tools::promote_args<T>::type result_type;
@@ -89,5 +89,5 @@ do { \
 
 
 		}
-		#endif // LVVMATH_H
+		#endif // LVV_META_H
  

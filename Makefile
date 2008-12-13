@@ -1,5 +1,5 @@
 
-.DEFAULT_GOAL := test
+.DEFAULT_GOAL := u-array-r
 
 include include.mk
 	
@@ -9,9 +9,16 @@ t-* u-*    : *.h
 #CXXFLAGS +=  -D ASMLIB -I .. -I /usr/local/include
 #LDFLAGS  +=  -L /usr/local/lib/ -l:alibelf64o.a -lgsl
 
+
 test:	u-array u-powi
 	./u-array
 	./u-powi
+
+testall:	u-array u-powi
+	./u-array
+	./u-powi
+
+b-array: SPEED = OPTIMIZE
 
 t-timer: t-timer.cc
 	$(CXX) $(CXXFLAGS) $< $(LDFLAGS) -o $@ 
