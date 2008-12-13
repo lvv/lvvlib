@@ -170,7 +170,6 @@ template < class T, int N, int BEGIN=0> class array { public:
 
 	//-------------------------------------
 	float	sum_impl (sse, float)		const { DBG cerr << " max<sse,float> " << N << "(" << N-N%8 <<")"; 
-		#ifdef  CANUSE_SSE
 		const unsigned	sse_size	= 4;
 		const unsigned	unroll		= 2;
 										// commented out: boost-1.37/SVN  error
@@ -193,9 +192,6 @@ template < class T, int N, int BEGIN=0> class array { public:
 
 		m1 = _mm_add_ps(m1, m2);
 		T m  = mk_array<float,4,0>(m1).sum<plain>();  /* for (size_t i=sse_cycle; i<N; i++)  m += m < elems[i] ? elems[i] : m;*/   return  m;
-		#else
-		T m  = elems[0];   for (size_t i=1; i<N; i++)  m +=  elems[i] : m;   return  m;
-		#endif
 	}
 //// ================================================================================================================ MAX
 T					min() 		const	{ return *std::min_element(begin(), end()); };
@@ -212,7 +208,6 @@ T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = 
 	
 
 float	max_impl (sse, float)		const { DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
-	#ifdef  CANUSE_SSE
 	const unsigned	sse_size	= 4;
 	const unsigned	unroll		= 2;
 									// commented out: boost-1.37/SVN  error
@@ -235,9 +230,6 @@ float	max_impl (sse, float)		const { DBG cerr <<" max<sse,float> " << N << "(" <
 
 	m1 = _mm_max_ps(m1, m2);
 	T m  = mk_array<float,4,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  m = m < elems[i] ? elems[i] : m;   return  m;
-	#else
-	T m  = elems[0];   for (size_t i=1; i<N; i++)  m = m < elems[i] ? elems[i] : m;   return  m;
-	#endif
  }
 
 	

@@ -4,7 +4,7 @@
 	//#define 	INCLUDE		"b-cmp.h"
 	#define 	INCLUDE		"b-sum.h"
 	#define		REPEAT		7
-	const static unsigned long	N = 	100000000;
+	const static unsigned long	N = 	1000000000;
 
 	#ifdef	F32
 		#define		TYPE		float
@@ -91,9 +91,9 @@ int main(int argc, char *argv[]) {
 
 	array<float,REPEAT> tick;
 
-	#define PRINT(NAME,EXPR)							\
+	#define PRINT(NAME,EXPR)	\
 		tick[r] = ticks = t.interval_ticks() / float (N); sec = t.interval_cpu();		\
-		if (r==0)		cout	<< setw(10) << (EXPR) <<"  " << setprecision(3) << setw(8) << sec <<"\t\t" << ticks;	\
+		if (r==0)		cout	<< setprecision(7) << setw(10) << (EXPR) << "  " << setprecision(3) << setw(8) << sec <<"\t\t" << ticks;\
 		else			cout	<< "\t" <<  ticks; \
 		if (r==(REPEAT-1))	cout	<< "\t\t" <<  tick.min() << "  \t" << NAME << endl;
 

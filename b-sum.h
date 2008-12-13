@@ -130,42 +130,89 @@ PRINT("PLAIN LOOP-DF+8+omp:", dsum);
  for(int r=0; r<REPEAT; r++) {
 	float  __attribute__((aligned(16))) sum4[4] = {};
 	__m128 s4, A4;
-	s4 = _mm_load_ps(sum4);
+	s4 = MK_REG(sum4);
 
 	for (int i=0; i<N; i+=4) {
-		  A4 = _mm_load_ps(&A[i]);
-		  s4 = _mm_add_ps(s4, A4);
+		  A4 = MK_REG(A[i]);
+		  s4 = MM_ADD_OP(s4, A4);
 	}
 	_mm_store_ps(sum4,s4);
 PRINT("SSE:", sum4[0]+sum4[1]+sum4[2]+sum4[3]);
  }
 
+ for(int r=0; r<REPEAT; r++) {
+	double sum = 0;
+	REG_T _0, _1, _2, _3;
+
+	for (int i=0; i<N; i+=32) {
+		  _0 = MK_REG(A[i+0]);	_0 = MM_ADD_OP(_0, MK_REG(A[i+4 ]));
+		  _1 = MK_REG(A[i+8]);	_1 = MM_ADD_OP(_1, MK_REG(A[i+12]));
+		  _2 = MK_REG(A[i+16]); _2 = MM_ADD_OP(_2, MK_REG(A[i+20]));
+
+		  _3 = MK_REG(A[i+24]); _3 = MM_ADD_OP(_3, MK_REG(A[i+28]));
+
+		  _0 = MM_ADD_OP(_0, _1);
+		  _1 = MM_ADD_OP(_2, _3);
+		  _0 = MM_ADD_OP(_0, _1);
+
+		sum +=
+			((*(array<float,4> *)&_0)[0]
+			+(*(array<float,4> *)&_0)[0])
+			+
+			((*(array<float,4> *)&_0)[0]
+			+(*(array<float,4> *)&_0)[0])
+		;
+	}
+
+PRINT("SSE ooo8*f2d (no-load, no-store):", sum);
+ }
+ for(int r=0; r<REPEAT; r++) {
+	float  __attribute__((aligned(16))) sum4[4] = {};
+	double sum = 0;
+	REG_T _0, _1, _2, _3;
+
+	for (int i=0; i<N; i+=32) {
+		  _0 = MK_REG(A[i+0]);	_0 = MM_ADD_OP(_0, MK_REG(A[i+4 ]));
+		  _1 = MK_REG(A[i+8]);	_1 = MM_ADD_OP(_1, MK_REG(A[i+12]));
+		  _2 = MK_REG(A[i+16]); _2 = MM_ADD_OP(_2, MK_REG(A[i+20]));
+
+		  _3 = MK_REG(A[i+24]); _3 = MM_ADD_OP(_3, MK_REG(A[i+28]));
+
+		  _0 = MM_ADD_OP(_0, _1);
+		  _1 = MM_ADD_OP(_2, _3);
+		  _0 = MM_ADD_OP(_0, _1);
+		_mm_store_ps(sum4,_0);
+		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
+	}
+
+PRINT("SSE ooo8*f2d (no-load, store):", sum);
+ }
+ 
  for(int r=0; r<REPEAT; r++) { ////////////  PLAIN-LOOP-FD+8gg
 	float  __attribute__((aligned(16))) sum4[4] = {};
 	double sum = 0;
 	__m128 _0, _1, _2, _3, _4;
 
 	for (int i=0; i<N; i+=32) {
-		  _0 = _mm_load_ps(&A[i]);
-		  _1 = _mm_load_ps(&A[i+4]);
-		  _0 = _mm_add_ps(_0, _1);
+		  _0 = MK_REG(A[i]);
+		  _1 = MK_REG(A[i+4]);
+		  _0 = MM_ADD_OP(_0, _1);
 
-		  _1 = _mm_load_ps(&A[i+8]);
-		  _2 = _mm_load_ps(&A[i+12]);
-		  _1 = _mm_add_ps(_1, _2);
+		  _1 = MK_REG(A[i+8]);
+		  _2 = MK_REG(A[i+12]);
+		  _1 = MM_ADD_OP(_1, _2);
 
-		  _2 = _mm_load_ps(&A[i+16]);
-		  _3 = _mm_load_ps(&A[i+20]);
-		  _2 = _mm_add_ps(_2, _3);
+		  _2 = MK_REG(A[i+16]);
+		  _3 = MK_REG(A[i+20]);
+		  _2 = MM_ADD_OP(_2, _3);
 
-		  _3 = _mm_load_ps(&A[i+24]);
-		  _4 = _mm_load_ps(&A[i+28]);
-		  _3 = _mm_add_ps(_3, _4);
+		  _3 = MK_REG(A[i+24]);
+		  _4 = MK_REG(A[i+28]);
+		  _3 = MM_ADD_OP(_3, _4);
 
-		  //
-		  _0 = _mm_add_ps(_0, _1);
-		  _1 = _mm_add_ps(_2, _3);
-		  _0 = _mm_add_ps(_0, _1);
+		  _0 = MM_ADD_OP(_0, _1);
+		  _1 = MM_ADD_OP(_2, _3);
+		  _0 = MM_ADD_OP(_0, _1);
 		_mm_store_ps(sum4,_0);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
@@ -173,33 +220,21 @@ PRINT("SSE:", sum4[0]+sum4[1]+sum4[2]+sum4[3]);
 PRINT("SSE ooo8*f2d:", sum);
  }
 
- for(int r=0; r<REPEAT; r++) { ////////////  PLAIN-LOOP-FD+8gg
+ for(int r=0; r<REPEAT; r++) {
 	float  __attribute__((aligned(16))) sum4[4] = {};
 	double sum = 0;
-	__m128 _0, _1, _2, _3, _4;
+	__m128 _0, _1, _2, _3;
 
-	#pragma omp parallel for private(_0, _1, _2, _3, _4, sum4) reduction(+:sum)
+	#pragma omp parallel for private(_0, _1, _2, _3, sum4) reduction(+:sum)
 	for (int i=0; i<N; i+=32) {
-		  _0 = _mm_load_ps(&A[i]);
-		  _1 = _mm_load_ps(&A[i+4]);
-		  _0 = _mm_add_ps(_0, _1);
+		  _0 = MK_REG(A[i]);		_0 = MM_ADD_OP(_0, MK_REG(A[i+4]));
+		  _1 = MK_REG(A[i+8]);		_1 = MM_ADD_OP(_1, MK_REG(A[i+12]));
+		  _2 = MK_REG(A[i+16]);		_2 = MM_ADD_OP(_2, MK_REG(A[i+20]));
+		  _3 = MK_REG(A[i+24]);		_3 = MM_ADD_OP(_3, MK_REG(A[i+28]));
 
-		  _1 = _mm_load_ps(&A[i+8]);
-		  _2 = _mm_load_ps(&A[i+12]);
-		  _1 = _mm_add_ps(_1, _2);
-
-		  _2 = _mm_load_ps(&A[i+16]);
-		  _3 = _mm_load_ps(&A[i+20]);
-		  _2 = _mm_add_ps(_2, _3);
-
-		  _3 = _mm_load_ps(&A[i+24]);
-		  _4 = _mm_load_ps(&A[i+28]);
-		  _3 = _mm_add_ps(_3, _4);
-
-		  //
-		  _0 = _mm_add_ps(_0, _1);
-		  _1 = _mm_add_ps(_2, _3);
-		  _0 = _mm_add_ps(_0, _1);
+		  _0 = MM_ADD_OP(_0, _1);
+		  _1 = MM_ADD_OP(_2, _3);
+		  _0 = MM_ADD_OP(_0, _1);
 		_mm_store_ps(sum4,_0);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
@@ -207,8 +242,8 @@ PRINT("SSE ooo8*f2d:", sum);
 PRINT("SSE 8*f2d+omp:", sum);
  }
 
- for(int r=0; r<REPEAT; r++) { double sum = A.sum(); PRINT(".sum()", sum); }
+for(int r=0; r<REPEAT; r++) { double sum = A.sum(); PRINT(".sum()", sum); }
  
- for(int r=0; r<REPEAT; r++) { double sum = A.sum<plain>(); PRINT(".sum<plain>()", sum); }
+for(int r=0; r<REPEAT; r++) { double sum = A.sum<plain>(); PRINT(".sum<plain>()", sum); }
 
 #endif
