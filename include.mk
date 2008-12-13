@@ -7,6 +7,12 @@ FC	= gfortran
 
 TMPDIR ?=/v
 
+################################################################################ LABEL
+_cc = $(CXX)-$(shell $(CXX) -v 2>&1 | sed  -n 's/^.*ersion *\([0-9.]*\) .*/\1/p')
+_date = $(shell date +'%y%m%d_%H%M%S')
+_rev=$(shell git rev-parse HEAD|sed -n 's/^\(........\).*/\1/p')++$(shell git branch |sed -n 's/master/M/; s/^* //p')
+ID = $(shell echo $(_date)-$≡$(_cc)-$(SPEED:DEBUG=g)-$(_rev) | tr -d ' ')
+
 ########################################################################################
 #SPEED := $(s:o=OPTIMZE)
 SPEED := $(s:d=DEBUG)

@@ -1,11 +1,13 @@
 	///////////////////   CONFIG
-	//#define I16_CMP
-	#define CANUSE_OMP
-	#define REPEAT	7
-	#define F32_CMP
+	#define		I16_CMP
+	//#define		F32_CMP
+	#define		REPEAT		7
+	#define		DO_SIMD
+	const static unsigned long	N =   		100000000;
 
 	#ifdef	F32_CMP
-		#define		SSE		sse
+		#define		CANUSE_OMP
+		#define		CANUSE_SSE
 		#define		TYPE		float
 		#define		SSE_SIZE	4
 		#define		MM_OP 		_mm_max_ps
@@ -15,7 +17,7 @@
 	#endif
 
 	#ifdef	I16_CMP
-		#define		SSE		sse2
+		#define		CANUSE_OMP
 		#define		TYPE		int16_t
 		#define		SSE_SIZE	8
 		#define		MM_OP 		_mm_max_epi16
@@ -23,6 +25,8 @@
 		#define		REG_T		__m128i
 		#define		MK_REG		mk_m128i
 	#endif
+
+	#define dID 1
 
 	///////////////////////////////////
 	#include <iostream>
@@ -35,11 +39,6 @@
 		using lvv::plain;
 		using lvv::mk_array;
 
-
-	#include <lvv/mmap.h>
-		using lvv::mmap_read;
-		using lvv::mmap_write;
-
 	#include <lvv/timer.h>
 		using lvv::Timer;
 
@@ -51,7 +50,23 @@
 
 int main(int argc, char *argv[]) {
 
-	const unsigned long N  = 100*1000*1000;
+	///////////////////////////////////  ID
+	cout << ID << "    <<"
+		#ifdef CANUSE_MMX
+			<< " mmx "
+		#endif
+		#ifdef CANUSE_SSE
+			<< " sse "
+		#endif
+		#ifdef CANUSE_SSE2
+			<< " sse2 "
+		#endif
+		#ifdef CANUSE_OMP
+			<< " omp "
+		#endif
+	<< ">>" << endl;
+
+	///////////////////////////////////
 	typedef array<TYPE, N> array_t;
 
 	////////////   CREATE ARRAY
@@ -62,11 +77,7 @@ int main(int argc, char *argv[]) {
 	}
 	A[333] = 3; // for max() testing
 
-	cout << "MAX: " << *std::max_element(A.begin(), A.end()) << endl;
-
-
 	Timer	t(true);
-	cout << "0-interval: " << t.interval_ticks();
 	float sec, ticks;
 
 	cout <<  "\nValue\tSeconds\t\tTick/Cycle ...   Min-Tick/Cycle \t Method\n" << setprecision(4);
@@ -75,14 +86,14 @@ int main(int argc, char *argv[]) {
 
 	#define PRINT(NAME,EXPR)							\
 		tick[r] = ticks = t.interval_ticks() / float (N); sec = t.interval_cpu();		\
-		if (r==0)		cout   <<(EXPR) <<"  "<< sec <<"\t\t" << ticks;	\
-		else			cout << "\t" <<  ticks; \
-		if (r==(REPEAT-1))	cout << "\t\t" <<  tick.min() << "  \t" << NAME << endl;
-		//if (r==0)	cout << fmt % NAME %(EXPR) %(0.15*N) %sec %ticks;
-		//else cout << format("%12.2ft \t") %ticks;
+		if (r==0)		cout	<<(EXPR) <<"  "<< sec <<"\t\t" << ticks;	\
+		else			cout	<< "\t" <<  ticks; \
+		if (r==(REPEAT-1))	cout	<< "\t\t" <<  tick.min() << "  \t" << NAME << endl;
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 for (int r=0; r<REPEAT; r++) { TYPE m = A.max();  	PRINT("max():		", m ); }
+
 for (int r=0; r<REPEAT; r++) { TYPE m = A.max<plain>();	PRINT("max<plain>:	", m ); }
 
  for (int r=0; r<REPEAT; r++) {
@@ -204,24 +215,25 @@ for (size_t r=0; r<REPEAT; r++) { TYPE max=A[0]; for (size_t i=1; i<N; i++) { if
 
 for (size_t r=0; r<REPEAT; r++) { TYPE max=A[0]; for (TYPE* p = &A[0]; p != &A[N]; p++) { if (*p CMP_OP max) max = *p; } PRINT("p++:		",max); }
 
-for (size_t r=0; r<REPEAT; r++) {
+ for (size_t r=0; r<REPEAT; r++) {
 	TYPE* p = &A[0]; TYPE max=*p; 
 	do {
 		if (*p CMP_OP max) max = *p;
 		p++;
 	} while (p != &A[N]);
 
-	PRINT("while p++:	",max);
-}
-for (size_t r=0; r<REPEAT; r++) {
+PRINT("while p++:	",max);
+ }
+
+ for (size_t r=0; r<REPEAT; r++) {
 	TYPE* p = &A[0]; TYPE max=*p; 
 	do {
 		if (__builtin_expect(*p CMP_OP max, 0)) max = *p;
 		p++;
 	} while (p != &A[N]);
 
-	PRINT("while p++ + ex:	",max);
-}
+PRINT("while p++ + ex:	",max);
+ }
 
  for (size_t r=0; r<REPEAT; r++) {
 	TYPE max=A[0];
@@ -310,11 +322,12 @@ PRINT("IF+omp:		",max);	 	// race, incorrect result
  #endif // CANUSE_OMP
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    SSE
-#ifdef  CANUSE_SSE
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    SIMD
+#ifdef  DO_SIMD
 
 for (int r=0; r<REPEAT; r++) { TYPE m = A.max();  	PRINT("max():		", m ); }
-for (int r=0; r<REPEAT; r++) { TYPE m = A.max<SSE>();  	PRINT("max<SSE>():		", m ); }
+
+//for (int r=0; r<REPEAT; r++) { TYPE m = A.max<sse2>();  	PRINT("max<sse2>():		", m ); }
 
  for (size_t r=0; r<REPEAT; r++) { 
 
@@ -381,7 +394,7 @@ PRINT("SSE+unroll8:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
 	REG_T m = MK_REG(A[0]);
 	for (size_t i=SSE_SIZE; i<N-8*SSE_SIZE; i+=8*SSE_SIZE) {
 		  m = MM_OP(m, MK_REG(A[i]));
-		  m = MM_OP(m, MK_REG(A[i+SSE_SIZE]));
+		  m = MM_OP(m, MK_REG(A[i+1*SSE_SIZE]));
 		  m = MM_OP(m, MK_REG(A[i+2*SSE_SIZE]));
 		  m = MM_OP(m, MK_REG(A[i+3*SSE_SIZE]));
 		  m = MM_OP(m, MK_REG(A[i+4*SSE_SIZE]));
@@ -393,7 +406,7 @@ PRINT("SSE+unroll8:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
 PRINT("SSE+unroll8+pf500:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  }
 
- for (size_t r=0; r<REPEAT; r++) { ////////////  SSE
+ for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
 	#pragma omp parallel for shared(m)
 	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) {	m = MM_OP(m, MK_REG(A[i])); }

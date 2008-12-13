@@ -159,16 +159,17 @@ main() {
 	cout << endl << flush ;
 
 	{			/////////////  INT-16
-	array<int16_t,3>  h3 = {{1,2,3}};
-	array<int16_t,10> h10 = {{1,2,3,4,5,6,7,8,9,10}};
-	array<int16_t,1000> h1000 = {{1,2,3,4,5,6,7,8,9,10}};
+	array<int16_t,3>  h3 = {{1,2,3}};			CHECK(IS_ALIGN16(h3));
+	array<int16_t,10> h10 = {{1,2,3,4,5,6,7,8,9,10}};	CHECK(IS_ALIGN16(h10));
+	array<int16_t,1000> h1000 = {{1,2,3,4,5,6,7,8,9,10}};	CHECK(IS_ALIGN16(h1000));
+
 	// CHECKeq((f3.max<sse>()),3); 				should trigger static assert
 	CHECKeq((h10.max()),10);
 	//CHECKeq((h10.max<sse>()),10); 	// should trigger static assert  (sould be: sse2)
 	//CHECKeq((h10.max<sse2>()),10);	// assert will fail (no true:  10 > 8*2)
 	CHECKeq((h1000.max<plain>()),10);
-	#ifdef CANUSE_SSE
 	CHECKeq((h1000.max_impl(sse2(),int16_t())),10);
+	#ifdef CANUSE_SSE2
 	CHECKeq((h1000.max<sse2>()),10);
 	#endif
 	}

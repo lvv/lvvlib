@@ -41,7 +41,9 @@
 	template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>127), sse,  plain>::type 	type;};
 	#endif
 
+	#ifdef CANUSE_SSE2
 	template<int N>			struct	select_method<int16_t,N>	{typedef	typename IF< (N>127), sse2, plain>::type 	type;};
+	#endif
 
 				template<typename TT, int NN>
 	struct select_alignment {
@@ -169,11 +171,10 @@ template < class T, int N, int BEGIN=0> class array { public:
 	//// ================================================================================================================ MAX
 	T					min() 		const	{ return *std::min_element(begin(), end()); };
 
-	template<typename method_type>	T	max()	const	{ return max_impl(method_type(), T()); } 			// explicit template selection	
-					T	max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }	// auto-selection (no template)
-							// default template parameter:  Due to an unfortunate oversight, the standard simply bans
-							// default arguments for template parameters for a function template. Voted
-							// to be corrected in the next standard
+	template<typename method_type>	T	max()	const	{ return max_impl(method_type(), T()); } 			// explicit
+					T	max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }	// auto-selection
+		// default template parameter:  Due to an unfortunate oversight, the standard simply bans
+		// default arguments for template parameters for a function template. Voted to be corrected in the next standard
 
 	//// ----------------------------------------------------------------------------------------------------------------- MAX
 	T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = ((max>elems[i]) ? max : elems[i]); return max; }
