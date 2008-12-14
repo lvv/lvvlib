@@ -1,7 +1,7 @@
 	///////////////////   CONFIG
 	#define		F32
-	//#define 	INCLUDE		"b-cmp.h"
-	#define 	INCLUDE		"b-sum.h"
+	#define 	INCLUDE		"b-cmp.h"
+	//#define 	INCLUDE		"b-sum.h"
 	#define		REPEAT		9
 	const static unsigned long	N = 	100000000;
 
@@ -87,8 +87,8 @@ int main(int argc, char *argv[]) {
 	////////////   CREATE ARRAY
 	array_t  A;
 	for (size_t i=0; i<N-1; i+=2) {
-		A[i]  =0.1;
-		A[i+1]=0.2;
+		A[i]  =1;
+		A[i+1]=2;
 	}
 	A[333] = 3; // for max() testing
 

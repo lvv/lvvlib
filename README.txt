@@ -2,13 +2,36 @@
 
 :gh-ll:		http://github.com/lvv/lvvlib/tree/master/
 
-Initially collection of headers that I created for use in my projects.  'LVV' are my initials (Leonid V. Volnitsky).
+Initially collection of headers that I used in my projects.  'LVV' are my initials (Leonid V. Volnitsky).
 Needs some cleanup, dependency pruning and documentation. 
 
 === http://github.com/lvv/lvvlib/tree/master/array.h[array.h]
 
-Similar to http://http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`]
-which is basically plain C array wrapped in class to make it STL compatible
+Similar to http://http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`] but faster:
+
+.Sum of 100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ...}
+[cols="^3,^1,16",frame="topbot",options="header"]
+|=============================================================================================
+| Ticks per cycle| Computed Value | Source
+| 1.74           | 1.5e+08        | `float  sum = A.sum();`
+| 3.14           | 1.5e+08        | `double sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
+| 3.06           | 3.35544e+07    | `float  sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
+| 3.06           | 3.35544e+07    | `float  sum = std::accumulate(A.begin(), A.end(), float());`
+|=============================================================================================
+
+.Max of 100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ... 3, ... }
+[cols="^1,6",frame="topbot",options="header"]
+|=============================================================================================
+| Ticks per cycle|  Source
+| 1.63           |  `float  max = A.max()`
+| 5.81           |  `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
+| 1.88           |  OpenMP (source same as above, no check for race)
+| 5.81           |  STL: `float  max = *std::max_element (A.begin(), A.end());`
+| 1.67           |  SSE: `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
+|==============================================================================================
+
+
+It is basically plain C array wrapped in class to make it STL compatible
 container.  If you look in such array in debugger its looks exactly like C
 arrays (which means you can freely cast to and from C array). Because it
 doesn't have constructor, it can be initialised like C arrays:
@@ -19,17 +42,13 @@ Second set of curly braces needed because this is an array inside a class.
 There are no mallocs,  no extra pointers, no extraneous class members.
 
 .lvv::array have following added capabilities:
-- Index of first element defaults to 0, but can be any number
+- Vector operation:   `A1 += A2; cout << A1;`
+- explicit SSE vectorization (gcc not very good yet in auto-vectorization).
+- parallelization with OpenMP
+- Index of first element defaults to 0, but can be any number.
 - Index value tested if it is in valid range when `NDEBUG` macro  is not defined (i.e. for  `gcc -g` ). 
-- array can be sent to iostream:  `cout << A;`
-- `matrix` type defined as array of arrays
 - basic linear algebra functions:  `norm2(A)`, `distance_norm2(A1,A2)`, `dot_product(A1,A2)`, etc
-- array assignment expressions: `A1 += A2;`
 
-.Soon to be added:
-- non-assignment array expressions (malloc free, through lazy evaluation) like: `A1 = A2 + A3;`
-- explicit SSE vectorization for vector operations (gcc not very good yet in auto-vectorization).
-- vector operation parallelization with OpenMP
 
 === *eq()* - numeric comparison template function (http://github.com/lvv/lvvlib/tree/master/math.h[math.h])
 Used for numeric comparison in generic programming.  For floating point types

@@ -1,19 +1,19 @@
 
 #include ../Makefile
 
-DESTDIR ?= /tmp/html-lvvlib
+WEB_DESTDIR ?= /tmp/html-lvvlib
 ASCIIDOC ?= asciidoc
 
-show: install
-	firefox $(DESTDIR)/index.html
+show: web_install
+	firefox $(WEB_DESTDIR)/index.html
 
 
 index.html: index.txt
 	$(ASCIIDOC)  -o $@  $<
 
-install: index.html 
-	mkdir -p  $(DESTDIR)
-	cp -uv $^ $(DESTDIR)
+web_install: index.html 
+	mkdir -p  $(WEB_DESTDIR)
+	cp -uv $^ $(WEB_DESTDIR)
 
 clean:
 	rm -f *.html

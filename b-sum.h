@@ -198,9 +198,10 @@ cout << "*** SIMD ***" << endl;
 PRINT("SSE:", sum4[0]+sum4[1]+sum4[2]+sum4[3]);
  }
 
-for(int r=0; r<REPEAT; r++) { double sum = std::accumulate(A.begin(), A.end(), 0.0f);  PRINT("stl::accumulate()", sum); }
+for(int r=0; r<REPEAT; r++) { double sum = std::accumulate(A.begin(), A.end(), float());  PRINT("stl::accumulate(,,float())", sum); }
+for(int r=0; r<REPEAT; r++) { double sum = std::accumulate(A.begin(), A.end(), double());  PRINT("stl::accumulate(,,double())", sum); }
 #define GLIBCXX_PARALLEL 1
-for(int r=0; r<REPEAT; r++) { double sum = std::accumulate(A.begin(), A.end(), 0.0f);  PRINT("stl::accumulate() para", sum); }
+for(int r=0; r<REPEAT; r++) { double sum = std::accumulate(A.begin(), A.end(), 0.0f);  PRINT("stl::accumulate() parallel", sum); }
 
 for(int r=0; r<REPEAT; r++) { double sum = A.sum(); PRINT(".sum()", sum); }
 
