@@ -1,6 +1,5 @@
 
 
-for (int r=0; r<REPEAT; r++) { TYPE m = A.max();  	PRINT("max():		", m ); }
 
 for (int r=0; r<REPEAT; r++) { TYPE m = A.max<plain>();	PRINT("max<plain>:	", m ); }
 
@@ -242,10 +241,10 @@ for (int r=0; r<REPEAT; r++) { TYPE m = A.max();  	PRINT("max():		", m ); }
 	REG_T m1 = MK_REG(A[0]);
 	REG_T m2 = MK_REG(A[SSE_SIZE]);
 	for (size_t i=2*SSE_SIZE; i<N; i+=2*SSE_SIZE) {
-		  m1 = MM_OP(m1, MK_REG(A[i]) );
-		  m2 = MM_OP(m2, MK_REG(A[i+SSE_SIZE]) );
+		  m1 = MM_CMP_OP(m1, MK_REG(A[i]) );
+		  m2 = MM_CMP_OP(m2, MK_REG(A[i+SSE_SIZE]) );
 	}
-	m1 = MM_OP(m1, m2);
+	m1 = MM_CMP_OP(m1, m2);
 PRINT("SSE+unroll2+ooo2:", (mk_array<TYPE,SSE_SIZE,0 CMP_OP (m1).max()) );
  }
 
@@ -255,30 +254,30 @@ PRINT("SSE+unroll2+ooo2:", (mk_array<TYPE,SSE_SIZE,0 CMP_OP (m1).max()) );
 	//m0 =  m4 =  m8 = m12 = m16 = m20 = m24 = m28 = m;
 	m0 =  m4 =  m8 = m12 = m;
 	for (size_t i=4*SSE_SIZE; i<N; i+=4*SSE_SIZE) {
-		  m0 = MM_OP(m0, MK_REG(A[i]));
-		  m4 = MM_OP(m4, MK_REG(A[i+SSE_SIZE]));
-		  m8 = MM_OP(m8, MK_REG(A[i+2*SSE_SIZE]));
-		  m12 = MM_OP(m12, MK_REG(A[i+3*SSE_SIZE]));
-		  //m16 = MM_OP(m16, MK_REG(A[i+16]));
-		  //m20 = MM_OP(m20, MK_REG(A[i+20]));
-		  //m24 = MM_OP(m24, MK_REG(A[i+24]));
-		  //m28 = MM_OP(m28, MK_REG(A[i+28]));
+		  m0 = MM_CMP_OP(m0, MK_REG(A[i]));
+		  m4 = MM_CMP_OP(m4, MK_REG(A[i+SSE_SIZE]));
+		  m8 = MM_CMP_OP(m8, MK_REG(A[i+2*SSE_SIZE]));
+		  m12 = MM_CMP_OP(m12, MK_REG(A[i+3*SSE_SIZE]));
+		  //m16 = MM_CMP_OP(m16, MK_REG(A[i+16]));
+		  //m20 = MM_CMP_OP(m20, MK_REG(A[i+20]));
+		  //m24 = MM_CMP_OP(m24, MK_REG(A[i+24]));
+		  //m28 = MM_CMP_OP(m28, MK_REG(A[i+28]));
 
 	}
-	  m0 = MM_OP(m0, m4);
-	  m8 = MM_OP(m8, m12);
-	  //m16 = MM_OP(m16, m20);
-	  //m24 = MM_OP(m24, m28);
+	  m0 = MM_CMP_OP(m0, m4);
+	  m8 = MM_CMP_OP(m8, m12);
+	  //m16 = MM_CMP_OP(m16, m20);
+	  //m24 = MM_CMP_OP(m24, m28);
 
-	  //m0 = MM_OP(m0, m4);
-	  //m8 = MM_OP(m8, m12);
-	  //m16 = MM_OP(m16, m20);
-	  //m24 = MM_OP(m24, m28);
+	  //m0 = MM_CMP_OP(m0, m4);
+	  //m8 = MM_CMP_OP(m8, m12);
+	  //m16 = MM_CMP_OP(m16, m20);
+	  //m24 = MM_CMP_OP(m24, m28);
 
-	  m0 = MM_OP(m0, m8);
-	  //m16 = MM_OP(m16, m24);
+	  m0 = MM_CMP_OP(m0, m8);
+	  //m16 = MM_CMP_OP(m16, m24);
 
-	  //m = MM_OP(m0, m16);
+	  //m = MM_CMP_OP(m0, m16);
 	  m = m0;
 PRINT("SSE+unroll4+ooo4:", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  }
@@ -286,14 +285,14 @@ PRINT("SSE+unroll4+ooo4:", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
 	for (size_t i=SSE_SIZE; i<N-8*SSE_SIZE; i+=8*SSE_SIZE) {
-		  m = MM_OP(m, MK_REG(A[i]));
-		  m = MM_OP(m, MK_REG(A[i+SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+2*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+3*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+4*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+5*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+6*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+7*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+2*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+3*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+4*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+5*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+6*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+7*SSE_SIZE]));
 	}
 PRINT("SSE+unroll8:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  }
@@ -301,14 +300,14 @@ PRINT("SSE+unroll8:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
 	for (size_t i=SSE_SIZE; i<N-8*SSE_SIZE; i+=8*SSE_SIZE) {
-		  m = MM_OP(m, MK_REG(A[i]));
-		  m = MM_OP(m, MK_REG(A[i+1*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+2*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+3*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+4*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+5*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+6*SSE_SIZE]));
-		  m = MM_OP(m, MK_REG(A[i+7*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+1*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+2*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+3*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+4*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+5*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+6*SSE_SIZE]));
+		  m = MM_CMP_OP(m, MK_REG(A[i+7*SSE_SIZE]));
 		 __builtin_prefetch((void*)&A[i+500],0,0);	
 	}
 PRINT("SSE+unroll8+pf500:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
@@ -317,46 +316,76 @@ PRINT("SSE+unroll8+pf500:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
 	#pragma omp parallel for shared(m)
-	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) {	m = MM_OP(m, MK_REG(A[i])); }
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) {	m = MM_CMP_OP(m, MK_REG(A[i])); }
 PRINT("SSE+omp:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()));
  }
 
  for (size_t r=0; r<REPEAT; r++) { //////////// 
 	REG_T m = MK_REG(A[0]);
-	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+1000],0,0);	m = MM_OP(m, MK_REG(A[i]) );	}
-PRINT("SSE+pf1000:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+1024+512],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
+PRINT("SSE+pf1530:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
+ }
+
+ for (size_t r=0; r<REPEAT; r++) { //////////// 
+	REG_T m = MK_REG(A[0]);
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+1024+256],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
+PRINT("SSE+pf1260:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
+ }
+
+ for (size_t r=0; r<REPEAT; r++) { //////////// 
+	REG_T m = MK_REG(A[0]);
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+1024+128],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
+PRINT("SSE+pf1130:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
+ }
+
+ for (size_t r=0; r<REPEAT; r++) { //////////// 
+	REG_T m = MK_REG(A[0]);
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+1024],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
+PRINT("SSE+pf1024:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  }
 
  for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
-	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+700],0,0);	m = MM_OP(m, MK_REG(A[i]) );	}
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+700],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
 PRINT("SSE+pf700:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  }
 
 
  for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
-	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+300],0,0);	m = MM_OP(m, MK_REG(A[i]) );	}
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+300],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
 PRINT("SSE+pf300:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  }
 
  for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
-	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+200],0,0);	m = MM_OP(m, MK_REG(A[i]) );	}
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+200],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
 PRINT("SSE+pf200:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  }
 
  for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
-	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { m = MM_OP(m, MK_REG(A[i]) );	}
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { m = MM_CMP_OP(m, MK_REG(A[i]) );	}
 PRINT("SSE:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  }
 
  for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
-	for (size_t i=SSE_SIZE; i<N-SSE_SIZE; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+500],0,0);	m = MM_OP(m, MK_REG(A[i]) );	}
+	for (size_t i=SSE_SIZE; i<N-SSE_SIZE; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+500],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
 PRINT("SSE+pf500:		", (mk_array<TYPE,SSE_SIZE,0>(m).max<plain>()) );
 	//cout << mk_array<TYPE,SSE_SIZE,0>(m);
+ }
+
+ for (size_t r=0; r<REPEAT; r++) { //////////// 
+	REG_T m = MK_REG(A[0]);
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+1024+512+128],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
+PRINT("SSE+pf1800:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
+ }
+
+ for (size_t r=0; r<REPEAT; r++) { //////////// 
+	REG_T m = MK_REG(A[0]);
+	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) { __builtin_prefetch((void*)&A[i+2048],0,0);	m = MM_CMP_OP(m, MK_REG(A[i]) );	}
+PRINT("SSE+pf2048:		", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  }
 
 
@@ -365,11 +394,11 @@ PRINT("SSE+pf500:		", (mk_array<TYPE,SSE_SIZE,0>(m).max<plain>()) );
 	REG_T m1 = MK_REG(A[0]);
 	REG_T m2 = MK_REG(A[SSE_SIZE]);
 	for (size_t i = 2*SSE_SIZE; i<N-2*SSE_SIZE; i+=2*SSE_SIZE) {
-		  m1 = MM_OP(m1, MK_REG(A[i]) );
-		  m2 = MM_OP(m2, MK_REG(A[i+SSE_SIZE]) );
+		  m1 = MM_CMP_OP(m1, MK_REG(A[i]) );
+		  m2 = MM_CMP_OP(m2, MK_REG(A[i+SSE_SIZE]) );
 		 __builtin_prefetch((void*)&A[i+512],0,0);	
 	}
-	m1 = MM_OP(m1, m2);
+	m1 = MM_CMP_OP(m1, m2);
 
 PRINT("SSE+unroll2+ooo2+pf500:", (mk_array<TYPE,SSE_SIZE,0>(m1).max<plain>()) );
 	//cout << mk_array<TYPE,SSE_SIZE,0>(m1);
@@ -379,4 +408,4 @@ PRINT("SSE+unroll2+ooo2+pf500:", (mk_array<TYPE,SSE_SIZE,0>(m1).max<plain>()) );
 
  #endif // CANUSE_SSE
 
-	cout << "MAX: " << *std::max_element(A.begin(), A.end()) << endl;
+for (int r=0; r<REPEAT; r++) { TYPE m = A.max();  	PRINT("max():		", m ); }

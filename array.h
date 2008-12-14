@@ -45,10 +45,12 @@
 	template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>127), sse,  plain>::type 	type;};
 	#endif
 
+	// http://gcc.gnu.org/bugzilla/show_bug.cgi?id=38525
+	#ifdef GCC_BUG
 	#ifdef CANUSE_SSE2
 	template<int N>			struct	select_method<int16_t,N>	{typedef	typename IF< (N>127), sse2, plain>::type 	type;};
 	#endif
-
+	#endif
 
 				template<typename TT, int NN>
 	struct select_alignment {
@@ -69,7 +71,7 @@ template < class T, int N, int BEGIN=0> class array { public:
 
 
 
-	typename select_alignment<T,N>::type	elems;
+	typename select_alignment<T,N>::type __restrict__	elems;
 
 	enum { sz = N, ibg=BEGIN, ien=BEGIN+N };  // gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
 
@@ -87,7 +89,6 @@ template < class T, int N, int BEGIN=0> class array { public:
 	// CTOR 
 	
 	// n/a (impossible with having aggregate constructor)
-
 
 	// index
 	index_type				ibegin()	const		{ return BEGIN; }
@@ -163,12 +164,13 @@ template < class T, int N, int BEGIN=0> class array { public:
 
 
 	//// ================================================================================================================ SUM
-	T	sum_impl(plain, T) 	const	{ return std::accumulate(begin(), end(), 0); };			// default impt
+	T	sum_impl(plain, T) 	const	{ return std::accumulate(begin(), end(), T()); };			// default impt
 
 	template<typename method_type>	T	sum()	const	{ return sum_impl(method_type(), T()); } 			// explicit
 					T	sum()	const	{ return sum_impl(typename select_method<T,N>::type(), T()); }	// auto-selection
 
 	//-------------------------------------
+	/*
 	float	sum_impl (sse, float)		const { DBG cerr << " max<sse,float> " << N << "(" << N-N%8 <<")"; 
 		const unsigned	sse_size	= 4;
 		const unsigned	unroll		= 2;
@@ -191,7 +193,30 @@ template < class T, int N, int BEGIN=0> class array { public:
 		}
 
 		m1 = _mm_add_ps(m1, m2);
-		T m  = mk_array<float,4,0>(m1).sum<plain>();  /* for (size_t i=sse_cycle; i<N; i++)  m += m < elems[i] ? elems[i] : m;*/   return  m;
+		T m  = mk_array<float,4,0>(m1).sum<plain>();     return  m;
+		//T m  = mk_array<float,4,0>(m1).sum<plain>();   for (size_t i=sse_cycle; i<N; i++)  m += m < elems[i] ? elems[i] : m;   return  m;
+	}
+	*/
+
+	float	sum_impl (sse, float)		const { DBG cerr << " max<sse,float> " << N << "(" << N-N%8 <<")"; 
+		float  __attribute__((aligned(16))) sum4[4] = {};
+		double sum = 0;
+		__m128 _0, _1, _2, _3;
+
+		for (int i=0; i<N-32; i+=32) {
+			  _0 = mk_m128(elems[i+0]) ;	_0 = _mm_add_ps(_0, mk_m128(elems[i+4 ])); 
+			  _1 = mk_m128(elems[i+8]) ;	_1 = _mm_add_ps(_1, mk_m128(elems[i+12])); 
+			  _2 = mk_m128(elems[i+16]);	_2 = _mm_add_ps(_2, mk_m128(elems[i+20])); 
+			  _3 = mk_m128(elems[i+24]);	_3 = _mm_add_ps(_3, mk_m128(elems[i+28])); 
+
+			  _0 = _mm_add_ps(_0, _1);
+			  _2 = _mm_add_ps(_2, _3);
+			  _0 = _mm_add_ps(_0, _2);
+
+			_mm_store_ps(sum4,_0);
+			sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);		// TODO: inline assambly
+		}
+		return (float) sum;
 	}
 //// ================================================================================================================ MAX
 T					min() 		const	{ return *std::min_element(begin(), end()); };
@@ -201,17 +226,17 @@ T					max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }
 		// default template parameter:  Due to an unfortunate oversight, the standard simply bans
 		// default arguments for template parameters for a function template. Voted to be corrected in the next standard
 
-//// ----------------------------------------------------------------------------------------------------------------- MAX
 
 T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = ((max>elems[i]) ? max : elems[i]); return max; }
 
 	
 
-float	max_impl (sse, float)		const { DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
+// ----------------------------------------------------------------------------------------------------------------- MAX FLOAT-32
+float	max_impl (sse, float) __restrict__		const { // DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
 	const unsigned	sse_size	= 4;
 	const unsigned	unroll		= 2;
-									// commented out: boost-1.37/SVN  error
 									//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
+									// commented out: boost-1.37/SVN  error
 									//STATIC_ASSERT(N>=sse_size*unroll,"sse can be used for N>=8");
 									assert(N>=sse_size*unroll && "sse can be used for N>=8");
 	const unsigned	prefetch	= 512;
@@ -233,15 +258,15 @@ float	max_impl (sse, float)		const { DBG cerr <<" max<sse,float> " << N << "(" <
  }
 
 	
-int16_t	max_impl (sse2, int16_t)		const { DBG cerr << " max<sse2,int16> " << N << "(" << N-N%8 << ")"; 
+// ----------------------------------------------------------------------------------------------------------------- MAX  INT-16
+int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << N << "(" << N-N%8 << ")"; 
 	int16_t m;
-	#ifdef CANUSE_SSE2
 	const unsigned	sse_size	= 8;
 	const unsigned	unroll		= 2;
 									//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
 									//STATIC_ASSERT(N>=sse_size*unroll,"sse can be used for N>=8");
 									assert(N>=sse_size*unroll);
-	const unsigned	prefetch	= 512;
+	const unsigned	prefetch	= 1024;
 	const unsigned	cycle_step	= unroll * sse_size;
 	const size_t	sse_cycle	= N - N % cycle_step;
 
@@ -252,16 +277,12 @@ int16_t	max_impl (sse2, int16_t)		const { DBG cerr << " max<sse2,int16> " << N <
 		//dPR1(i);
 		  m1 = _mm_max_epi16(m1, mk_m128i(elems[i]) );
 		  m2 = _mm_max_epi16(m2, mk_m128i(elems[i+sse_size]) );
-		 //__builtin_prefetch((void*)&elems[i+prefetch],0,0);      
+		 __builtin_prefetch((void*)(elems+prefetch),0,0);      
 	}
 
 	m1 = _mm_max_epi16(m1, m2);
 	m  = mk_array<int16_t,sse_size,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  m = m < elems[i] ? elems[i] : m;
-
-	#else
-	m = elems[0]; for (const int16_t* p = &elems[0]; p != &elems[N]; p++) { if (*p > m) m = *p; };
-	#endif
-
+	_mm_empty();
 	return m;
  }
 

@@ -18,6 +18,14 @@
 	#include <emmintrin.h>
 #endif
 
+#ifdef __SSE3__
+	#include <pmmintrin.h>                                                                                                                                      
+#endif
+
+#ifdef __SSSE3__
+	#include <tmmintrin.h>
+#endif
+
 #include <boost/detail/select_type.hpp>
 	using boost::detail::if_true;
 
