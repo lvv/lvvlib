@@ -101,7 +101,7 @@ b-%  u-%  : MAKEFLAGS	+= -B
 	make $(<:.cc=)
 	./$(<:.cc=)
 
-u-*       : CXXFLAGS	+= -Wno-unused-variable
-b-*       : SPEED      	 = OPTIMIZE
+u-%       : CXXFLAGS	+= -Wno-unused-variable
+b-%       : SPEED      	 = OPTIMIZE
 
 # vim:noexpandtab ft=make:

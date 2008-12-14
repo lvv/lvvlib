@@ -18,6 +18,14 @@
 	#include <emmintrin.h>
 #endif
 
+#ifdef __SSE3__
+	#include <pmmintrin.h>                                                                                                                                      
+#endif
+
+#ifdef __SSSE3__
+	#include <tmmintrin.h>
+#endif
+
 #include <boost/detail/select_type.hpp>
 	using boost::detail::if_true;
 
@@ -26,12 +34,10 @@
 	
 	#define mk_m128(x) *(__m128*)&(x)
 	#define mk_m128i(x) *(__m128i*)&(x)
-	//namespace array {
 	template<typename T, int N, int B> class array;
-	//template<typename T, int N, int B> const lvv::array<T,N,B>& mk_array(const __m128 m128) { return reinterpret_cast<lvv::array<T,N,B> > (m128); } // is there an overhead?
-	template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128&  V) { return *(array<T,N,B>*)&(V); } // is there an overhead?
+	template<typename T, int N, int B>	array<T,N,B>&	mk_array(const __m128&  V) { return *(array<T,N,B>*)&(V); } // is there an overhead?
+	//template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128&  V) { return *(array<T,N,B>*)&(V); } // is there an overhead?
 	template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128i& V) { return *(array<T,N,B>*)&(V); }
-	//template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const T* v) { return *reinterpret_cast<const array<T,N,B>*>(v); }	   
 
 
 	// indicator what technology is available

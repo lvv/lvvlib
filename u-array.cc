@@ -1,4 +1,7 @@
 
+	#define CANUSE_SSE
+	#define CANUSE_SSE2
+	#define CANUSE_SSE3
 //#include <iostream>
 
 #include <lvv/math.h>
@@ -9,6 +12,7 @@
 	using lvv::sse2;
 	using lvv::plain;
 	using lvv::openmp;
+	using lvv::select_method;
 
 #include <lvv/lvv.h>
 
@@ -143,9 +147,17 @@ main() {
 	CHK(i4);     CHECK(IS_ALIGN16(i4)); 
 
 	//////////////////////////////////////////////////////////////////////////////////  SSE OPS
+	CHECK(typeid(select_method<double , 2>::type  )  ==  typeid(plain) ) ;
+	CHECK(typeid(select_method<double , 200>::type)  ==  typeid(plain) ) ;
+	CHECK(typeid(select_method<int8_t , 2>::type  )  ==  typeid(plain) ) ;
+	CHECK(typeid(select_method<int8_t , 200>::type)  ==  typeid(plain) ) ;
+	CHECK(typeid(select_method<int8_t ,200>::type )  ==  typeid(plain));
+	//////////////////////////////////////////////////////////////////////////////////  SSE OPS
 	{  array<float,6> f6 = {{1,2,3,4,5,6}}; CHECK( f6.max() == 6 ); }
 
-	{
+	{		cout << " *****  FLOAT-32  *******\n";
+	CHECK(typeid(select_method<float  , 2>::type  )  ==  typeid(plain) ) ;
+	CHECK(typeid(select_method<float  , 200>::type)  ==  typeid(sse) ) ;
 	array<float,3> f3 = {{1,2,3}};
 	array<float,10> f10 = {{1,2,3,4,5,6,7,8,9,10}};
 	array<float,20> f20 = {{1,2,3,4,5,6,7,8,9,10}};
@@ -156,9 +168,10 @@ main() {
 	CHECKeq(f20.max(),10);
 	
 	}
-	cout << endl << flush ;
 
-	{			/////////////  INT-16
+	{		cout << " *****  INT-16  *******\n";
+	CHECK(typeid(select_method<int16_t, 2>::type  )  ==  typeid(plain) ) ;
+	CHECK(typeid(select_method<int16_t, 200>::type)  ==  typeid(sse2) ) ;
 	array<int16_t,3>  h3 = {{1,2,3}};			CHECK(IS_ALIGN16(h3));
 	array<int16_t,10> h10 = {{1,2,3,4,5,6,7,8,9,10}};	CHECK(IS_ALIGN16(h10));
 	array<int16_t,1000> h1000 = {{1,2,3,4,5,6,7,8,9,10}};	CHECK(IS_ALIGN16(h1000));
@@ -167,9 +180,11 @@ main() {
 	CHECKeq((h10.max()),10);
 	//CHECKeq((h10.max<sse>()),10); 	// should trigger static assert  (sould be: sse2)
 	//CHECKeq((h10.max<sse2>()),10);	// assert will fail (no true:  10 > 8*2)
+
+	#ifdef GCC_BUG
 	CHECKeq((h1000.max<plain>()),10);
+	CHECKeq((h1000.max()),10);
 	CHECKeq((h1000.max_impl(sse2(),int16_t())),10);
-	#ifdef CANUSE_SSE2
 	CHECKeq((h1000.max<sse2>()),10);
 	#endif
 	}
