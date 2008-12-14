@@ -1,6 +1,7 @@
 #ifndef LVV_ARRAY
 #define LVV_ARRAY
 
+
 		// TODO 
 		// tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
 		// memcpy specialization: file:///tr/boost-trunk.svn/libs/type_traits/doc/html/boost_typetraits/examples/copy.html
@@ -71,7 +72,7 @@ template < class T, int N, int BEGIN=0> class array { public:
 
 
 
-	typename select_alignment<T,N>::type __restrict__	elems;
+	typename select_alignment<T,N>::type 	elems;
 
 	enum { sz = N, ibg=BEGIN, ien=BEGIN+N };  // gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
 
@@ -232,7 +233,7 @@ T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = 
 	
 
 // ----------------------------------------------------------------------------------------------------------------- MAX FLOAT-32
-float	max_impl (sse, float) __restrict__		const { // DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
+float	max_impl (sse, float) 			const	{ // DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
 	const unsigned	sse_size	= 4;
 	const unsigned	unroll		= 2;
 									//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
