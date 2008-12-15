@@ -1,5 +1,5 @@
 	///////////////////   CONFIG
-	#define		F32
+	#define		I16
 	#define 	INCLUDE		"b-cmp.h"
 	//#define 	INCLUDE		"b-sum.h"
 	#define		REPEAT		9

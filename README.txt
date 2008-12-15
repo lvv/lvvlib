@@ -42,7 +42,8 @@ Second set of curly braces needed because this is an array inside a class.
 There are no mallocs,  no extra pointers, no extraneous class members.
 
 .lvv::array have following added capabilities:
-- Vector operation:   `A1 += A2; cout << A1;`
+- Vector operation:   `A1 += A2;   cout << A1;`
+- Optimized template specialization for specific combination of CPU capabilities,  array size and type.
 - explicit SSE vectorization (gcc not very good yet in auto-vectorization).
 - parallelization with OpenMP
 - Index of first element defaults to 0, but can be any number.
