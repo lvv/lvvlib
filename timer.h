@@ -28,8 +28,8 @@
 
 /////////////////////////////////////////////////////////////////////////////////////  READ_TICK
 #if defined(__x86_64) || defined (__i386)
-uint64_t	read_tick() {	// tested with 
-	uint64_t now_tick;
+uint64_t	read_tick() {				// tested with with x86_64 only. 
+	uint64_t now_tick;			
        	asm volatile (	"subl	%%eax,%%eax;"
 		"cpuid;"
 		"rdtsc;"

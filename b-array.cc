@@ -1,9 +1,13 @@
+	
 	///////////////////   CONFIG
 	#define		I16
+	//#define		F32
 	#define 	INCLUDE		"b-cmp.h"
 	//#define 	INCLUDE		"b-sum.h"
 	#define		REPEAT		9
+	#define		GCC_BUG
 	const static unsigned long	N = 	100000000;
+
 
 	#ifdef	F32
 		#define		TYPE		float
@@ -11,6 +15,8 @@
 		#define		CANUSE_SSE
 		#define		CANUSE_SSE2
 		#define		CANUSE_SSE3
+		/#define		CANUSE_SSE4
+		//		_mm_minpos_epu16  
 
 			#define		SSE_SIZE	4
 			#define		MM_ADD_OP 	_mm_add_ps
@@ -38,7 +44,7 @@
 			#define		MK_REG		mk_m128i
 				#define		DO_PLAIN
 				#define		DO_SIMD
-				#define		DO_OMP
+				//#define		DO_OMP
 	#endif
 
 	#define dID 1

@@ -2,6 +2,8 @@
 	#define CANUSE_SSE
 	#define CANUSE_SSE2
 	#define CANUSE_SSE3
+	#define GCC_BUG
+
 //#include <iostream>
 
 #include <lvv/math.h>
@@ -146,12 +148,13 @@ main() {
 	i4_t	i4;	
 	CHK(i4);     CHECK(IS_ALIGN16(i4)); 
 
-	//////////////////////////////////////////////////////////////////////////////////  SSE OPS
+	//////////////////////////////////////////////////////////////////////////////////  SELECT_METHOD
 	CHECK(typeid(select_method<double , 2>::type  )  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<double , 200>::type)  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<int8_t , 2>::type  )  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<int8_t , 200>::type)  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<int8_t ,200>::type )  ==  typeid(plain));
+
 	//////////////////////////////////////////////////////////////////////////////////  SSE OPS
 	{  array<float,6> f6 = {{1,2,3,4,5,6}}; CHECK( f6.max() == 6 ); }
 

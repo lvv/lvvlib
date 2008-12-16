@@ -261,7 +261,6 @@ float	max_impl (sse, float) 			const	{ // DBG cerr <<" max<sse,float> " << N << 
 	
 // ----------------------------------------------------------------------------------------------------------------- MAX  INT-16
 int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << N << "(" << N-N%8 << ")"; 
-	int16_t m;
 	const unsigned	sse_size	= 8;
 	const unsigned	unroll		= 2;
 									//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
@@ -274,17 +273,26 @@ int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << 
 	__m128i m1 = mk_m128i(elems[0]);
 	__m128i m2 = mk_m128i(elems[sse_size]);
 
-	for (size_t i= cycle_step;  i < sse_cycle; i+=cycle_step) { 			// SSE
-		//dPR1(i);
+	for (size_t i= cycle_step;  i < sse_cycle; i+=cycle_step) {
 		  m1 = _mm_max_epi16(m1, mk_m128i(elems[i]) );
 		  m2 = _mm_max_epi16(m2, mk_m128i(elems[i+sse_size]) );
 		 __builtin_prefetch((void*)(elems+prefetch),0,0);      
 	}
 
 	m1 = _mm_max_epi16(m1, m2);
-	m  = mk_array<int16_t,sse_size,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  m = m < elems[i] ? elems[i] : m;
-	_mm_empty();
-	return m;
+
+	/*
+	int16_t tmp8[8]  __attribute__((aligned(16)));
+	_mm_store_si128 ((__m128i *)tmp8, m1);
+	int16_t max = tmp8[0];
+	for (size_t i=1; i<8; i++)  max = max < tmp8[i] ? tmp8[i] : max;
+	for (size_t i=sse_cycle; i<N; i++)  max = max < elems[i] ? elems[i] : max;
+	//cout << " : " << *(array<int16_t,8>*) &m1;
+	*/
+
+	int16_t max = mk_array<int16_t,sse_size,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  max = max < elems[i] ? elems[i] : max;
+
+	return max;
  }
 
  };

@@ -22,7 +22,7 @@
                 #define PURE
         #endif
 
-	#include <boost/static_assert.hpp>
+//	#include <boost/static_assert.hpp>
 //		#define  static_assert	BOOST_STATIC_ASSERT
 //////////////////////////////////////////////////////////////////////////////////////////////  STATIC ASSERT
 
