@@ -1,9 +1,13 @@
 	
 	///////////////////   CONFIG
-	#define		I16
-	//#define		F32
-	#define 	INCLUDE		"b-cmp.h"
-	//#define 	INCLUDE		"b-sum.h"
+	//#define		I16
+
+	#ifndef INCLUDE
+		#define 	INCLUDE		"b-cmp.h"
+		//#define 	INCLUDE		"b-sum.h"
+	#endif
+		
+	#define		F32
 	#define		REPEAT		9
 	#define		GCC_BUG
 	const static unsigned long	N = 	100000000;
@@ -15,7 +19,7 @@
 		#define		CANUSE_SSE
 		#define		CANUSE_SSE2
 		#define		CANUSE_SSE3
-		/#define		CANUSE_SSE4
+		#define		CANUSE_SSE4
 		//		_mm_minpos_epu16  
 
 			#define		SSE_SIZE	4
@@ -46,6 +50,11 @@
 				#define		DO_SIMD
 				//#define		DO_OMP
 	#endif
+
+	#ifndef TYPE
+		#error "type  (F32/I16/...) not defined"
+	#endif
+
 
 	#define dID 1
 

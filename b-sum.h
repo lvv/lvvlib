@@ -1,4 +1,5 @@
 
+cout << "*** SUM  type:"  << typeid(TYPE).name() << endl;
 
 #ifdef DO_PLAIN
 
@@ -122,14 +123,14 @@ cout << "*** OMP ***" << endl;
  for(int r=0; r<REPEAT; r++) { ////////////  PLAIN-LOOP-F-omp
 	float fsum=0;
 	#pragma omp parallel for reduction(+:fsum)
-	for (int i=0; i<N; i++) fsum += A[i];
+	for (long i=0; i<N; i++) fsum += A[i];
 PRINT("PLAIN LOOP-omp:", fsum);
  }
 
  for(int r=0; r<REPEAT; r++) {
 	double dsum=0;
 	#pragma omp parallel for reduction(+:dsum)
-	for (int i=0; i<N; i+=8) dsum += ((A[i] + A[i+1]) + (A[i+2] +A[i+3])) + ((A[i+4] + A[i+5]) + (A[i+6] +A[i+7]));
+	for (long i=0; i<N; i+=8) dsum += ((A[i] + A[i+1]) + (A[i+2] +A[i+3])) + ((A[i+4] + A[i+5]) + (A[i+6] +A[i+7]));
 PRINT("PLAIN LOOP-DF+8+omp:", dsum);
  }
 
@@ -139,7 +140,7 @@ PRINT("PLAIN LOOP-DF+8+omp:", dsum);
 	__m128 _0, _1, _2, _3;
 
 	#pragma omp parallel for private(_0, _1, _2, _3, sum4) reduction(+:sum)
-	for (int i=0; i<N; i+=32) {
+	for (long i=0; i<N; i+=32) {
 		  _0 = MK_REG(A[i]);		_0 = MM_ADD_OP(_0, MK_REG(A[i+4]));
 		  _1 = MK_REG(A[i+8]);		_1 = MM_ADD_OP(_1, MK_REG(A[i+12]));
 		  _2 = MK_REG(A[i+16]);		_2 = MM_ADD_OP(_2, MK_REG(A[i+20]));
@@ -161,7 +162,7 @@ PRINT("SSE 4*f2d+omp:", sum);
 	__m128 _0, _1, _2, _3;
 
 	#pragma omp parallel for private(_0, _1, _2, _3, sum4) reduction(+:sum)
-	for (int i=0; i<N; i+=32) {
+	for (long i=0; i<N; i+=32) {
 		  _0 = MK_REG(A[i]);		_0 = MM_ADD_OP(_0, MK_REG(A[i+4]));
 		  _1 = MK_REG(A[i+8]);		_1 = MM_ADD_OP(_1, MK_REG(A[i+12]));
 		  _2 = MK_REG(A[i+16]);		_2 = MM_ADD_OP(_2, MK_REG(A[i+20]));

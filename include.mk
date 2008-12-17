@@ -11,7 +11,11 @@ TMPDIR ?=/v
 _cc = $(CXX)-$(shell $(CXX) -v 2>&1 | sed  -n 's/^.*ersion *\([0-9.]*\) .*/\1/p')
 _date = $(shell date +'%y%m%d_%H%M%S')
 _rev=$(shell git rev-parse HEAD|sed -n 's/^\(........\).*/\1/p')++$(shell git branch |sed -n 's/master/M/; s/^* //p')
-ID = $(shell echo $(_date)-$≡$(_cc)-$(SPEED:DEBUG=g)-$(_rev) | tr -d ' ')
+#_cpu=$(shell uname -m -p  |sed 's/Intel(R)//;s/(TM)//;s/@//;s/CPU//;s/ \+/-/g')
+_cpu=$(shell sed -n '/^model name/!d; s/.*: //; s/(tm) Processor//; s/Intel(R)//; s/(TM)//; s/@//; s/^ //; s/ \+/-/g;p;q' /proc/cpuinfo )
+_cores=$(shell awk '/^processor/{cores=$$3+1}; END{print cores}' /proc/cpuinfo)
+_mhz=$(shell awk '/^cpu MHz/{mhz=$$4}; END{print mhz}' /proc/cpuinfo |sed 's/\.[0-9]\+//')
+ID = $(shell echo "$(_date)-$(_cc)-$(SPEED:DEBUG=g)-$(_rev)-$(_cpu)-x$(_cores)@$(_mhz)" | tr -d ' ')
 
 ########################################################################################
 #SPEED := $(s:o=OPTIMZE)
@@ -57,11 +61,12 @@ iccFLAGS_DEBUG    := -debug all
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
 #######################################################################################  NOT COMPILE SPECIFIC
-CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'   -I ~/p/  -I /usr/local/include
+CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'   -I ~/p/ -I /usr/include/boost-1_37/  -I /usr/local/include
 #-frecord-gcc-switches
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK 
+#-D_GLIBCXX_PARALLEL
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
-CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_OFF 
+CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_OFF
 CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DNOSTATS   -D_GLIBCXX_DEBUG  
 
 #######################################################################################  EVALUATE CXXFLAGS

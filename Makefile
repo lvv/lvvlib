@@ -9,6 +9,13 @@ t-* u-*    : *.h
 #CXXFLAGS +=  -D ASMLIB -I .. -I /usr/local/include
 #LDFLAGS  +=  -L /usr/local/lib/ -l:alibelf64o.a -lgsl
 
+id:
+	@echo "****ID  " $(ID) |cat -A
+	@echo "****_cc " $(_cc) |cat -A
+	@echo "****_rev " $(_rev) |cat -A
+	@echo "****_date " $(_date) |cat -A
+	@echo "****_cpu " $(_cpu) |cat -A
+	@echo "****_mhz " $(_mhz) |cat -A
 
 test:	u-array u-powi
 	./u-array

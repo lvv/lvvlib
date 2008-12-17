@@ -122,6 +122,8 @@ for (size_t r=0; r<REPEAT; r++) { TYPE max=0; for (size_t i=0; i<N; i++) max = s
 
 for (size_t r=0; r<REPEAT; r++) { TYPE max = *std::max_element (A.begin(), A.end()); 		PRINT("STL::MAX_ELEMENT:",max); }
 
+//for (size_t r=0; r<REPEAT; r++) { TYPE max = *__gnu_parallel::max_element (A.begin(), A.end()); 		PRINT("STL::MAX_ELEMENT __gnu_parallel",max); }
+
 for (size_t r=0; r<REPEAT; r++) { TYPE max=A[0]; for (size_t i=1; i<N; i++) { if (A[i] CMP_OP max) max = A[i]; } PRINT("IF++:		",max); }
 
 for (size_t r=0; r<REPEAT; r++) { TYPE max=A[0]; for (TYPE* p = &A[0]; p != &A[N]; p++) { if (*p CMP_OP max) max = *p; } PRINT("p++:		",max); }
@@ -174,7 +176,7 @@ PRINT("IF+unr4+pf512:		",max);
  for (size_t r=0; r<REPEAT; r++) {
 	TYPE max=A[0];
 	#pragma omp parallel for shared(max)
-	for (size_t i=1; i<N; i+=8) {
+	for (long i=1; i<N; i+=8) {
 		TYPE m0 = (A[i+0] CMP_OP A[i+1] ? A[i+0] : A[i+1]); 
 		TYPE m2 = (A[i+2] CMP_OP A[i+3] ? A[i+2] : A[i+3]); 
 		TYPE m4 = (A[i+4] CMP_OP A[i+5] ? A[i+4] : A[i+5]); 
@@ -190,7 +192,7 @@ PRINT("?+ooo8+omp+ex:	",max);
  for (size_t r=0; r<REPEAT; r++) {
 	TYPE max=A[0];
 	#pragma omp parallel for shared(max)
-	for (size_t i=1; i<N; i+=8) {
+	for (long i=1; i<N; i+=8) {
 		TYPE m0 = (A[i+0] CMP_OP A[i+1] ? A[i+0] : A[i+1]); 
 		TYPE m2 = (A[i+2] CMP_OP A[i+3] ? A[i+2] : A[i+3]); 
 		TYPE m4 = (A[i+4] CMP_OP A[i+5] ? A[i+4] : A[i+5]); 
@@ -207,7 +209,7 @@ PRINT("?+ooo8+omp:	",max);
  for (size_t r=0; r<REPEAT; r++) {
 	TYPE max=0;
 	#pragma omp parallel for shared(max)
-	for (size_t i=0; i<N-7; i+=7) {
+	for (long i=0; i<N-7; i+=7) {
 		TYPE m0 = (A[i+0] CMP_OP A[i+1] ? A[i+0] : A[i+1]); 
 		TYPE m2 = (A[i+2] CMP_OP A[i+3] ? A[i+2] : A[i+3]); 
 		TYPE m4 = (A[i+4] CMP_OP A[i+5] ? A[i+4] : A[i+5]); 
@@ -225,7 +227,7 @@ PRINT("?+ooo7+omp+ex+reod:	",max);
  for (size_t r=0; r<REPEAT; r++) {
 	TYPE max=0;
 	#pragma omp parallel for shared(max) 
-	for (size_t i=0; i<N; i++) if (A[i] CMP_OP max) max = A[i];
+	for (long i=0; i<N; i++) if (A[i] CMP_OP max) max = A[i];
 
 PRINT("IF+omp:		",max);	 	// race, incorrect result
 }
@@ -320,7 +322,7 @@ PRINT("SSE+unroll8+pf500:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()) );
  for (size_t r=0; r<REPEAT; r++) {
 	REG_T m = MK_REG(A[0]);
 	#pragma omp parallel for shared(m)
-	for (size_t i=SSE_SIZE; i<N; i+=SSE_SIZE) {	m = MM_CMP_OP(m, MK_REG(A[i])); }
+	for (long i=SSE_SIZE; i<N; i+=SSE_SIZE) {	m = MM_CMP_OP(m, MK_REG(A[i])); }
 PRINT("SSE+omp:	", (mk_array<TYPE,SSE_SIZE,0>(m).max()));
  }
 
