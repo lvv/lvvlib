@@ -40,8 +40,8 @@ g++FLAGS_OPTIMIZE :=         -O3 -march=native  -fwhole-program --combine  -fope
 
 # 2try(but deps on libs with exception?): -DBOOST_NO_EXCEPTIONS -fno-exceptions -fno-enforce-eh-specs  -freorder-blocks-and-partition
 # -ftree-vectorizer-verbose=3 -fdump-tree-vect 
-
-#g++FLAGS_OPTIMIZE += -fast-math -fstrict-overflow 
+#
+g++FLAGS_COMMON += -I /usr/local/include -l:/opt/intel/Compiler/11.0/074/lib/intel64/libimf.so 
 ##################################################################################33
 
 # CHECK+DEBUG
@@ -52,16 +52,17 @@ g++FLAGS_DEBUG    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-chec
 	#g++FLAGS_DEBUG    += -Wfloat-equal -Weffc++
 	#g++FLAGS_DEBUG    += -fmudflap
 
-iccFLAGS          :=  -wd1418 -wd981         -wd424 -wd810 -wd383 
+iccFLAGS          := -vec-report0 -Wformat -openmp-report0 -wd1418 -wd981 -wd424 -wd810 -wd383  -wd82 -wd1572 -wd2259 -wd11001 -wd11005
 #-gxx-name=/usr/libexec/gcc/x86_64-pc-linux-gnu/4.2.4/
-iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2  -openmp -xT
+iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2  -openmp -xT -openmp-lib compat
 #iccFLAGS_OPTIMIZE := -ipo  -march=core2  -fomit-frame-pointer -parallel
 #iccFLAGS_OPTIMIZE := -ipo  -msse3  -march=core2  -fomit-frame-pointer -parallel
-iccFLAGS_DEBUG    := -debug all
+iccFLAGS_DEBUG    := -debug all 
+iccFLAGS_CHECK    := -check-uninit -fmudflap -fstack-security-check -ftrapuv -Wcheck
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
 #######################################################################################  NOT COMPILE SPECIFIC
-CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'   -I ~/p/ -I /usr/include/boost-1_37/  -I /usr/local/include
+CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'   -I ~/p/ -I /usr/include/boost-1_37/ 
 #-frecord-gcc-switches
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK 
 #-D_GLIBCXX_PARALLEL

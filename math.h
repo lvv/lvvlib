@@ -141,7 +141,7 @@ template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
                                 template<typename T1, typename T2> static inline   bool
 eq (T1 n1,T2 n2, ulp_t ulps=100, typename promote_trait<T1,T2>::T_promote characteristic_value=0)  {
         typedef  typename promote_trait<T1,T2>::T_promote  T;
-        typename is_integral<T>::type  integral_flag;
+        typename boost::is_integral<T>::type  integral_flag;
         return eq_impl<T1,T2,T>(n1, n2, integral_flag, ulps, characteristic_value);
  }
 

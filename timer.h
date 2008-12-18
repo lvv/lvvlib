@@ -109,6 +109,13 @@ Timer(bool dtor=false) : verbose_dtor(dtor)     {
 	    // amount of unrequested memory  -   CommitLimit - Committed_AS
 };
 
+void reset() {
+			#if defined(__x86_64) || defined (__i386)
+	interval_ticks();
+			#endif
+	interval_cpu();
+}
+	
 			#if defined(__x86_64) || defined (__i386)
                         uint64_t
 interval_ticks()                { 
