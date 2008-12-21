@@ -3,14 +3,14 @@
 	//#define		I16
 
 	#ifndef INCLUDE
-		#define 	INCLUDE		"b-cmp.h"
+		#define 	INCLUDE		"b-lower_bound.h"
+		//#define 	INCLUDE		"b-cmp.h"
 		//#define 	INCLUDE		"b-sum.h"
 	#endif
 		
 	#define		F32
-	#define		REPEAT		9
+	#define		REPEAT		1
 	#define		GCC_BUG
-	const static unsigned long	N = 	100000000;
 
 
 	#ifdef	F32
@@ -97,15 +97,7 @@ int main(int argc, char *argv[]) {
 	<< ">>" << endl;
 
 	///////////////////////////////////
-	typedef array<TYPE, N> array_t;
 
-	////////////   CREATE ARRAY
-	array_t  A;
-	for (size_t i=0; i<N-1; i+=2) {
-		A[i]  =1;
-		A[i+1]=2;
-	}
-	A[333] = 3; // for max() testing
 
 	Timer	t(true);
 	float sec, ticks;
