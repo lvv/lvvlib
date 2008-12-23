@@ -13,7 +13,7 @@ container.  If you look in such array in debugger its looks exactly like C
 arrays (which means you can freely cast to and from C array). Because it
 doesn't have constructor, it can be initialised like C arrays:
 
-  lvv::array<float,3> A = {{1., 2., 3.}}  //  this is not C++0x,
+  lvv::array<float,3> A = {{1., 2., 3.}}
 
 Second set of curly braces needed because this is an array inside a class. 
 There are no mallocs,  no extra pointers, no extraneous class members.
@@ -26,11 +26,17 @@ GCC 4.4 promoted `boost::array` to `tr1::array`.
 	* parallelization with OpenMP
 	* out-of order execution optimization
 - Index of first element defaults to 0, but can be any number.
-- Index value tested if it is in valid range when `NDEBUG` macro  is not defined (i.e. for  `gcc -g` ). 
+- Index value tested if it is in valid range when `NDEBUG` macro  is not defined (not optimized compile). 
 - basic linear algebra functions:  `norm2(A)`, `distance_norm2(A1,A2)`, `dot_product(A1,A2)`, etc
 
-Below is benchmark of specialised operations. Benchmarks are done on Core2 Duo, 2.2Ghz, with GCC-4.4.
-Benchmark source is at `b-*.h` files.
+==== Specialization
+Template specialization is technique which allow with zero overhead to select
+most appropriate implementation.  Zero overhead means no run time
+implementation selection code, everything done in compile time. This is similar
+to run time CPU dispatch. Selection logic is based on data-type, performed
+operation, target cpu, array size.  Below is benchmark of specialised
+operations. Benchmarks are done on Core2 Duo, 2.2Ghz, with GCC-4.4.  Benchmark
+source is at `b-*.h` files. 
 
 .Sum of 100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ...}
 [cols="^3,^1,16",frame="topbot",options="header"]
@@ -38,8 +44,8 @@ Benchmark source is at `b-*.h` files.
 | *Ticks per cycle* | *Computed Value*  | *Source*
 | 1.74              | 1.5e+08           | `float  sum = A.sum();`
 | 3.14              | 1.5e+08           | `double sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
-| 3.06              | 3.35544e+07       | `float  sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
-| 3.06              | 3.35544e+07       | `float  sum = std::accumulate(A.begin(), A.end(), float());`
+| 3.06              | 3.35544e+07<1>       | `float  sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
+| 3.06              | 3.35544e+07<1>     | `float  sum = std::accumulate(A.begin(), A.end(), float());`
 |=============================================================================================
 
 .Maximum of 100,000,000 float-s
@@ -53,7 +59,6 @@ Benchmark source is at `b-*.h` files.
 | 1.67              |  SSE: `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
 |==============================================================================================
 
-Acceleration is done through template specialization for combination of specific type and  operation.
 So far I implemented only combinations needed for my work. Hopefully there will
 be less blank space in table bellow as I will have more time or there will be outside contributions.
 
@@ -61,11 +66,12 @@ be less blank space in table bellow as I will have more time or there will be ou
 [cols="1,^1,^1,^1,^1,^1,^1,^1,^1",frame="topbot",options="header"]
 |=============================================================================================
 | *Type*         |  *sum*  | *max* | *min* | *lower_bound* | *find* | *V1 += V2* | *V1 -= V2* | *...*
-| *float*        |  yes    |  yes  |       |               |        |            |            |
+| *generic*      |  STL    |  STL  |       |               |        | for-loop   | for-loop   |
+| *float*        |  sse    |  sse  |       |               |        |            |            |
 | *double*       |         |       |       |               |        |            |            |
 | *long double*  |         |       |       |               |        |            |            |
 | *int8_t*       |         |       |       |               |        |            |            |
-| *int16_t*      |         |  yes  |       |               |        |            |            |
+| *int16_t*      |         |  sse2 |       |               |        |            |            |
 | *int32_t*      |         |       |       |               |        |            |            |
 | *int64_t*      |         |       |       |               |        |            |            |
 | *uint8_t*      |         |       |       |               |        |            |            |
