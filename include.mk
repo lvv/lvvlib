@@ -33,6 +33,8 @@ g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare # -fstrict-aliasing # 
 g++FLAGS_OPTIMIZE :=         -O3 -march=native  -fwhole-program --combine  -fopenmp -fomit-frame-pointer -funsafe-loop-optimizations
 # FAST
 #g++FLAGS_OPTIMIZE :=        -O3 -march=native  -fwhole-program --combine  -fopenmp -fomit-frame-pointer -fargument-noalias-anything -ffast-math -funsafe-loop-optimizations -fassociative-math -fassociative-math  -mfpmath=sse,387 -fno-builtin -fargument-noalias-anything  -fassociative-math
+g++FLAGS_PROFILE := -pg -g -O2 -march=native -fno-omit-frame-pointer -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline
+
 
 # DO NOT USE
 #-fargument-noalias-anything   (newuoa segfalts at the end)
@@ -41,7 +43,7 @@ g++FLAGS_OPTIMIZE :=         -O3 -march=native  -fwhole-program --combine  -fope
 # 2try(but deps on libs with exception?): -DBOOST_NO_EXCEPTIONS -fno-exceptions -fno-enforce-eh-specs  -freorder-blocks-and-partition
 # -ftree-vectorizer-verbose=3 -fdump-tree-vect 
 #
-g++FLAGS_COMMON += -I /usr/local/include -l:/opt/intel/Compiler/11.0/074/lib/intel64/libimf.so 
+g++FLAGS_COMMON += -I /usr/local/include -l:/opt/intel/Compiler/11.0/074/lib/intel64/libimf.so  -Wstrict-aliasing=2
 ##################################################################################33
 
 # CHECK+DEBUG
@@ -52,7 +54,7 @@ g++FLAGS_DEBUG    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-chec
 	#g++FLAGS_DEBUG    += -Wfloat-equal -Weffc++
 	#g++FLAGS_DEBUG    += -fmudflap
 
-iccFLAGS          := -vec-report0 -Wformat -openmp-report0 -wd1418 -wd981 -wd424 -wd810 -wd383  -wd82 -wd1572 -wd2259 -wd11001 -wd11005
+iccFLAGS          := -vec-report0 -Wformat -openmp-report0 -wd1418 -wd981 -wd424 -wd810 -wd383  -wd82 -wd1572 -wd2259 -wd11001 -wd11005 
 #-gxx-name=/usr/libexec/gcc/x86_64-pc-linux-gnu/4.2.4/
 iccFLAGS_OPTIMIZE := -O3 -ipo  -march=core2  -openmp -xT -openmp-lib compat
 #iccFLAGS_OPTIMIZE := -ipo  -march=core2  -fomit-frame-pointer -parallel
@@ -81,7 +83,7 @@ b-%  u-%  : MAKEFLAGS	+= -B
 
 % : %.cc
 	@tput sgr0; tput setaf 4
-	$(CXX)	 $< -o $(name_prefix)$@     $(CXXFLAGS)  $(LDFLAGS)
+	@$(CXX)	 $< -o $(name_prefix)$@     $(CXXFLAGS)  $(LDFLAGS)
 	@tput sgr0
 
 	#@make $<

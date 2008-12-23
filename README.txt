@@ -1,37 +1,14 @@
 == LvvLib - C++ utility library
-
 :gh-ll:		http://github.com/lvv/lvvlib/tree/master/
+
 
 Initially collection of headers that I used in my projects.  'LVV' are my initials (Leonid V. Volnitsky).
 Needs some cleanup, dependency pruning and documentation. 
 
 === http://github.com/lvv/lvvlib/tree/master/array.h[array.h]
 
-Similar to http://http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`] but faster:
-
-.Sum of 100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ...}
-[cols="^3,^1,16",frame="topbot",options="header"]
-|=============================================================================================
-| Ticks per cycle| Computed Value | Source
-| 1.74           | 1.5e+08        | `float  sum = A.sum();`
-| 3.14           | 1.5e+08        | `double sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
-| 3.06           | 3.35544e+07    | `float  sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
-| 3.06           | 3.35544e+07    | `float  sum = std::accumulate(A.begin(), A.end(), float());`
-|=============================================================================================
-
-.Max of 100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ... 3, ... }
-[cols="^1,6",frame="topbot",options="header"]
-|=============================================================================================
-| Ticks per cycle|  Source
-| 1.63           |  `float  max = A.max()`
-| 5.81           |  `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
-| 1.88           |  OpenMP (source same as above, no check for race)
-| 5.81           |  STL: `float  max = *std::max_element (A.begin(), A.end());`
-| 1.67           |  SSE: `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
-|==============================================================================================
-
-
-It is basically plain C array wrapped in class to make it STL compatible
+It is enhanced version of http://http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`] 
+which is plain C array wrapped in class to make it STL compatible
 container.  If you look in such array in debugger its looks exactly like C
 arrays (which means you can freely cast to and from C array). Because it
 doesn't have constructor, it can be initialised like C arrays:
@@ -40,15 +17,62 @@ doesn't have constructor, it can be initialised like C arrays:
 
 Second set of curly braces needed because this is an array inside a class. 
 There are no mallocs,  no extra pointers, no extraneous class members.
+GCC 4.4 promoted `boost::array` to `tr1::array`.
 
 .lvv::array have following added capabilities:
 - Vector operation:   `A1 += A2;   cout << A1;`
 - Optimized template specialization for specific combination of CPU capabilities,  array size and type.
-- explicit SSE vectorization (gcc not very good yet in auto-vectorization).
-- parallelization with OpenMP
+	* explicit SSE vectorization (gcc not very good yet in auto-vectorization).
+	* parallelization with OpenMP
+	* out-of order execution optimization
 - Index of first element defaults to 0, but can be any number.
 - Index value tested if it is in valid range when `NDEBUG` macro  is not defined (i.e. for  `gcc -g` ). 
 - basic linear algebra functions:  `norm2(A)`, `distance_norm2(A1,A2)`, `dot_product(A1,A2)`, etc
+
+Below is benchmark of specialised operations. Benchmarks are done on Core2 Duo, 2.2Ghz, with GCC-4.4.
+Benchmark source is at `b-*.h` files.
+
+.Sum of 100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ...}
+[cols="^3,^1,16",frame="topbot",options="header"]
+|=============================================================================================
+| *Ticks per cycle* | *Computed Value*  | *Source*
+| 1.74              | 1.5e+08           | `float  sum = A.sum();`
+| 3.14              | 1.5e+08           | `double sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
+| 3.06              | 3.35544e+07       | `float  sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
+| 3.06              | 3.35544e+07       | `float  sum = std::accumulate(A.begin(), A.end(), float());`
+|=============================================================================================
+
+.Maximum of 100,000,000 float-s
+[cols="^1,6",frame="topbot",options="header"]
+|=============================================================================================
+| *Ticks per cycle* |  *Source*
+| 1.63              |  `float  max = A.max()`
+| 5.81              |  `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
+| 1.88              |  OpenMP (source same as above, no check for race)
+| 5.81              |  STL: `float  max = *std::max_element (A.begin(), A.end());`
+| 1.67              |  SSE: `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
+|==============================================================================================
+
+Acceleration is done through template specialization for combination of specific type and  operation.
+So far I implemented only combinations needed for my work. Hopefully there will
+be less blank space in table bellow as I will have more time or there will be outside contributions.
+
+.Implemented combinations
+[cols="1,^1,^1,^1,^1,^1,^1,^1,^1",frame="topbot",options="header"]
+|=============================================================================================
+| *Type*         |  *sum*  | *max* | *min* | *lower_bound* | *find* | *V1 += V2* | *V1 -= V2* | *...*
+| *float*        |  yes    |  yes  |       |               |        |            |            |
+| *double*       |         |       |       |               |        |            |            |
+| *long double*  |         |       |       |               |        |            |            |
+| *int8_t*       |         |       |       |               |        |            |            |
+| *int16_t*      |         |  yes  |       |               |        |            |            |
+| *int32_t*      |         |       |       |               |        |            |            |
+| *int64_t*      |         |       |       |               |        |            |            |
+| *uint8_t*      |         |       |       |               |        |            |            |
+| *uint16_t*     |         |       |       |               |        |            |            |
+| *uint32_t*     |         |       |       |               |        |            |            |
+| *uint64_t*     |         |       |       |               |        |            |            |
+|==============================================================================================
 
 
 === *eq()* - numeric comparison template function (http://github.com/lvv/lvvlib/tree/master/math.h[math.h])
@@ -84,11 +108,9 @@ We assume that if someone compares with `unsigned` then he guarantees that other
 === check.h
 
 Very basic unit testing. I had to write my own unit testing because gcc44 can not
-compile BOOST_CHECK. Implemented mostly in macros. Shows at execution log
-evaluated expression. 
+compile BOOST_CHECK. Implemented mostly in macros.
 
 === Other
-
 
 [width="80%",cols="3,3,6",frame="none",options="header"]
 |==========================

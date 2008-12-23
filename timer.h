@@ -43,10 +43,11 @@ uint64_t	read_tick() {				// tested with with x86_64 only.
 			"lea	%0, 	%%eax;"
 			"movl	%%edx,	4(%%eax);"
 		#endif
+		"cpuid;"
                          :[now_tick] "=m"(now_tick)        // output
                          :
 		#if defined(__x86_64) 
-                         :"rbx","rcx", "rdx"         // clobbered register
+                         :"rax", "rdx", "rbx","rcx", "rdx"         // clobbered register
 		#else
                          :"ebx","ecx", "edx"         // clobbered register
 		#endif

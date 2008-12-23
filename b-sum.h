@@ -1,4 +1,15 @@
 
+const static unsigned long	N = 	1000000;
+////////////   CREATE ARRAY
+array_t  A;
+for (size_t i=0; i<N-1; i+=2) {
+	A[i]  =1;
+	A[i+1]=2;
+}
+A[333] = 3; // for max() testing
+///////////////////////////////////////////
+	
+
 cout << "*** SUM  type:"  << typeid(TYPE).name() << endl;
 
 #ifdef DO_PLAIN

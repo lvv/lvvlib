@@ -1,7 +1,7 @@
 
 #include ../Makefile
 
-WEB_DESTDIR ?= /tmp/html-lvvlib
+WEB_DESTDIR ?= /tmp/html
 ASCIIDOC ?= asciidoc
 
 show: web_install

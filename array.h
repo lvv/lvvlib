@@ -362,9 +362,11 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
  operator<<  (ostream& os, array<T,N,B> A)  {
 	//os << format("[%d..%d]=") %A.ibegin() %(A.iend()-1);
 	
+	/*
 	if (N > 10)  std::cout << endl;
 	std::cout << "[" << A.ibegin() << ".." << A.iend() << "] ";
 	if (N > 10)  std::cout << endl;
+	*/
 
 	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, " "));
 	//for (long i=A.ibegin();  i< A.iend();  i++)

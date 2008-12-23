@@ -1,4 +1,14 @@
 
+	const static unsigned long	N = 	1000000;
+	typedef array<TYPE, N> array_t;
+	////////////   CREATE ARRAY
+	array_t  A;
+	for (size_t i=0; i<N-1; i+=2) {
+		A[i]  =1;
+		A[i+1]=2;
+	}
+	A[333] = 3; // for max() testing
+
 cout << "*** COMPARE  type:"  << typeid(TYPE).name() << endl;
 
 
