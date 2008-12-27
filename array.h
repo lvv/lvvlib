@@ -68,13 +68,13 @@
 		//namespace array {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////   ARRAY CLASS
-template < class T, int N, int BEGIN=0> class array { public:
+template < class T, int N, int B=0> class array { public:
 
 
 
 	typename select_alignment<T,N>::type 	elems;
 
-	enum { sz = N, ibg=BEGIN, ien=BEGIN+N };  // gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
+	enum { sz = N, ibg=B, ien=B+N };  // gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
 
       public:
 	// type definitions
@@ -92,8 +92,8 @@ template < class T, int N, int BEGIN=0> class array { public:
 	// n/a (impossible with having aggregate constructor)
 
 	// index
-	index_type				ibegin()	const		{ return BEGIN; }
-	index_type				iend()		const		{ return BEGIN + N; }
+	index_type				ibegin()	const		{ return B; }
+	index_type				iend()		const		{ return B + N; }
 
 	// iterator 
 	iterator				begin()				{ return elems; }
@@ -114,25 +114,25 @@ template < class T, int N, int BEGIN=0> class array { public:
 	reference				operator[](int i) throw(char *)	{
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				cerr << "lvv::array::operator[] error: index=" << i <<  "out of range [" << ibegin() << ".." << iend() << ")  at " << __FILE__ << ":" << __LINE__ ;    
+				cerr << "lvv::array::operator[] error: index=" << i <<  " is out of range [" << ibegin() << ".." << iend() << ")  at " << __FILE__ << ":" << __LINE__<< endl ;    
 				assert(false);
 			}
 		#endif 
-		return elems[i-BEGIN];
+		return elems[i-B];
 	}
 
 	const_reference				operator[](int i) const	 throw(char *) {
 		#if  	defined (DOCHECK)   ||   (!defined (NDEBUG)  &&  !defined (NOCHECK))
 			if (i < ibegin()  ||  iend() <= i) {
-				cerr << "lvv::array::operator[] error: index=" << i <<  "out of range [" << ibegin() << ".." << iend() <<")  at " << __FILE__ << ":" << __LINE__;    
+				cerr << "lvv::array::operator[] error: index=" << i <<  " is out of range [" << ibegin() << ".." << iend() <<")  at " << __FILE__ << ":" << __LINE__<< endl;    
 				assert(false);
 			}
 		#endif 
-		return elems[i-BEGIN];
+		return elems[i-B];
 	}
 
-	reference				at(size_type i)			{ assert(i<N+BEGIN && i>=BEGIN && "out of range"); return elems[i-BEGIN]; }
-	const_reference				at(size_type i)	const		{ assert(i<N+BEGIN && i>=BEGIN && "out of range"); return elems[i-BEGIN]; }
+	reference				at(size_type i)			{ assert(i<N+B && i>=B && "out of range"); return elems[i-B]; }
+	const_reference				at(size_type i)	const		{ assert(i<N+B && i>=B && "out of range"); return elems[i-B]; }
 	reference				front()				{ return elems[0]; }
 	reference				back()				{ return elems[N-1]; }
 	const_reference				front()		const		{ return elems[0]; }
@@ -152,12 +152,13 @@ template < class T, int N, int BEGIN=0> class array { public:
         T*					data()				{ return elems; }
 
 	// assignment with type conversion
-	template <typename T2>	array <T, N, BEGIN>	&operator=(const array < T2, N, BEGIN > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
+	//template <typename T2>	array <T, N, B>	&operator=(const array < T2, N, B > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
+	template <typename T2, int N2, int B2>	array <T, N, B>	&operator=(const array<T2,N2,B2> &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
 	
 	//TODO memcpy assignment (without type conversion)
 
 	// assign one value to all elements
-	template<typename T2> 	array<T,N,BEGIN>&  operator= ( const  T2 value) {  std::fill_n(begin(), size(), value);  return *this; }
+	template<typename T2> 	array<T,N,B>&  operator= ( const  T2 value) {  std::fill_n(begin(), size(), value);  return *this; }
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
 	//TODO memset scalar assignment
 

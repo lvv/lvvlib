@@ -64,7 +64,7 @@ iccFLAGS_CHECK    := -check-uninit -fmudflap -fstack-security-check -ftrapuv -Wc
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
 #######################################################################################  NOT COMPILE SPECIFIC
-CXXFLAGS_COMMON		 = -Wall -DID='"$(ID)"'   -I /host/lvv/p/ -I /usr/include/boost-1_37/ 
+CXXFLAGS_COMMON		 = -Wall -std=c++0x -DID='"$(ID)"'   -I /home/lvv/p/ -I /usr/include/boost-1_37/ 
 #-frecord-gcc-switches
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK 
 #-D_GLIBCXX_PARALLEL
@@ -83,7 +83,7 @@ b-%  u-%  : MAKEFLAGS	+= -B
 
 % : %.cc
 	@tput sgr0; tput setaf 4
-	@$(CXX)	 $< -o $(name_prefix)$@     $(CXXFLAGS)  $(LDFLAGS)
+	$(CXX)	 $< -o $(name_prefix)$@     $(CXXFLAGS)  $(LDFLAGS)
 	@tput sgr0
 
 	#@make $<

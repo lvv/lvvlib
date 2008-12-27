@@ -27,7 +27,7 @@ main() {
 
 	typedef array<int,5> a5_t;
 
-	// CTOR
+	cout << " *****  CTOR  *******\n"; //////////////////////////////////////////////////////////////////////
 	array <int, 5   >       a0 = {{0,1,2,3,4}}; 			// index starts from 0 
 		CHECK(a0.ibegin()==0);
 		CHECK( a0.iend()==5);
@@ -46,22 +46,28 @@ main() {
 
 	//	cout << "a0: "       << a0 << endl;
 	
-	////////////////////////////////////////////////////  vector assignment
+	{ cout << " *****  VECTOR ASSIGNMENT  *******\n"; ///////////////////////////////////////////////
 	// = scalar
-	array<int,5,0> b0;
-	b0 = 0;
-	b0 = 2;
-		CHECK( b0[0]		== 2 );
-		CHECK( b0[3]		== 2 );
+	array<short,3,0>	a0s;
+	CHECK((a0s=0,	a0s[0]		== 0));
+	CHECK((a0s = 9,	a0s.back()	== 9));
 
-	// = diffrent type vector
-	array<long,5,0> c0;
-	c0 = a0;
-		CHECK( c0[0]		== 0 );
-		CHECK( c0[3]		== 3 );
 
-	////////////////////////////////////////////////////  vector ops 
-	//  array op= scalar : an+10 
+	// = diffrent dimentions
+	array<int,3,0>		a0i = {{0,1,2}};
+
+	CHECK((a0s=a0i,	a0s[0]		== 0));
+	CHECK(( 	a0s.back()	== 2));
+
+
+	// = diffrent type
+	array<float,3,1>	b1f	= {{1.f,2.f,3.f}};
+	array<double,3,-1>	bm1d;
+	bm1d = b1f;
+	CHECKeq(bm1d.front(), 1.f);
+
+	}
+	cout << " *****  VECTOR OPS  *******\n"; ///////////////////////////////////////////////
 	an += 10;
 		CHECK( *an.begin()	== -2+10 );
 		CHECK( an[-1]		== -1+10 );
@@ -88,8 +94,8 @@ main() {
 	array<double,2> v2 = {{0., 4.}};
 	CHECK(	eq(distance_norm2(v1,v2), 5.));
 
-	////////////////////////////////////////////////////  gsl  convertion
 	#ifdef CONVERT_GSl_H
+	cout << " *****  CONVERT_GSL  *******\n"; ///////////////////////////////////////////////
 	gsl_vector* gV; // 1st index == 0 
 	gV  = gsl_vector_alloc(a0.size()); 
 	gV <<= a0; 
@@ -110,12 +116,15 @@ main() {
 	CHECK( b_m2[-2]== a1[1]);
 	CHECK( b_m2[2] == a1[5]);
 	#endif
-	//////////////////////////////////////////////////////		SSE ALIGNMENT
 
-//#define CHK(var)	cout << #var << " \t " << &var << " \t " <<  reinterpret_cast<size_t>(&var) % 16 << endl; 
-#define CHK(x)
 
-#define IS_ALIGN16(var)	((reinterpret_cast<size_t>(&var) % 16) == 0)
+
+	cout << " *****  SSE ALIGNMENT  *******\n"; ///////////////////////////////////////////////
+
+	//#define CHK(var)	cout << #var << " \t " << &var << " \t " <<  reinterpret_cast<size_t>(&var) % 16 << endl; 
+	#define CHK(x)
+
+	#define IS_ALIGN16(var)	((reinterpret_cast<size_t>(&var) % 16) == 0)
 
 	//cout << "SUM: " << c1.sum() << endl;
 	//cout << "MAX: " << c1.max() << endl;
@@ -148,14 +157,14 @@ main() {
 	i4_t	i4;	
 	CHK(i4);     CHECK(IS_ALIGN16(i4)); 
 
-	//////////////////////////////////////////////////////////////////////////////////  SELECT_METHOD
+	cout << " *****  SELECT_METHOD  *******\n"; ///////////////////////////////////////////////
 	CHECK(typeid(select_method<double , 2>::type  )  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<double , 200>::type)  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<int8_t , 2>::type  )  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<int8_t , 200>::type)  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<int8_t ,200>::type )  ==  typeid(plain));
 
-	//////////////////////////////////////////////////////////////////////////////////  SSE OPS
+	cout << " *****  SSE SPECIALISATION  ******************************************\n"; ///////////////////////////////////////////////
 	{  array<float,6> f6 = {{1,2,3,4,5,6}}; CHECK( f6.max() == 6 ); }
 
 	{		cout << " *****  FLOAT-32  *******\n";
