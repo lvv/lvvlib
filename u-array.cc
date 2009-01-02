@@ -165,9 +165,10 @@ main() {
 	CHECK(typeid(select_method<int8_t ,200>::type )  ==  typeid(plain));
 
 	cout << " *****  SSE SPECIALISATION  ******************************************\n"; ///////////////////////////////////////////////
-	{  array<float,6> f6 = {{1,2,3,4,5,6}}; CHECK( f6.max() == 6 ); }
 
 	{		cout << " *****  FLOAT-32  *******\n";
+	{  array<float,6> f6 = {{1,2,3,4,5,6}};		CHECK( f6.max() == 6 ); }
+
 	CHECK(typeid(select_method<float  , 2>::type  )  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<float  , 200>::type)  ==  typeid(sse) ) ;
 	array<float,3> f3 = {{1,2,3}};

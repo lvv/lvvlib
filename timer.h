@@ -30,12 +30,12 @@
 #if defined(__x86_64) || defined (__i386)
 uint64_t	read_tick() {				// tested with with x86_64 only. 
 	uint64_t now_tick;			
-       	asm volatile (	"subl	%%eax,%%eax;"
+       	asm volatile (	"subl	%%eax,	%%eax;"
 		"cpuid;"
 		"rdtsc;"
 		#if defined(__x86_64) 
-			"shlq	$32, %%rdx;"
-			"orq	%%rdx, %%rax;"		// combine into 64 bit register        
+			"shlq	$32,	%%rdx;"
+			"orq	%%rdx,	%%rax;"		// combine into 64 bit register        
 			"movq	%%rax,	%[now_tick];"
 		#endif
 		#if defined(__i386) 
@@ -57,9 +57,21 @@ uint64_t	read_tick() {				// tested with with x86_64 only.
 #endif
 
 class Timer { //=========================================== TIMER
-                        // too late, I've found almost the same impl at http://www.boost.org/doc/libs/1_35_0/libs/timer/timer.htm
 			// article about hi-res timers: http://www.devx.com/cplus/Article/35375/0/page/2
 			// see also OpenMP timer: http://gcc.gnu.org/onlinedocs/libgomp/omp_005fget_005fwtime.html#omp_005fget_005fwtime
+			// ---
+			//      > how do you get the divide by 10?
+			//
+			//      The TSC updates at the rate the bus clock ticks, and when it updates
+			//      it adds the (processor clock speed)/(bus clock speed) ratio, rather
+			//      than 1. Since my processor clock speed is 2.67 GHz and the bus clock
+			//      is 267 MHz, this ratio is 10 and so every TSC reading will be divisible
+			//      by 10. Just copy and paste some of your raw TSC measurements here
+			//      and the readers will be able to figure out your bus clock ratio.
+			//      When the ratio is 10, it is quite obvious because the last digit of
+			//      every measurement is zero, but for other ratios it might not be so
+			//      evident at a glance.
+			//
     private: 
     	bool		verbose_dtor;
 

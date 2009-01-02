@@ -1,25 +1,23 @@
 	
 	///////////////////   CONFIG
 	//#define		I16
+	#define		F32
+	#define		REPEAT		7
+
 
 	#ifndef INCLUDE
-		#define 	INCLUDE		"b-lower_bound.h"
+		//#define 	INCLUDE		"b-lower_bound.h"
 		//#define 	INCLUDE		"b-cmp.h"
-		//#define 	INCLUDE		"b-sum.h"
+		#define 	INCLUDE		"b-sum.h"
 	#endif
 		
-	#define		F32
-	#define		REPEAT		1
-	#define		GCC_BUG
-
-
 	#ifdef	F32
 		#define		TYPE		float
-		#define		CANUSE_OMP
+		//#define		CANUSE_OMP
 		#define		CANUSE_SSE
 		#define		CANUSE_SSE2
-		#define		CANUSE_SSE3
-		#define		CANUSE_SSE4
+		//#define		CANUSE_SSE3
+		//#define		CANUSE_SSE4
 		//		_mm_minpos_epu16  
 
 			#define		SSE_SIZE	4
@@ -81,7 +79,7 @@
 int main(int argc, char *argv[]) {
 
 	///////////////////////////////////  ID
-	cout << ID  //<< "    << " 
+	cout << ID   //<< "    << " 
 		#ifdef CANUSE_MMX
 			<< " mmx "
 		#endif

@@ -32,12 +32,15 @@
 				namespace lvv {
 
 	
+
+				#ifdef __SSE__
 	#define mk_m128(x) *(__m128*)&(x)
 	#define mk_m128i(x) *(__m128i*)&(x)
 	template<typename T, int N, int B> class array;
 	template<typename T, int N, int B>	array<T,N,B>&	mk_array(const __m128&  V) { return *(array<T,N,B>*)&(V); } // is there an overhead?
 	//template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128&  V) { return *(array<T,N,B>*)&(V); } // is there an overhead?
 	template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128i& V) { return *(array<T,N,B>*)&(V); }
+				#endif // __SSE__
 
 
 	// indicator what technology is available

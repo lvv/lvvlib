@@ -126,4 +126,7 @@ compile BOOST_CHECK. Implemented mostly in macros.
 | {gh-ll}timer.h[timer.h]| {gh-ll}t-timer.cc[t-timer.cc] | interval/total for  cpu/wall/tick  timer.
 |==========================
 
+== Refrence
+http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
+
 // vim:ft=asciidoc:

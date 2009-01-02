@@ -1,5 +1,6 @@
 
-const static unsigned long	N = 	1000000;
+	const static unsigned long	N = 	100*1000*1000;
+	typedef array<TYPE, N> array_t;
 ////////////   CREATE ARRAY
 array_t  A;
 for (size_t i=0; i<N-1; i+=2) {
@@ -207,7 +208,7 @@ cout << "*** SIMD ***" << endl;
 		  s4 = MM_ADD_OP(s4, A4);
 	}
 	_mm_store_ps(sum4,s4);
-PRINT("SSE:", sum4[0]+sum4[1]+sum4[2]+sum4[3]);
+PRINT("sse in plain loop", sum4[0]+sum4[1]+sum4[2]+sum4[3]);
  }
 
 for(int r=0; r<REPEAT; r++) { double sum = std::accumulate(A.begin(), A.end(), float());  PRINT("stl::accumulate(,,float())", sum); }
@@ -220,7 +221,7 @@ for(int r=0; r<REPEAT; r++) { double sum = A.sum(); PRINT(".sum()", sum); }
 for(int r=0; r<REPEAT; r++) { double sum = A.sum<plain>(); PRINT(".sum<plain>()", sum); }
 
 
- #ifdef CANUSE_SSE3
+ #ifdef __SSE3__
  for(int r=0; r<REPEAT; r++) {
 	double sum;
 	__m128d _sum = _mm_set1_pd(0.0);
@@ -248,7 +249,7 @@ PRINT("SSE3 ooo4*f2d (Hadd):", sum);
  }
  #endif
 
- #ifdef CANUSE_SSE3
+ #ifdef __SSE3__
  for(int r=0; r<REPEAT; r++) {
 	double sum;
 	__m128d _sum = _mm_set1_pd(0.0);
