@@ -103,8 +103,8 @@ powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/
 
 	template<typename T>  T static inline pow2(T x)  { return x*x; };
 	template<typename T>  T static inline pow3(T x)  { return x*x*x; };
-	template<typename T>  T static inline pow4(T x)  { return x*x*x*x; };
-	template<typename T>  T static inline pow5(T x)  { return x*x*x*x*x; };
+	template<typename T>  T static inline pow4(T x)  { return (x*x)*(x*x); };
+	template<typename T>  T static inline pow5(T x)  { return (x*x)*(x*x)*x; };
 
  
     ////////////////////////////////////////////////////////////////////////////////////////////////////  ABS()
@@ -239,6 +239,7 @@ double		polynomial_derivative_eval	(const double x, ARRAY_t C)	{
 
 	return sum;
  };
+
 
     ////////////////////////////////////////////////////////////////////////////////// END
     }
