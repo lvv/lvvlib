@@ -106,12 +106,17 @@ powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/
 	template<typename T>  T static inline pow4(T x)  { return (x*x)*(x*x); };
 	template<typename T>  T static inline pow5(T x)  { return (x*x)*(x*x)*x; };
 
-//----------
-template<unsigned N>	static	double  pow		(double x)  {  return  pow<N % 2>(x)  *  pow<N / 2>(x*x); };
-template<>				double  pow<0u>	(double x)  {  return 1;  };
-template<>				double  pow<1u>	(double x)  {  return x;  };
+	//////  IPOW
+	template<unsigned X, unsigned  P>	struct  ipow		{  enum { value =  ipow<X, P % 2>::value  *  ipow<X*X, P / 2>::value }; };
+	template<unsigned X>			struct  ipow<X, 0>	{  enum { value =  1 };  };
+	template<unsigned X>			struct  ipow<X, 1>	{  enum { value =  X };  };
 
- 
+	//////  ILOG2
+	template<unsigned N>	struct  ilog2		{  static_assert(N%2==0, "ilot2:  N must be even number"); enum { value =  1 + ilog2<N/2>::value}; };
+	template<>		struct  ilog2<1>	{  enum { value =  0 }; };
+	template<>		struct  ilog2<2>	{  enum { value =  1 }; };
+
+	 
     ////////////////////////////////////////////////////////////////////////////////////////////////////  ABS()
     // TODO add specialisation for FP
     // 
