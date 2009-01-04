@@ -106,6 +106,11 @@ powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/
 	template<typename T>  T static inline pow4(T x)  { return (x*x)*(x*x); };
 	template<typename T>  T static inline pow5(T x)  { return (x*x)*(x*x)*x; };
 
+//----------
+template<unsigned N>	static	double  pow		(double x)  {  return  pow<N % 2>(x)  *  pow<N / 2>(x*x); };
+template<>				double  pow<0u>	(double x)  {  return 1;  };
+template<>				double  pow<1u>	(double x)  {  return x;  };
+
  
     ////////////////////////////////////////////////////////////////////////////////////////////////////  ABS()
     // TODO add specialisation for FP
