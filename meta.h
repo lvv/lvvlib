@@ -45,10 +45,6 @@
 	template <>                 struct   Type<double>           { typedef double          SuperiorType; };
 	*/
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////  IEEE FLOATING POINT
-template<typename T>	struct 	fp_metrics;
-template<>		struct 	fp_metrics<float>	{ enum { mantissa_size=23, exponent_size=8 }; };
 //////////////////////////////////////////////////////////////////////////////////////////////  META  IF
 
 	// also in /usr/include/boost/detail/select_type.hpp
@@ -61,6 +57,35 @@ template<>		struct 	fp_metrics<float>	{ enum { mantissa_size=23, exponent_size=8
 				//	IF< sizeof(int)<sizeof(long), long, int>::type  i;
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////  TODO IS_POW_OF_TWO
+// (x&(x-1)) == 0 
+/////////////////////////////////////////////////////////////////////////////////////////////  IPOW
+	template<unsigned X, unsigned  P>	struct  ipow		{  enum { value =  ipow<X, P % 2>::value  *  ipow<X*X, P / 2>::value }; };
+	template<unsigned X>			struct  ipow<X, 0>	{  enum { value =  1 };  };
+	template<unsigned X>			struct  ipow<X, 1>	{  enum { value =  X };  };
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////  ILOG2
+	template<unsigned N>	struct  ilog2		{  static_assert(N%2==0, "ilot2:  N must be even number"); enum { value =  1 + ilog2<N/2>::value}; };
+	template<>		struct  ilog2<1>	{  enum { value =  0 }; };
+	template<>		struct  ilog2<2>	{  enum { value =  1 }; };
+
+/////////////////////////////////////////////////////////////////////////////////////////////  BINARY
+
+	// useage:   const uint32_t bin_val2=binary<101010>::value;
+	template <uint32_t N>	struct binary	 { static uint32_t const	value	= binary<N/10>::value <<1 | N%10; };
+	template <> 		struct binary<0> { static uint32_t const	value	= 0; };
+
+/////////////////////////////////////////////////////////////////////////////////////////////  RATIO
+			template<long N, long D=1, typename FP=long double>
+	struct ratio {
+		//template<typename T>  T value() { return T(N)/D;};
+		enum { numerator = N,  denominator = D };
+		FP	const static 	value = FP(N)/D;
+	};
+
+/////////////////////////////////////////////////////////////////////////////////////////////  INT_
+	template<long N> struct int_ { enum { value = N }; };
 
 		}
 		#endif // LVV_META_H

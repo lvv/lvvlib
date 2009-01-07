@@ -29,12 +29,13 @@
 		
 
 
+	#include <tr1/type_traits>
 	//#include <boost/type_traits.hpp>
-	#include <boost/type_traits/integral_constant.hpp>
-	#include <boost/type_traits/is_integral.hpp>
-		using boost::true_type;
-		using boost::false_type;
-		using boost::is_integral;
+	//#include <boost/type_traits/integral_constant.hpp>
+	//#include <boost/type_traits/is_integral.hpp>
+	//	using boost::true_type;
+	//	using boost::false_type;
+		//using boost::is_integral;
 	
         #ifdef __GNUC__
                 #define PURE         __attribute__((const))                                                                                                    
@@ -80,8 +81,8 @@
     // TODO:  type specialization
     // TODO:  add asserts 
     // TODO:  fast pow with lookup table: http://www.hxa7241.org/articles/content/fast-pow-adjustable_hxa7241_2007.html
-		double  inline  static
-powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c
+			inline  static
+double		powi		(double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c
     double y;
     if( n & 1 )
 	y = x;
@@ -106,16 +107,6 @@ powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/
 	template<typename T>  T static inline pow4(T x)  { return (x*x)*(x*x); };
 	template<typename T>  T static inline pow5(T x)  { return (x*x)*(x*x)*x; };
 
-	//////  IPOW
-	template<unsigned X, unsigned  P>	struct  ipow		{  enum { value =  ipow<X, P % 2>::value  *  ipow<X*X, P / 2>::value }; };
-	template<unsigned X>			struct  ipow<X, 0>	{  enum { value =  1 };  };
-	template<unsigned X>			struct  ipow<X, 1>	{  enum { value =  X };  };
-
-	//////  ILOG2
-	template<unsigned N>	struct  ilog2		{  static_assert(N%2==0, "ilot2:  N must be even number"); enum { value =  1 + ilog2<N/2>::value}; };
-	template<>		struct  ilog2<1>	{  enum { value =  0 }; };
-	template<>		struct  ilog2<2>	{  enum { value =  1 }; };
-
 	 
     ////////////////////////////////////////////////////////////////////////////////////////////////////  ABS()
     // TODO add specialisation for FP
@@ -124,9 +115,24 @@ powi  (double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/
     //       float f;
     //       *(int*)&f &= 0x7FFFFFFF; // set sign bit to zero
    
-template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
- //template<typename T>  T static inline max(T x, T y){ return x > y ? x  : y; };
- //template<typename T>  T static inline mix(T x, T y){ return x < y ? x  : y; };
+	template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
+	template<typename T>  T static inline max(T x, T y){
+		return x > y ? x  : y;
+	};
+	template<typename T>  T static inline min(T x, T y){
+		return x < y ? x  : y;
+	};
+	/*
+	#ifdef x__SSE__                                                                                                                    
+		// fit to range
+	        asm(    
+	                " maxss %[Z_front], %[z];"
+	                " minss %[Z_back],  %[z];"
+	                        :[z]    "=&x"(z)
+	                        :"0"(z), [Z_front]      "m"(rZ.front()),        [Z_back]        "m"(rZ.back())   
+	        );
+	*/
+
 
 
  /////////////////////////////////////////////////////////////////////////////////////////////////////  EQ (int/FP)
@@ -148,8 +154,8 @@ template<typename T>  T static inline abs(T x){ return x > 0 ? x  : -x; };
             return abs_diff < max_error;
      }
 
-                                template<typename T1, typename T2> static inline   bool
-eq (T1 n1,T2 n2, ulp_t ulps=100, typename promote_trait<T1,T2>::T_promote characteristic_value=0)  {
+                                template<typename T1, typename T2> static inline
+bool		eq		(T1 n1,T2 n2, ulp_t ulps=100, typename promote_trait<T1,T2>::T_promote characteristic_value=0)  {
         typedef  typename promote_trait<T1,T2>::T_promote  T;
         typename boost::is_integral<T>::type  integral_flag;
         return eq_impl<T1,T2,T>(n1, n2, integral_flag, ulps, characteristic_value);
@@ -157,8 +163,8 @@ eq (T1 n1,T2 n2, ulp_t ulps=100, typename promote_trait<T1,T2>::T_promote charac
 
 
  //////////////////////////////////////////////////////////////////////////////////////  SIMON_MEAN
-                    double static inline  
-group_mean(
+					    static inline  
+double		group_mean		(
     double sample_value,
     double samples,
     double gloable_value,
@@ -191,7 +197,7 @@ group_mean(
 
     jmp_buf             setjmp_environment;
 
-void fpe_signal_handler(int signum, siginfo_t *info, void *context) {
+void		fpe_signal_handler		(int signum, siginfo_t *info, void *context) {
 
     cerr << "FP error: "; 
     switch (info->si_code) {                                            // FIXME there might be several exception at the same time
@@ -209,7 +215,7 @@ void fpe_signal_handler(int signum, siginfo_t *info, void *context) {
     longjmp(setjmp_environment, 1);
  }
 
-void setup_fpe() {
+void		setup_fpe			() {
     //feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW); // do not enable all
     feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW ); // do not enable all
     struct sigaction fpe_sigaction;
@@ -223,7 +229,7 @@ void setup_fpe() {
  }
 
 		template<typename ARRAY_t>
-double		polynomial_eval	(const double x, ARRAY_t C)	{
+double		polynomial_eval			(const double x, ARRAY_t C)	{
  
 	double poly = *C.begin() ; 
 	double pow_x = 1.0; // x[0,0]^0
@@ -235,8 +241,8 @@ double		polynomial_eval	(const double x, ARRAY_t C)	{
 	return poly;
  };
 
-// x  = a + b*x + c*x^2
-// dx = 0 + b   + 2c*x
+ // x  = a + b*x + c*x^2
+ // dx = 0 + b   + 2c*x
 		template<typename ARRAY_t>
 double		polynomial_derivative_eval	(const double x, ARRAY_t C)	{
  

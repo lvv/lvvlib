@@ -5,6 +5,9 @@
 		// TODO 
 		// tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
 		// memcpy specialization: file:///tr/boost-trunk.svn/libs/type_traits/doc/html/boost_typetraits/examples/copy.html
+		// A+A:
+		// 	http://aszt.inf.elte.hu/~gsd/visit/eindhoven/material/ch01s06.html
+		// 	Portable Expression Template Engine	http://acts.nersc.gov/pete/
 
 						// According to the language definition, aggregate initialization only works
 						// for aggregate types. An array or class type is not an aggregate if it has

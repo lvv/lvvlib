@@ -5,17 +5,23 @@
 #include <lvv/lvv.h>
 
 #include <lvv/check.h>
+	using namespace lvv;
 //#include <lopti/convert-gsl.h>
 	using namespace std;
 
 #include <lvv/float.h>
-	using lvv::floor;
-	using lvv::trunc;
                 int
 main() {
 
 
+	{ 	cout << " *****  FLOOR (DOUBLE)  *******\n";
+	using lvv::fp;
+	CHECKeq(fp<float>::mantissa_size,23);
+	CHECKeq(fp<float>::exponent_size,8);
+	}
+
 	{		cout << " *****  FLOOR (DOUBLE)  *******\n";
+	using lvv::floor;
 	double d;
 	CHECK((d = 0.0,  floor(d) == 0. )) ;
 	CHECK((d = 0.2,  floor(d) == 0. )) ;
@@ -35,6 +41,7 @@ main() {
 	}
 
 	{		cout << " *****  FLOOR (FLOAT)  *******\n";
+	using lvv::floor;
 	float f;
 	CHECK((f = 0.0,  floor(f) == 0.f )) ;
 	CHECK((f = 0.2,  floor(f) == 0.f )) ;
@@ -53,7 +60,8 @@ main() {
 	CHECK((f = -12345.2,  floor(f) == -12346.f )) ;
 	}
 
-	{		cout << " *****  TRUNC (FLOAT)  *******\n";
+	{		cout << " *****  TRUNC (FLOAT)  ******* - STILL BROKEN\n";
+	using lvv::trunc;
 	float f;
 	CHECK((f = 0.0     , trunc(f) == 0.f     ) ) ;
 	CHECK((f = 0.2     , trunc(f) == 0.f     ) ) ;
