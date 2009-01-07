@@ -7,7 +7,7 @@
 	
 	// TODO:  2 check boost: typedef typename tools::promote_args<T>::type result_type;
 	// local copy of blitz promote-old.h 
-	#include <lvv/blitz-promote-old.h>
+	//#include <lvv/blitz-promote-old.h>
 	
 	#include <boost/type_traits/integral_constant.hpp>
 		using boost::true_type;
@@ -15,6 +15,7 @@
 	#include <boost/type_traits/is_integral.hpp>
 		//#include <boost/type_traits.hpp>
 		using boost::is_integral;
+	#include <iostream>
 	
         #ifdef __GNUC__
                 #define PURE         __attribute__((const))                                                                                                    
@@ -87,6 +88,37 @@
 /////////////////////////////////////////////////////////////////////////////////////////////  INT_
 	template<long N> struct int_ { enum { value = N }; };
 
+/////////////////////////////////////////////////////////////////////////////////////////////  TYPE_DESCRIPTOR
+	 // by Ariel Badichi, Irfan Zaidi and Leonid Volnitsky
+	// #include <cstddef>
+
+	 template<typename T> struct type_descriptor;
+
+	 template<typename T> struct type_descriptor<T *>                {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " *";            }};
+	 template<typename T> struct type_descriptor<T &>                {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " &";            }};
+	 template<typename T, std::size_t N> struct type_descriptor<T[N]>{std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " [" << N << "]";}};
+	 template<typename T> struct type_descriptor<const T>            {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " const";        }};
+	 template<typename T> struct type_descriptor<volatile T>         {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " volatile";     }};
+	 template<typename T> struct type_descriptor<const volatile T>   {std::ostream & print(std::ostream& out) const  {out << "const volatile " << type_descriptor<T>(); return out; } };
+	 template<typename T> struct type_descriptor<T* const>           {std::ostream & print(std::ostream& out) const  {out << type_descriptor<T>() << "* const"; return out; } };
+
+
+	 template<> struct type_descriptor<char>       {std::ostream & print(std::ostream & out) const{return out << "char";         }}; // without this compile error
+	 template<> struct type_descriptor<int8_t>     {std::ostream & print(std::ostream & out) const{return out << "int8_t";     }};
+	 template<> struct type_descriptor<uint8_t>    {std::ostream & print(std::ostream & out) const{return out << "uint8_t";    }};
+	 template<> struct type_descriptor<int16_t>    {std::ostream & print(std::ostream & out) const{return out << "int16_t";    }};
+	 template<> struct type_descriptor<uint16_t>   {std::ostream & print(std::ostream & out) const{return out << "uint16_t";   }};
+	 template<> struct type_descriptor<int32_t>    {std::ostream & print(std::ostream & out) const{return out << "int32_t";    }};
+	 template<> struct type_descriptor<uint32_t>   {std::ostream & print(std::ostream & out) const{return out << "uint32_t";   }};
+	 template<> struct type_descriptor<int64_t>    {std::ostream & print(std::ostream & out) const{return out << "int64_t";    }};
+	 template<> struct type_descriptor<uint64_t>   {std::ostream & print(std::ostream & out) const{return out << "uint64_t";   }};
+	 template<> struct type_descriptor<float>      {std::ostream & print(std::ostream & out) const{return out << "float";      }};
+	 template<> struct type_descriptor<double>     {std::ostream & print(std::ostream & out) const{return out << "double";     }};
+	 template<> struct type_descriptor<long double>{std::ostream & print(std::ostream & out) const{return out << "long double";}};
+
+	 template<typename T> std::ostream & operator<< (std::ostream & out, const type_descriptor<T> & desc) { return desc.print(out); }
+
+/////////////////////////////////////////////////////////////////////////////////////////////  
 		}
 		#endif // LVV_META_H
  

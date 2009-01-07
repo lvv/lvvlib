@@ -2,6 +2,8 @@
 						#define LVV_FLOAT_H
 						namespace lvv {
 
+	// TR floating point utils:  http://www.codeproject.com/KB/cpp/floatutils.aspx
+
 	//////////////////////////////////////////////////////////////////////////////////////////////  IEEE FLOATING POINT
 	template<typename T, long M=0, long E=1>	struct 	fp {
 		T const static value =  M *  (E > 0 ?  ipow<10,E>::value : ( E < 0 ?  T(1)/T(ipow<10,-E>::value) : 1) );
@@ -43,6 +45,19 @@
 	//  #define	le0(f)	(FasI(f) <= 0)
 	//  #define	gt0(f)	(FasI(f) > 0)
 	//  #define	ge0(f)	(FasUI(f) <= 0x80000000U)
+	//
+	
+	////////////////////////////////////////////////////////////////////////////////////   RECIPROCAL
+	// // This is about 2.12 times faster than using 1.0f / n
+	//
+	// // r = 1/p
+	//
+	// #define FP_INV(r,p) 	{ \
+	//		int _i = 2 * 0x3F800000 - *(int *)&(p); \
+	//		(r) = *(float *)&_i; \
+	//		(r) = (r) * (2.0f - (p) * (r)); \
+	//	}
+	//
 	//
 	
 	////////////////////////////////////////////////////////////////////////////////////   FLOOR
