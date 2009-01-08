@@ -27,22 +27,21 @@ main() {
 	PR1	((type_descriptor<LVV_PROMOTE2(long double , char    ) >() ) ) ;
 
 	{ cout << "\n\n *** Test is_integral ***\n";
-	const int i=0;   const float f=0;  const double d=0;
 	PR1	(LVV_IS_INTEGRAL(int));
 	PR1	(LVV_IS_INTEGRAL(float));
 	PR1	(LVV_IS_INTEGRAL(double));
 	}
 
-	#ifdef ONE
 	cout << "*********  RATIO<>  **********\n";
 	CHECK_ARE_EQUAL		((ratio_<2>::denominator),		1);
 	CHECK_ARE_EQUAL		((ratio_<2,3>::denominator),		3);
 	CHECK_ARE_EQUAL		((ratio_<2,3>::numerator),		2);
-	//CHECK_ARE_FP_EQUAL	((ratio_<2,3,float>::value),		float(2./3.));
-	//CHECK_ARE_FP_EQUAL	((ratio_<1,2>::value),			1./2.);
-	//CHECK_ARE_FP_EQUAL	((ratio_<0,3,float>::value),		float(0.));
-	//CHECK_ARE_FP_EQUAL	((ratio_<-2,3,float>::value),		float(2./-3.));
-	//CHECK_ARE_FP_EQUAL	((ratio_<1,1000,float>::value),		float(0.001));
+	CHECK_ARE_FP_EQUAL	((ratio_<2,3>::convert<float>()),	float(2./3.));
+	CHECK_ARE_FP_EQUAL	((ratio_<2,3>::convert<int>()),		0);
+	CHECK_ARE_FP_EQUAL	((ratio_<1,2>::convert<float>()),	1./2.);
+	CHECK_ARE_FP_EQUAL	((ratio_<0,3>::convert<float>()),	float(0.));
+	CHECK_ARE_FP_EQUAL	((ratio_<-2,3>::convert<float>()),float(2./-3.));
+	CHECK_ARE_FP_EQUAL	((ratio_<1,1000>::convert<float>()),	float(0.001));
 
 	cout << "*********  FP<>  **********\n";
 	CHECK_ARE_EQUAL		((fp<float,2,-1>::value),		float(0.2));
@@ -66,6 +65,7 @@ main() {
 	CHECKeq((lvv::ilog2<256>::value), 8);
 
 	CHECK_EXIT;
+	#ifndef ONE
 	#endif // ONE
 
 }

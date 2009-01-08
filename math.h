@@ -148,8 +148,8 @@ double		powi		(double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/tr
 
 
                                 template<typename T1, typename T2> static inline
-bool		eq		(T1 n1,T2 n2, ulp_t ulps=100, __gnu_cxx::__promote_2<T1,T2> characteristic_value=0)  {
-        typedef __gnu_cxx::__promote_2<T1,T2>  T;
+bool		eq		(T1 n1,T2 n2, ulp_t ulps=100, typename LVV_PROMOTE2(T1,T2) characteristic_value=0)  {
+        typedef typename LVV_PROMOTE2(T1,T2)  T;
         typename boost::is_integral<T>::type  integral_flag;
         return eq_impl<T1,T2,T>(n1, n2, integral_flag, ulps, characteristic_value);
  }

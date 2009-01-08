@@ -119,12 +119,11 @@
 
 
 //------------------------------------------------------------------------------------------ 	RATIO
-			template<long N, long D=1, typename FP=long double>
+			template<long N, long D=1>
 	struct ratio_ {
-		//template<typename T>  T value() { return T(N)/D;};
-		enum { numerator = N,  denominator = D };
-		//template<typename TO> TO static convert() {return TO(N)/D; }
-		//FP	const static 	value = FP(N)/D;
+		long const static  numerator = N;
+		long const static  denominator = D;
+		template<typename TO> TO static convert() {return TO(N)/D; }
 	};
 
 //------------------------------------------------------------------------------------------	INT_
