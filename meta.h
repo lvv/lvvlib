@@ -123,11 +123,19 @@
 	struct ratio_ {
 		long const static  numerator = N;
 		long const static  denominator = D;
+		typedef 	ratio_<N,D>	type;
 		template<typename TO> TO static convert() {return TO(N)/D; }
 	};
 
-//------------------------------------------------------------------------------------------	INT_
-	template<long N> struct int_ { enum { value = N }; };
+	template<long N> struct int_ : ratio_<N,1> { long const static value=N; };
+
+//------------------------------------------------------------------------------------------	PLUS
+			template<typename A, typename B>
+	struct plus {
+		typedef 	ratio_<A::numerator*B::denominator  + B::numerator*A::denominator, A::denominator * B::denominator>	type;
+	};
+
+	
 
 //------------------------------------------------------------------------------------------	TODO IS_POW_OF_TWO
 // (x&(x-1)) == 0 

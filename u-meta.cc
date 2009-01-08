@@ -52,6 +52,10 @@ main() {
 	cout << "*********  INT_<>  **********\n";
 	CHECK_ARE_EQUAL		((int_<3>::value), 			3);
 	CHECK_ARE_EQUAL		((int_<-3>::value), 			-3);
+	CHECK_ARE_EQUAL		((int_<3>::numerator),			3);
+	CHECK_ARE_EQUAL		((int_<3>::denominator),		1);
+	CHECK_ARE_FP_EQUAL	((int_<3>::convert<float>()),		3.);
+	CHECK_ARE_EQUAL		((lvv::plus< ratio_<1,3>, ratio_<1,3> >::type::convert<float>()),	float(2./3.));
 
 	cout << " ***** IPOW  *******\n"; ///////////////////////////////////////////////
 	CHECKeq((lvv::ipow<3,0>::value), 1);
