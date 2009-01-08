@@ -1,36 +1,44 @@
 
-	// template metaprogramming and conveniance macros
+					// template metaprogramming and conveniance macros
+					
+					#ifndef LVV_META_H
+					#define LVV_META_H
+
+	//#include	<boost/type_traits/integral_constant.hpp>
+
+	#define		LVV_TRUE_TYPE		boost::true_type;
+	#define		LVV_FALSE_TYPE		boost::false_type;
+
+	#include	<iostream>
+			// for type_descriptor
+
+//------------------------------------------------------------------------------------------	PROMOTE 
+	#include	<boost/type_traits.hpp>    
+	#define		LVV_PROMOTE1(T)		boost::promote<T>::type
+	#define		LVV_IS_INTEGRAL(T)	boost::is_integral<T>::value
+
+
+	#include	<boost/numeric/ublas/traits.hpp>
+	#define		LVV_PROMOTE2(T1,T2)	boost::numeric::ublas::promote_traits<T1,T2>::promote_type
+
+	/* for promotion:
+		for single arg only:
+			#include  <boost/type_traits/promote.hpp>    
+			boost::promote 
+
+		for 2 args
+			#include  <boost/boost/numeric/ublas/traits.hpp>
+			boost::numeric:ublas
+
+		old blitz promte:
+			//#include <lvv/blitz-promote-old.h>
 	
-	#ifndef LVV_META_H
-	#define LVV_META_H
+		gcc builtin doesn't works with T from template?
+			__gnu_cxx::__promote_2<T1,T2>
 
-	
-	// TODO:  2 check boost: typedef typename tools::promote_args<T>::type result_type;
-	// local copy of blitz promote-old.h 
-	//#include <lvv/blitz-promote-old.h>
-	
-	#include <boost/type_traits/integral_constant.hpp>
-		using boost::true_type;
-		using boost::false_type;
-	#include <boost/type_traits/is_integral.hpp>
-		//#include <boost/type_traits.hpp>
-		using boost::is_integral;
-	#include <iostream>
-	
-        #ifdef __GNUC__
-                #define PURE         __attribute__((const))                                                                                                    
-        #else
-                #define PURE
-        #endif
+		my own, depricated:
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	#include  <boost/type_traits/promote.hpp>
-
-	namespace lvv {
-
-///////////////////////////////////////////////////////////////////////////////////////////////  SUPERIOR TYPE type_trait
-	/*  DEPRICATED, use boost::promote
+	DEPRICATED
 	// this is promote_trait class to provide summator type
 	// use:
 	//    typename Type<T>::SuperiorType       sum;
@@ -46,7 +54,54 @@
 	template <>                 struct   Type<double>           { typedef double          SuperiorType; };
 	*/
 
-//////////////////////////////////////////////////////////////////////////////////////////////  META  IF
+
+
+						namespace lvv {
+
+////////////////////////////////////////////////////////////////////////////////////////////  TRAIT
+
+	typedef	 int64_t	int_longest_t;
+	typedef	 uint64_t	uint_longest_t;
+	typedef	 long double	float_longest_t;
+
+
+//------------------------------------------------------------------------------------------	TODO:  FLOAT DEMOTION
+// see after #else at /usr/include/boost-1_37/boost/type_traits/floating_point_promotion.hpp
+
+//------------------------------------------------------------------------------------------	TYPE_DESCRIPTOR
+ // by Ariel Badichi, Irfan Zaidi and Leonid Volnitsky
+ //  usage:   cout << type_descriptor<const float>;
+
+ template<typename T> struct type_descriptor;
+
+ template<typename T> struct type_descriptor<T *>                {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " *";            }};
+ template<typename T> struct type_descriptor<T &>                {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " &";            }};
+ template<typename T, std::size_t N> struct type_descriptor<T[N]>{std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " [" << N << "]";}};
+ template<typename T> struct type_descriptor<const T>            {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " const";        }};
+ template<typename T> struct type_descriptor<volatile T>         {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " volatile";     }};
+ template<typename T> struct type_descriptor<const volatile T>   {std::ostream & print(std::ostream& out) const  {out << "const volatile " << type_descriptor<T>(); return out; } };
+ template<typename T> struct type_descriptor<T* const>           {std::ostream & print(std::ostream& out) const  {out << type_descriptor<T>() << "* const"; return out; } };
+
+
+ template<> struct type_descriptor<char>       {std::ostream & print(std::ostream & out) const{return out << "char";         }}; // without this compile error
+ template<> struct type_descriptor<int8_t>     {std::ostream & print(std::ostream & out) const{return out << "int8_t";     }};
+ template<> struct type_descriptor<uint8_t>    {std::ostream & print(std::ostream & out) const{return out << "uint8_t";    }};
+ template<> struct type_descriptor<int16_t>    {std::ostream & print(std::ostream & out) const{return out << "int16_t";    }};
+ template<> struct type_descriptor<uint16_t>   {std::ostream & print(std::ostream & out) const{return out << "uint16_t";   }};
+ template<> struct type_descriptor<int32_t>    {std::ostream & print(std::ostream & out) const{return out << "int32_t";    }};
+ template<> struct type_descriptor<uint32_t>   {std::ostream & print(std::ostream & out) const{return out << "uint32_t";   }};
+ template<> struct type_descriptor<int64_t>    {std::ostream & print(std::ostream & out) const{return out << "int64_t";    }};
+ template<> struct type_descriptor<uint64_t>   {std::ostream & print(std::ostream & out) const{return out << "uint64_t";   }};
+ template<> struct type_descriptor<float>      {std::ostream & print(std::ostream & out) const{return out << "float";      }};
+ template<> struct type_descriptor<double>     {std::ostream & print(std::ostream & out) const{return out << "double";     }};
+ template<> struct type_descriptor<long double>{std::ostream & print(std::ostream & out) const{return out << "long double";}};
+
+ template<typename T> std::ostream & operator<< (std::ostream & out, const type_descriptor<T> & desc) { return desc.print(out); }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////  CONTROL STRUCTURE
+
+//------------------------------------------------------------------------------------------	META  IF
 
 	// also in /usr/include/boost/detail/select_type.hpp
 	template <bool CONDITION, class THEN, class ELSE>	struct IF { typedef THEN type; };
@@ -58,67 +113,42 @@
 				//	IF< sizeof(int)<sizeof(long), long, int>::type  i;
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////  TODO IS_POW_OF_TWO
+
+
+////////////////////////////////////////////////////////////////////////////////////////////  META   MATH
+
+
+//------------------------------------------------------------------------------------------ 	RATIO
+			template<long N, long D=1, typename FP=long double>
+	struct ratio_ {
+		//template<typename T>  T value() { return T(N)/D;};
+		enum { numerator = N,  denominator = D };
+		//template<typename TO> TO static convert() {return TO(N)/D; }
+		//FP	const static 	value = FP(N)/D;
+	};
+
+//------------------------------------------------------------------------------------------	INT_
+	template<long N> struct int_ { enum { value = N }; };
+
+//------------------------------------------------------------------------------------------	TODO IS_POW_OF_TWO
 // (x&(x-1)) == 0 
-/////////////////////////////////////////////////////////////////////////////////////////////  IPOW
-	template<unsigned X, unsigned  P>	struct  ipow		{  enum { value =  ipow<X, P % 2>::value  *  ipow<X*X, P / 2>::value }; };
-	template<unsigned X>			struct  ipow<X, 0>	{  enum { value =  1 };  };
-	template<unsigned X>			struct  ipow<X, 1>	{  enum { value =  X };  };
+//------------------------------------------------------------------------------------------	IPOW
+       template<unsigned X, unsigned  P>       struct  ipow            {  enum { value =  ipow<X, P % 2>::value  *  ipow<X*X, P / 2>::value }; };
+       template<unsigned X>                    struct  ipow<X, 0>      {  enum { value =  1 };  };
+       template<unsigned X>                    struct  ipow<X, 1>      {  enum { value =  X };  };
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////  ILOG2
+//------------------------------------------------------------------------------------------	ILOG2
 	template<unsigned N>	struct  ilog2		{  static_assert(N%2==0, "ilot2:  N must be even number"); enum { value =  1 + ilog2<N/2>::value}; };
 	template<>		struct  ilog2<1>	{  enum { value =  0 }; };
 	template<>		struct  ilog2<2>	{  enum { value =  1 }; };
 
-/////////////////////////////////////////////////////////////////////////////////////////////  BINARY
+//------------------------------------------------------------------------------------------	BINARY
 
 	// useage:   const uint32_t bin_val2=binary<101010>::value;
 	template <uint32_t N>	struct binary	 { static uint32_t const	value	= binary<N/10>::value <<1 | N%10; };
 	template <> 		struct binary<0> { static uint32_t const	value	= 0; };
 
-/////////////////////////////////////////////////////////////////////////////////////////////  RATIO
-			template<long N, long D=1, typename FP=long double>
-	struct ratio {
-		//template<typename T>  T value() { return T(N)/D;};
-		enum { numerator = N,  denominator = D };
-		FP	const static 	value = FP(N)/D;
-	};
 
-/////////////////////////////////////////////////////////////////////////////////////////////  INT_
-	template<long N> struct int_ { enum { value = N }; };
-
-/////////////////////////////////////////////////////////////////////////////////////////////  TYPE_DESCRIPTOR
-	 // by Ariel Badichi, Irfan Zaidi and Leonid Volnitsky
-	// #include <cstddef>
-
-	 template<typename T> struct type_descriptor;
-
-	 template<typename T> struct type_descriptor<T *>                {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " *";            }};
-	 template<typename T> struct type_descriptor<T &>                {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " &";            }};
-	 template<typename T, std::size_t N> struct type_descriptor<T[N]>{std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " [" << N << "]";}};
-	 template<typename T> struct type_descriptor<const T>            {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " const";        }};
-	 template<typename T> struct type_descriptor<volatile T>         {std::ostream & print(std::ostream & out) const{return out << type_descriptor<T>() << " volatile";     }};
-	 template<typename T> struct type_descriptor<const volatile T>   {std::ostream & print(std::ostream& out) const  {out << "const volatile " << type_descriptor<T>(); return out; } };
-	 template<typename T> struct type_descriptor<T* const>           {std::ostream & print(std::ostream& out) const  {out << type_descriptor<T>() << "* const"; return out; } };
-
-
-	 template<> struct type_descriptor<char>       {std::ostream & print(std::ostream & out) const{return out << "char";         }}; // without this compile error
-	 template<> struct type_descriptor<int8_t>     {std::ostream & print(std::ostream & out) const{return out << "int8_t";     }};
-	 template<> struct type_descriptor<uint8_t>    {std::ostream & print(std::ostream & out) const{return out << "uint8_t";    }};
-	 template<> struct type_descriptor<int16_t>    {std::ostream & print(std::ostream & out) const{return out << "int16_t";    }};
-	 template<> struct type_descriptor<uint16_t>   {std::ostream & print(std::ostream & out) const{return out << "uint16_t";   }};
-	 template<> struct type_descriptor<int32_t>    {std::ostream & print(std::ostream & out) const{return out << "int32_t";    }};
-	 template<> struct type_descriptor<uint32_t>   {std::ostream & print(std::ostream & out) const{return out << "uint32_t";   }};
-	 template<> struct type_descriptor<int64_t>    {std::ostream & print(std::ostream & out) const{return out << "int64_t";    }};
-	 template<> struct type_descriptor<uint64_t>   {std::ostream & print(std::ostream & out) const{return out << "uint64_t";   }};
-	 template<> struct type_descriptor<float>      {std::ostream & print(std::ostream & out) const{return out << "float";      }};
-	 template<> struct type_descriptor<double>     {std::ostream & print(std::ostream & out) const{return out << "double";     }};
-	 template<> struct type_descriptor<long double>{std::ostream & print(std::ostream & out) const{return out << "long double";}};
-
-	 template<typename T> std::ostream & operator<< (std::ostream & out, const type_descriptor<T> & desc) { return desc.print(out); }
-
-/////////////////////////////////////////////////////////////////////////////////////////////  
-		}
-		#endif // LVV_META_H
+							}
+							#endif // LVV_META_H
  

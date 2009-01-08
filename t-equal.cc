@@ -27,25 +27,6 @@ main() {
     cerr << setprecision(numeric_limits<double>::digits10+4) << boolalpha;
     cout << setprecision(numeric_limits<double>::digits10+4) << boolalpha;
 
-    // is_integral
-    /*{
-    using std::tr1::is_integral;
-    cout << "\n\n *** Test is_integral ***\n";
-    PR1(is_integral<typeof(i0)>::value);
-    PR1(is_integral<typeof(f0)>::value);
-    PR1(is_integral<typeof(d2)>::value);
-    }*/
-
-    // promote_trait
-    cout << "\n\n *** Test promote trait ***\n";
-    PR1(typeid(promote_trait<int        , int      > ::T_promote) .name() ) ;
-    PR1(typeid(promote_trait<int        , float    > ::T_promote) .name() ) ;
-    PR1(typeid(promote_trait<int        , float    > ::T_promote) .name() ) ;
-    PR1(typeid(promote_trait<float      , float    > ::T_promote) .name() ) ;
-    PR1(typeid(promote_trait<int        , int      > ::T_promote) .name() ) ;
-    PR1(typeid(promote_trait<char       , unsigned > ::T_promote) .name() ) ;
-    PR1(typeid(promote_trait<long double, char     > ::T_promote) .name() ) ;
-
     cout << "\n\n *** Test promote trait ***\n";
     PR1(eq(i0,i1))
     PR1(eq(i0,i0))

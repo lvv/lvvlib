@@ -27,16 +27,6 @@
 		using std::ostream;
 		using std::setprecision;
 		
-
-
-	#include <tr1/type_traits>
-	//#include <boost/type_traits.hpp>
-	//#include <boost/type_traits/integral_constant.hpp>
-	//#include <boost/type_traits/is_integral.hpp>
-	//	using boost::true_type;
-	//	using boost::false_type;
-		//using boost::is_integral;
-	
         #ifdef __GNUC__
                 #define PURE         __attribute__((const))                                                                                                    
         #else
@@ -59,7 +49,9 @@
 	    private:
 		long        count;
 		//typename Type<T>::SuperiorType       sum;
-		typename  boost::promote<T>::type         sum;
+		//typename  std::tr1::promote<T>::type         sum;
+		//__gnu_cxx::__promote<T>::__type         sum;
+		typename LVV_PROMOTE1(T)         sum;
 		string      lable;
 	 };
 
@@ -154,9 +146,10 @@ double		powi		(double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/tr
             return abs_diff < max_error;
      }
 
+
                                 template<typename T1, typename T2> static inline
-bool		eq		(T1 n1,T2 n2, ulp_t ulps=100, typename promote_trait<T1,T2>::T_promote characteristic_value=0)  {
-        typedef  typename promote_trait<T1,T2>::T_promote  T;
+bool		eq		(T1 n1,T2 n2, ulp_t ulps=100, __gnu_cxx::__promote_2<T1,T2> characteristic_value=0)  {
+        typedef __gnu_cxx::__promote_2<T1,T2>  T;
         typename boost::is_integral<T>::type  integral_flag;
         return eq_impl<T1,T2,T>(n1, n2, integral_flag, ulps, characteristic_value);
  }

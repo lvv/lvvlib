@@ -4,7 +4,7 @@
 
 	// TR floating point utils:  http://www.codeproject.com/KB/cpp/floatutils.aspx
 
-	//////////////////////////////////////////////////////////////////////////////////////////////  IEEE FLOATING POINT
+//////////////////////////////////////////////////////////////////////////////////////////////  IEEE FLOATING POINT
 	template<typename T, long M=0, long E=1>	struct 	fp {
 		T const static value =  M *  (E > 0 ?  ipow<10,E>::value : ( E < 0 ?  T(1)/T(ipow<10,-E>::value) : 1) );
 	};
@@ -32,11 +32,11 @@
 		float static const	one_ulp_magic	= 6755399441055744.0;	//2^52 * 1.5
 	};
 
-	////////////////////////////////////////////////////////////////////////////////////   ABS
+////////////////////////////////////////////////////////////////////////////////////   TODO ABS
 	/* make x = abs(x) */
 	// TO TRY:  *(((int *) &x) + 1) &= 0x7fffffff;
 	//
-	////////////////////////////////////////////////////////////////////////////////////   COMPARE
+////////////////////////////////////////////////////////////////////////////////////   TODO COMPARE
 	//  FROM http://aggregate.org/MAGIC/#Absolute%20Value%20of%20a%20Float
 	//  #define FasI(f)  (*((int *) &(f)))
 	//  #define FasUI(f) (*((unsigned int *) &(f)))
@@ -47,20 +47,19 @@
 	//  #define	ge0(f)	(FasUI(f) <= 0x80000000U)
 	//
 	
-	////////////////////////////////////////////////////////////////////////////////////   RECIPROCAL
-	// // This is about 2.12 times faster than using 1.0f / n
+////////////////////////////////////////////////////////////////////////////////////   TODO RECIPROCAL
+	// This is about 2.12 times faster than using 1.0f / n
 	//
-	// // r = 1/p
-	//
-	// #define FP_INV(r,p) 	{ \
-	//		int _i = 2 * 0x3F800000 - *(int *)&(p); \
-	//		(r) = *(float *)&_i; \
-	//		(r) = (r) * (2.0f - (p) * (r)); \
-	//	}
-	//
-	//
+	// r = 1/p
+	/*
+	 #define FP_INV(r,p) 	{ \
+			int _i = 2 * 0x3F800000 - *(int *)&(p); \
+			(r) = *(float *)&_i; \
+			(r) = (r) * (2.0f - (p) * (r)); \
+		}
+	*/
 	
-	////////////////////////////////////////////////////////////////////////////////////   FLOOR
+////////////////////////////////////////////////////////////////////////////////////   FLOOR
 	
 	// floor(float)
 	const float	fm 	= 0x1.0p23f*1.5f+1;	// 2^52 * 1.5,  uses limited precisicion to floor
@@ -77,7 +76,7 @@
 
 	double static inline	floor(double x)	{ return x - dme + dm - dm; }
 
-	////////////////////////////////////////////////////////////////////////////////////   INTEGER --> FP
+////////////////////////////////////////////////////////////////////////////////////   INTEGER --> FP
 	
 	/*
 	const double	 _double2fixmagic = 68719476736.0*1.5;     //2^36 * 1.5,  (52-_shiftamt=36) uses limited precisicion to floor
