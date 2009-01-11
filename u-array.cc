@@ -21,6 +21,8 @@
 #include <lvv/check.h>
 //#include <lopti/convert-gsl.h>
 	using namespace std;
+	using namespace lvv;
+	
 
                 int
 main() {

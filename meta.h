@@ -123,17 +123,19 @@
 	struct ratio_ {
 		long const static  numerator = N;
 		long const static  denominator = D;
+		long const static  value = N/D;
 		typedef 	ratio_<N,D>	type;
 		template<typename TO> TO static convert() {return TO(N)/D; }
 	};
 
 	template<long N> struct int_ : ratio_<N,1> { long const static value=N; };
 
-//------------------------------------------------------------------------------------------	PLUS
+//------------------------------------------------------------------------------------------	PLUS, MINUS
 			template<typename A, typename B>
-	struct plus {
-		typedef 	ratio_<A::numerator*B::denominator  + B::numerator*A::denominator, A::denominator * B::denominator>	type;
-	};
+	struct plus  { typedef 	ratio_<A::numerator*B::denominator  + B::numerator*A::denominator, A::denominator * B::denominator>	type; };
+
+			template<typename A, typename B>
+	struct minus { typedef 	ratio_<A::numerator*B::denominator  - B::numerator*A::denominator, A::denominator * B::denominator>	type; };
 
 	
 
@@ -144,6 +146,11 @@
        template<unsigned X>                    struct  ipow<X, 0>      {  enum { value =  1 };  };
        template<unsigned X>                    struct  ipow<X, 1>      {  enum { value =  X };  };
 
+       /*
+       template<float X, unsigned  P>       struct  fpow            {  float const static value =  fpow<X, P % 2>::value  *  fpow<X*X, P / 2>::value }; };
+       template<float X>                    struct  fpow<X, 0>      {  float const static value =  1;  };
+       template<float X>                    struct  fpow<X, 1>      {  float const static value =  X;  };
+       */
 //------------------------------------------------------------------------------------------	ILOG2
 	template<unsigned N>	struct  ilog2		{  static_assert(N%2==0, "ilot2:  N must be even number"); enum { value =  1 + ilog2<N/2>::value}; };
 	template<>		struct  ilog2<1>	{  enum { value =  0 }; };
@@ -155,6 +162,20 @@
 	template <uint32_t N>	struct binary	 { static uint32_t const	value	= binary<N/10>::value <<1 | N%10; };
 	template <> 		struct binary<0> { static uint32_t const	value	= 0; };
 
+//------------------------------------------------------------------------------------------    TODO UNION_CAST
+/*
+    template<typename From, typename To>
+    union Union_Cast {
+        From m_from;
+        To m_to;
+        Union_Cast (const From& from_) : m_from (from_) {}
+    };
+
+
+    float f = Union_Cast<int, float> (my_int).m_to;
+
+and you can even add some static assert to verify that sizeof(From) == sizeof (To) if you want.
+*/
 
 							}
 							#endif // LVV_META_H

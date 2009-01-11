@@ -31,22 +31,23 @@ GCC 4.4 promoted `boost::array` to `tr1::array`.
 
 ==== Specialization
 Template specialization is technique which allow with zero overhead to select
-most appropriate implementation.  Zero overhead means no run time
-implementation selection code, everything done in compile time. This is similar
-to run time CPU dispatch. Selection logic is based on data-type, performed
+most appropriate implementation.  Zero overhead means no run-time
+implementation-selection code, everything done in compile time. This is similar
+to run time CPU dispatch which is done in compile time. Selection logic is based on data-type, performed
 operation, target cpu, array size.  Below is benchmark of specialised
 operations. Benchmarks are done on Core2 Duo, 2.2Ghz, with GCC-4.4.  Benchmark
 source is at `b-*.h` files. 
 
 .Sum of 100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ...}
-[cols="^3,^1,16",frame="topbot",options="header"]
+[cols="^3,^1,^2, 16",frame="topbot",options="header"]
 |=============================================================================================
-| *Ticks per cycle* | *Computed Value*  | *Source*
-| 1.74              | 1.5e+08           | `float  sum = A.sum();`
-| 3.14              | 1.5e+08           | `double sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
-| 3.06              | 3.35544e+07<1>       | `float  sum=0  ; for (int i=0 ; i<N; i++) sum += A[i];`
-| 3.06              | 3.35544e+07<1>     | `float  sum = std::accumulate(A.begin(), A.end(), float());`
+| *Ticks per cycle* | *Computed Value*  | *Method* 		| *Source*
+| 1.74              | 1.5e+08           | lvv::array member fn	| `float  sum = A.sum();`
+| 3.14              | 1.5e+08           | double for-cycle	| `double sum=0;  for (int i=0 ; i<N; i++) sum += A[i];`
+| 3.06              | 3.355e+07		| float  for-cycle	| `float  sum=0;  for (int i=0 ; i<N; i++) sum += A[i];`
+| 3.06              | 3.355e+07		| std::accumulate<float>()| `float  sum = accumulate(A.begin(), A.end(), 0.f));`
 |=============================================================================================
+Note that two last lines have big rounding error. 
 
 .Maximum of 100,000,000 float-s
 [cols="^1,6",frame="topbot",options="header"]
@@ -54,7 +55,7 @@ source is at `b-*.h` files.
 | *Ticks per cycle* |  *Source*
 | 1.63              |  `float  max = A.max()`
 | 5.81              |  `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
-| 1.88              |  OpenMP (source same as above, no check for race)
+| 1.88              |  OpenMP (source same as above, 2xCPU, no check for race)
 | 5.81              |  STL: `float  max = *std::max_element (A.begin(), A.end());`
 | 1.67              |  SSE: `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
 |==============================================================================================
@@ -66,7 +67,7 @@ be less blank space in table bellow as I will have more time or there will be ou
 [cols="1,^1,^1,^1,^1,^1,^1,^1,^1",frame="topbot",options="header"]
 |=============================================================================================
 | *Type*         |  *sum*  | *max* | *min* | *lower_bound* | *find* | *V1 += V2* | *V1 -= V2* | *...*
-| *generic*      |  STL    |  STL  |       |               |        | for-loop   | for-loop   |
+| *generic*      |  std::  |  std::|       |   std::       | std::  | for-loop   | for-loop   |
 | *float*        |  sse    |  sse  |       |               |        |            |            |
 | *double*       |         |       |       |               |        |            |            |
 | *long double*  |         |       |       |               |        |            |            |
@@ -84,7 +85,7 @@ be less blank space in table bellow as I will have more time or there will be ou
 === *eq()* - numeric comparison template function (http://github.com/lvv/lvvlib/tree/master/math.h[math.h])
 Used for numeric comparison in generic programming.  For floating point types
 comparison precision will scale proportionally to type used and will still work if
-integral type used.
+integral type used. If different types are compared, ulp of lowest precision type is used. 
 
 Error in floating point expression is proportional to absolute value of a
 number and precision of a type used.  Error will be bigger for `10000` than for
@@ -104,26 +105,24 @@ The longer chain of calculation is the bigger accumulated error is.
 In `eq` acceptable error specified as integer ULP
 multiplier (3th template argument). Default is 100. 
 
-If types have different types they are both converted to mutually compatible type.
-Highest precision type of compared values is used.
-
 For integers: If one of arguments is `unsigned` then other argument converted to unsigned type too (to avoid overflows).
-We assume that if someone compares with `unsigned` then he guarantees that other value is positive.
+It is  assumed that if comparison is  with `unsigned` then it is guaranted that other value is positive (TODO: add assert check)
 
 
 === check.h
 
 Very basic unit testing. I had to write my own unit testing because gcc44 can not
-compile BOOST_CHECK. Implemented mostly in macros.
+compile BOOST_CHECK. Implemented mostly in macros. See examples in any ++u-*.cc++  file.
 
 === Other
 
 [width="80%",cols="3,3,6",frame="none",options="header"]
 |==========================
 | Header                 | Sample Use                    | Description
-| {gh-ll}check.h[check.h]| {gh-ll}t-equal.cc[t-equal.cc] | basic unit testing.
 | {gh-ll}mmap.h[mmap.h]  | {gh-ll}t-mmap.cc[t-mmap.cc]   | simplified mmap files ops.
-| {gh-ll}timer.h[timer.h]| {gh-ll}t-timer.cc[t-timer.cc] | interval/total for  cpu/wall/tick  timer.
+| {gh-ll}timer.h[timer.h]| {gh-ll}t-timer.cc[t-timer.cc] | timer of interval/total for cpu/wall/tick time.
+| {gh-ll}meta.h[meta.h]  | {gh-ll}u-meta.cc[u-meta.cc]   | meta programming
+| {gh-ll}float.h[float.h]  | {gh-ll}u-float.cc[u-float.cc]| floating point traits and bit-twiddling
 |==========================
 
 == Refrence

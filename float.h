@@ -13,6 +13,8 @@
 		enum {
 			mantissa_size	= 23,
 			mantissa_mask	= 0x7FFFFF,
+			//const long evoreal::FLT_EXP_BITS = 0x7F800000L;
+			//const long evoreal::DBL_EXP_BITS = 0x7FF00000UL;
 			exponent_size	= 8, 
 			sign_mask	= 0x80000000
 		};
@@ -98,5 +100,13 @@
 	inline int32 float2int(double val) { return (float) doulbe2int(val); }
 	*/
 
+	/*------------------------------------------------
+	one (stable) way is to use bit fiddling magic, so converting i in [0..2^32-1] to f in [0..1):
+
+		int_as_float(0x3F800000 | (i>>9)) - 1.0f
+
+	(maps an integer into the float mantissa by rescaling (>>9), then
+	setting the exponent to 1.0f (0x3F800000), then subtracting to map it from
+	[1..2) to [0..1) (- 1.0f))	*/
 					    }
 					    #endif // LVV_MATH_H
