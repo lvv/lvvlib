@@ -43,11 +43,12 @@ source is at `b-*.h` files.
 |=============================================================================================
 | *Ticks per cycle* | *Computed Value*  | *Method* 		| *Source*
 | 1.74              | 1.5e+08           | lvv::array member fn	| `float  sum = A.sum();`
+| 1.67              | 1.5e+08           | explicit OpenMP	| `float  sum = A.sum<omp>();`
 | 3.14              | 1.5e+08           | double for-cycle	| `double sum=0;  for (int i=0 ; i<N; i++) sum += A[i];`
 | 3.06              | 3.355e+07		| float  for-cycle	| `float  sum=0;  for (int i=0 ; i<N; i++) sum += A[i];`
 | 3.06              | 3.355e+07		| std::accumulate<float>()| `float  sum = accumulate(A.begin(), A.end(), 0.f));`
 |=============================================================================================
-Note that two last lines have big rounding error. 
+Note that two last lines have big rounding error. Benchmark source is at b-array.cc
 
 .Maximum of 100,000,000 float-s
 [cols="^1,6",frame="topbot",options="header"]
