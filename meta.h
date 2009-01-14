@@ -6,9 +6,9 @@
 
 	#include	<type_traits>
 	//#include	<boost/type_traits/integral_constant.hpp>
-
-	#define		LVV_TRUE_TYPE		boost::true_type
-	#define		LVV_FALSE_TYPE		boost::false_type
+	#define		LVV_TRUE_TYPE		std::tr1::true_type
+	#define		LVV_FALSE_TYPE		std::tr1::false_type
+				// what is std::__false_type ?
 
 	#include	<iostream>
 			// for type_descriptor
@@ -63,6 +63,11 @@
 	*/
 
 
+        #ifdef __GNUC__
+                #define PURE         __attribute__((const))                                                                                                    
+        #else
+                #define PURE
+        #endif
 
 						namespace lvv {
 

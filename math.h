@@ -27,11 +27,6 @@
 		using std::ostream;
 		using std::setprecision;
 		
-        #ifdef __GNUC__
-                #define PURE         __attribute__((const))                                                                                                    
-        #else
-                #define PURE
-        #endif
 
 	#include <lvv/meta.h>
 
@@ -131,7 +126,7 @@ double		powi		(double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/tr
     typedef  unsigned long long int                     ulp_t;
 
     ///type_trait overloded 
-    template<typename T1, typename T2, typename T>   bool static inline   eq_impl (T1 n1, T2 n2, boost::true_type  integral_flag, ulp_t ulps, T characteristic_value) {  // integral
+    template<typename T1, typename T2, typename T>   bool static inline   eq_impl (T1 n1, T2 n2, std::tr1::true_type  integral_flag, ulp_t ulps, T characteristic_value) {  // integral
             return (T)n1==(T)n2;
      };  
 
