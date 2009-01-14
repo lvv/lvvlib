@@ -4,6 +4,7 @@
 					#ifndef LVV_META_H
 					#define LVV_META_H
 
+	#include	<type_traits>
 	//#include	<boost/type_traits/integral_constant.hpp>
 
 	#define		LVV_TRUE_TYPE		boost::true_type
@@ -12,22 +13,21 @@
 	#include	<iostream>
 			// for type_descriptor
 
+					#ifdef OLD_PRE_TR1_FIX
+						#include	<boost/type_traits.hpp>    
+						#define		LVV_PROMOTE1(T)		boost::promote<T>::type
+						#define		LVV_IS_INTEGRAL(T)	boost::is_integral<T>::value
+
+						#include	<boost/numeric/ublas/traits.hpp>
+						#define		LVV_PROMOTE2(T1,T2)	boost::numeric::ublas::promote_traits<T1,T2>::promote_type
+					#endif
 //------------------------------------------------------------------------------------------	SELECT BOOST OR TR1
-	#include	<boost/type_traits.hpp>    
-	#define		LVV_PROMOTE1(T)		boost::promote<T>::type
-	#define		LVV_IS_INTEGRAL(T)	boost::is_integral<T>::value
-
-	#include	<boost/type_traits.hpp>    
-	#define		LVV_PROMOTE1(T)		boost::promote<T>::type
-	#define		LVV_IS_INTEGRAL(T)	boost::is_integral<T>::value
-
-	#include	<boost/type_traits.hpp>    
-	#define		LVV_PROMOTE1(T)		boost::promote<T>::type
-	#define		LVV_IS_INTEGRAL(T)	boost::is_integral<T>::value
-
-
 	#include	<boost/numeric/ublas/traits.hpp>
 	#define		LVV_PROMOTE2(T1,T2)	boost::numeric::ublas::promote_traits<T1,T2>::promote_type
+
+	#include	<boost/type_traits/promote.hpp>    
+	#define		LVV_PROMOTE1(T)		boost::promote<T>::type
+	#define		LVV_IS_INTEGRAL(T)	std::tr1::is_integral<T>::value
 
 	/* for promotion:
 		for single arg only:
@@ -46,20 +46,20 @@
 
 		my own, depricated:
 
-	DEPRICATED
-	// this is promote_trait class to provide summator type
-	// use:
-	//    typename Type<T>::SuperiorType       sum;
-	// if T if float then sum will be double
-	// if T if   int then sum will be long
-	template <typename Default> struct   Type                   { typedef long            SuperiorType; };
-	template <>                 struct   Type<  signed char>    { typedef   signed long   SuperiorType; };
-	template <>                 struct   Type<unsigned char>    { typedef unsigned long   SuperiorType; };
-	template <>                 struct   Type<unsigned short>   { typedef unsigned long   SuperiorType; };
-	template <>                 struct   Type<unsigned int>     { typedef unsigned long   SuperiorType; };
-	template <>                 struct   Type<unsigned long>    { typedef unsigned long   SuperiorType; };
-	template <>                 struct   Type<float>            { typedef double          SuperiorType; };
-	template <>                 struct   Type<double>           { typedef double          SuperiorType; };
+			DEPRICATED
+			// this is promote_trait class to provide summator type
+			// use:
+			//    typename Type<T>::SuperiorType       sum;
+			// if T if float then sum will be double
+			// if T if   int then sum will be long
+			template <typename Default> struct   Type                   { typedef long            SuperiorType; };
+			template <>                 struct   Type<  signed char>    { typedef   signed long   SuperiorType; };
+			template <>                 struct   Type<unsigned char>    { typedef unsigned long   SuperiorType; };
+			template <>                 struct   Type<unsigned short>   { typedef unsigned long   SuperiorType; };
+			template <>                 struct   Type<unsigned int>     { typedef unsigned long   SuperiorType; };
+			template <>                 struct   Type<unsigned long>    { typedef unsigned long   SuperiorType; };
+			template <>                 struct   Type<float>            { typedef double          SuperiorType; };
+			template <>                 struct   Type<double>           { typedef double          SuperiorType; };
 	*/
 
 
