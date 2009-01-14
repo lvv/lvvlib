@@ -70,7 +70,7 @@ CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK
 #-D_GLIBCXX_PARALLEL
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
 CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_OFF
-CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DNOSTATS   -D_GLIBCXX_DEBUG  
+CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEBUG  
 
 #######################################################################################  EVALUATE CXXFLAGS
 CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS_COMMON)  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF) $(CFLAGS) 
@@ -109,6 +109,7 @@ b-%  u-%  : MAKEFLAGS	+= -B
 	make $(<:.cc=)
 	./$(<:.cc=)
 
+a-%       : CXXFLAGS	+= -O3 -save-temps
 u-%       : CXXFLAGS	+= -Wno-unused-variable
 b-%       : SPEED      	 = OPTIMIZE
 

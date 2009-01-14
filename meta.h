@@ -6,13 +6,21 @@
 
 	//#include	<boost/type_traits/integral_constant.hpp>
 
-	#define		LVV_TRUE_TYPE		boost::true_type;
-	#define		LVV_FALSE_TYPE		boost::false_type;
+	#define		LVV_TRUE_TYPE		boost::true_type
+	#define		LVV_FALSE_TYPE		boost::false_type
 
 	#include	<iostream>
 			// for type_descriptor
 
-//------------------------------------------------------------------------------------------	PROMOTE 
+//------------------------------------------------------------------------------------------	SELECT BOOST OR TR1
+	#include	<boost/type_traits.hpp>    
+	#define		LVV_PROMOTE1(T)		boost::promote<T>::type
+	#define		LVV_IS_INTEGRAL(T)	boost::is_integral<T>::value
+
+	#include	<boost/type_traits.hpp>    
+	#define		LVV_PROMOTE1(T)		boost::promote<T>::type
+	#define		LVV_IS_INTEGRAL(T)	boost::is_integral<T>::value
+
 	#include	<boost/type_traits.hpp>    
 	#define		LVV_PROMOTE1(T)		boost::promote<T>::type
 	#define		LVV_IS_INTEGRAL(T)	boost::is_integral<T>::value
@@ -162,6 +170,8 @@
 	template <uint32_t N>	struct binary	 { static uint32_t const	value	= binary<N/10>::value <<1 | N%10; };
 	template <> 		struct binary<0> { static uint32_t const	value	= 0; };
 
+//------------------------------------------------------------------------------------------    TODO FIXED NUMBERS
+//  TR http://msdn.microsoft.com/en-us/library/ms972705.aspx
 //------------------------------------------------------------------------------------------    TODO UNION_CAST
 /*
     template<typename From, typename To>
