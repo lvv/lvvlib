@@ -12,7 +12,9 @@
 
 int main() {
 	
-	volatile float f = 1.00001f;
-	S<float,10> s;
-	std::cout << s.eval(f);
+	volatile float vf = 1.00001f;
+	float f = vf;
+	//S<float,10> s;
+	//std::cout << s.eval(f);
+	std::cout << (f*f)*(f*f);
 }

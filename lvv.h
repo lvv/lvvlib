@@ -7,11 +7,11 @@
 	#include <boost/lexical_cast.hpp>
 	using boost::lexical_cast; 
 
-	#include <boost/format.hpp>
-	using boost::format; 
-	#define FMT(f)	std::cout << boost::format(f)
-	#define MSG(f)	std::cerr << boost::format(f)
-	#define LOG(f)	std::clog << boost::format(f)
+	//#include <boost/format.hpp>
+	//using boost::format; 
+	//#define FMT(f)	std::cout << boost::format(f)
+	//#define MSG(f)	std::cerr << boost::format(f)
+	//#define LOG(f)	std::clog << boost::format(f)
 	
 
     #if  defined(NDEBUG) && defined(DEBUG)
@@ -60,8 +60,9 @@
     namespace lvv {
 
  ///////////////////////////////////////////////////////////////////////////////////
-	#define STR(x) REAL_STR(x)                                                                                                                         
-	#define REAL_STR(x) #x
+
+	#define LVV_STR(x) __LVV_STR__(x)
+	#define __LVV_STR__(x) #x
 
 	// TODO replace lexica_cast with boost::format  
 	

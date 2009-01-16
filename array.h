@@ -3,6 +3,7 @@
 
 
 		// TODO 
+		//	try to inherit from tr1:array - 	/usr/local/include/c++/4.4.0/tr1_impl/array
 		//	tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
 		//	memcpy specialization: file:///tr/boost-trunk.svn/libs/type_traits/doc/html/boost_typetraits/examples/copy.html
 		//
@@ -14,6 +15,17 @@
 						// for aggregate types. An array or class type is not an aggregate if it has
 						// any user-declared constructors, any private or protected nonstatic data
 						// members, any base classes, or any virtual functions.
+		// note to self:
+		// to overlay arrays use 'placement new':
+		//
+		// typedef array <int,4> A;
+		// int init[] = {1, 2, 3, 4};
+		// A& a = *new (init) A;
+		//
+		// Of course, this is equivalent to
+		//
+		// array<int,4> a = {1, 2, 3, 4};
+
 		#include	<lvv/lvv.h>
 		#include	<lvv/math.h>
 		#include	<cassert>
@@ -146,11 +158,9 @@ template < class T, int N, int B=0> class array { public:
 	enum { static_size = N };
 
 	void					swap(array<T, N> &y)		{ std::swap_ranges(begin(), end(), y.begin()); }
-	const T *				c_array()	const		{ return elems; }
-	T *					c_array()			{ return elems; }
 
-        const T*				data()		const		{ return elems; }
-        T*					data()				{ return elems; }
+	const T *				data()	const			{ return elems; }	// tr1 calls this data()
+	T *					data()				{ return elems; }
 
 	// assignment with type conversion
 	//template <typename T2>	array <T, N, B>	&operator=(const array < T2, N, B > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
@@ -289,7 +299,6 @@ template<class T, int N, int B> bool operator>=(const array<T, N, B> &x, const a
 // global swap()
 template < class T, size_t N, int B > inline void swap(array < T, N, B > &x, array < T, N, B > &y) { x.swap(y); }
 
-
 // array op= scalar  ( conflict with google sparsehash if we not spell out type)
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
 template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
@@ -354,9 +363,10 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 
 
 template <typename T, int N> 		class vector: public array<T,N,1> {}; // index start from 1
-template <typename T, int N1, int N2, int B1=1, int B2=1>	class matrix: public array<array<T,N1,B1>,N2,B2> {
+template <typename T, int N1, int N2, int B1=1, int B2=1>	struct  matrix: public array<array<T,N1,B1>,N2,B2> {
 	enum { sz1 = N1, sz2=N2, sz0=N1*N2 };
-	// operator()(int i, int j) { return elems[i][j]; }
+	const T *				data()	const			{ return this->front().data(); }	// tr1 calls this data()
+	T *					data()				{ return this->front().data(); }
 };
 
 			};	// namespace lvv
