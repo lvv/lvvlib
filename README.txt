@@ -1,26 +1,40 @@
 == LvvLib - C++ utility library
-:gh-ll:		http://github.com/lvv/lvvlib/tree/master/
 
+//  HTML rendered version of this file is at:  http://volnitsky.com/project/lvvlib
+
+:gh-ll:		http://github.com/lvv/lvvlib/tree/master/
 
 Initially collection of headers that I used in my projects.  'LVV' are my initials (Leonid V. Volnitsky).
 Needs some cleanup, dependency pruning and documentation. 
 
 === http://github.com/lvv/lvvlib/tree/master/array.h[array.h]
 
-It is enhanced version of http://http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`] 
+Enhanced version of http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`] 
 which is plain C array wrapped in class to make it STL compatible
 container.  If you look in such array in debugger its looks exactly like C
-arrays (which means you can freely cast to and from C array). Because it
-doesn't have constructor, it can be initialised like C arrays:
+arrays (which means you can freely cast to and from C array).
+There are no mallocs,  no extra pointers, no extraneous class members.
+Because it doesn't have constructor, it is an agrigate type, meaning that it can be initialised like C arrays,
+some vector operation are supported. Sample use:
 
-  lvv::array<float,3> A = {{1., 2., 3.}}
+---------------------------------
+using lvv:array;
+array<float,3>	A = {{1., 2., 3.}};
+array<float,3>	B;
+B = 1.;
+A += B;
+cout  << "vector A: "  <<  A  << endl;
+cout  << "vector B: "  <<  B  << endl;
+cout  << "dot product: "  <<  dot_prod(A,B)  << endl;
+------------------------------
 
 Second set of curly braces needed because this is an array inside a class. 
-There are no mallocs,  no extra pointers, no extraneous class members.
+All `B` elements are assigned scalar `1.f`, then vector `B` added to `A`, you can
+send `lvv::array` to `iostream`.
 GCC 4.4 promoted `boost::array` to `tr1::array`.
 
 .lvv::array have following added capabilities:
-- Vector operation:   `A1 += A2;   cout << A1;`
+- Vector operation
 - Optimized template specialization for specific combination of CPU capabilities,  array size and type.
 	* explicit SSE vectorization (gcc not very good yet in auto-vectorization).
 	* parallelization with OpenMP
@@ -33,34 +47,34 @@ GCC 4.4 promoted `boost::array` to `tr1::array`.
 Template specialization is technique which allow with zero overhead to select
 most appropriate implementation.  Zero overhead means no run-time
 implementation-selection code, everything done in compile time. This is similar
-to run time CPU dispatch which is done in compile time. Selection logic is based on data-type, performed
+to run time CPU dispatch, but it is done in compile time. Selection logic is based on data-type, performed
 operation, target cpu, array size.  Below is benchmark of specialised
 operations. Benchmarks are done on Core2 Duo, 2.2Ghz, with GCC-4.4.  Benchmark
 source is at `b-*.h` files. 
 
 .Sum of 100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ...}
-[cols="^3,^1,^2, 16",frame="topbot",options="header"]
-|=============================================================================================
-| *Ticks per cycle* | *Computed Value*  | *Method* 		| *Source*
-| 1.74              | 1.5e+08           | lvv::array member fn	| `float  sum = A.sum();`  // same as `sum<sse>()`
-| 1.67              | 1.5e+08           | explicit OpenMP	| `float  sum = A.sum<omp>();`
-| 3.14              | 1.5e+08           | double for-cycle	| `double sum=0;  for (int i=0 ; i<N; i++) sum += A[i];`
-| 3.06              | 3.355e+07		| float  for-cycle	| `float  sum=0;  for (int i=0 ; i<N; i++) sum += A[i];`
-| 3.06              | 3.355e+07		| std::accumulate<float>()| `float  sum = accumulate(A.begin(), A.end(), 0.f));`
-|=============================================================================================
+[cols="3,^2,^2, 16",frame="topbot",options="header"]
+|============================================================================================
+| *Method* 			| *Ticks per cycle* | *Computed Value*  | *Source*
+| lvv::array member fn		| 1.74              | 1.5e+08           | `float  sum = A.sum();`  // same as `sum<sse>()`
+| lvv::array, explicit OpenMP	| 1.67              | 1.5e+08           | `float  sum = A.sum<omp>();`
+| plain for-loop, double	| 3.14              | 1.5e+08           | `double sum=0;  for (int i=0; i<N; i++) sum += A[i];`
+| plain for-loop, float		| 3.06              | 3.35e+07		| `float  sum=0;  for (int i=0; i<N; i++) sum += A[i];`
+| std::accumulate<float>()	| 3.06              | 3.35e+07		| `float  sum = accumulate(A.begin(), A.end(), 0.f));`
+|============================================================================================
 Note that two last lines have big rounding error. Benchmark source is at b-array.cc.
-Further optimizatin is difficult as it is obsiously memory bound. 
+Further optimizatin is difficult as it is obviously memory bound. 
 
 .Maximum of 100,000,000 float-s
-[cols="^1,6",frame="topbot",options="header"]
-|=============================================================================================
-| *Ticks per cycle* |  *Source*
-| 1.63              |  `float  max = A.max()`
-| 5.81              |  `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
-| 1.88              |  OpenMP (source same as above, 2xCPU, no check for race)
-| 5.81              |  STL: `float  max = *std::max_element (A.begin(), A.end());`
-| 1.67              |  SSE: `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
-|==============================================================================================
+[cols="2,^1,11",frame="topbot",options="header"]
+|=======================================================================================================================
+| *Method* 		| *Ticks per cycle* | * *Source*
+| lvv::array member fn	| 1.63              | `float  max = A.max()`
+| plain for-loop	| 5.81              | `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
+| OpenMP		| 1.88              | `(source same as above, 2xCPU, no check for race)`
+| std::max_element()	| 5.81              | `float  max = *std::max_element (A.begin(), A.end());`
+| SSE intrinsics	| 1.67              | `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
+|========================================================================================================================
 
 So far I implemented only combinations needed for my work. Hopefully there will
 be less blank space in table bellow as I will have more time or there will be outside contributions.
