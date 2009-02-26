@@ -4,27 +4,30 @@
 
 		// TODO 
 		//	try to inherit from tr1:array - 	/usr/local/include/c++/4.4.0/tr1_impl/array
+		//	
 		//	tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
+		//
 		//	memcpy specialization: file:///tr/boost-trunk.svn/libs/type_traits/doc/html/boost_typetraits/examples/copy.html
 		//
-		//	A+A:
+		//	A+A (expresions templates:
 		// 		http://aszt.inf.elte.hu/~gsd/visit/eindhoven/material/ch01s06.html
 		// 		Portable Expression Template Engine	http://acts.nersc.gov/pete/
+		// 		Tiny Vector Matrix library - http://tvmet.sourceforge.net/
 
 						// According to the language definition, aggregate initialization only works
 						// for aggregate types. An array or class type is not an aggregate if it has
 						// any user-declared constructors, any private or protected nonstatic data
 						// members, any base classes, or any virtual functions.
-		// note to self:
-		// to overlay arrays use 'placement new':
+					
+		// overlaying arrays with 'placement new':
 		//
-		// typedef array <int,4> A;
-		// int init[] = {1, 2, 3, 4};
-		// A& a = *new (init) A;
-		//
-		// Of course, this is equivalent to
-		//
-		// array<int,4> a = {1, 2, 3, 4};
+		//	typedef array <int,4> A;
+		//	int init[] = {1, 2, 3, 4};
+		//	A& a = *new (init) A;
+		//	
+		//	Of course, this is equivalent to
+		//	
+		//	array<int,4> a = {1, 2, 3, 4};
 
 		#include	<lvv/lvv.h>
 		#include	<lvv/math.h>
@@ -32,6 +35,7 @@
 
 		#include	<iostream>
 				using std::ostream;
+				using std::istream;
 				using std::cout;
 				using std::endl;
 
@@ -81,8 +85,8 @@
 		//namespace array {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////   ARRAY CLASS
-template < class T, int N, int B=0> class array { public:
-
+			template < class T, int N, int B=0>
+struct array {
 
 
 	typename select_alignment<T,N>::type 	elems;
@@ -173,7 +177,8 @@ template < class T, int N, int B=0> class array { public:
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
 	//TODO memset scalar assignment
 
-	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, array<TT,NN,BB>  a);
+	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, const array<TT,NN,BB>&  a);
+	template <typename TT, int NN,  int BB> friend   istream& operator>> (istream& is,       array<TT,NN,BB>&  a);
 
 
 	//// ================================================================================================================ SUM
@@ -347,7 +352,7 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 
 		template <typename T, int N, int B>
 		std::ostream&
- operator<<  (ostream& os, array<T,N,B> A)  {
+ operator<<  (ostream& os, const array<T,N,B>& A)  {
 	//os << format("[%d..%d]=") %A.ibegin() %(A.iend()-1);
 	
 	/*
@@ -359,6 +364,13 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, " "));
 	//for (long i=A.ibegin();  i< A.iend();  i++)
 	return os;
+ };
+
+		template <typename T, int N, int B>
+		std::istream&
+ operator>>  (istream& is, array<T,N,B>& A)  {
+ 	for (size_t i=B;  i<B+N;  i++)	 is >> A[i];
+	return is;
  };
 
 

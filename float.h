@@ -62,21 +62,23 @@
 	*/
 	
 ////////////////////////////////////////////////////////////////////////////////////   FLOOR
-	
+								
 	// floor(float)
-	const float	fm 	= 0x1.0p23f*1.5f+1;	// 2^52 * 1.5,  uses limited precisicion to floor
-	const float	fmd	= 1.5e-8;		// .5f + 1e^(number of exp bit)
-	const float	fme	= .5f-fmd;		// .5f - 1e^(number of exp bit)
+	const static float	fm 	= 0x1.0p23f*1.5f+1;	// 2^52 * 1.5,  uses limited precisicion to floor
+	const static float	fmd	= 1.5e-8;		// .5f + 1e^(number of exp bit)
+	const static float	fme	= .5f-fmd;		// .5f - 1e^(number of exp bit)
 
 	float static inline	floor(float x)	{ return x - fme + fm - fm; }
-	float static inline	trunc(float x)	{ return x  + 0x1.0p23f - 0x1.0p23f; }
+	float static inline	ceil (float x)	{ return x - fme + fm - fm + 1; }
+	float static inline	BROKEN_trunc(float x)	{ return x  + 0x1.0p23f - 0x1.0p23f; }
 
 	// floor(double)
-	const double	dm 	= 6755399441055744.0;	//2^52 * 1.5,  uses limited precisicion to floor
-	const double	dmd	= 1.5e-8;		//almost .5f = .5f + 1e^(number of exp bit)
-	const double	dme	= .5f-dmd;		//almost .5f = .5f - 1e^(number of exp bit)
+	const static double	dm 	= 6755399441055744.0;	//2^52 * 1.5,  uses limited precisicion to floor
+	const static double	dmd	= 1.5e-8;		//almost .5f = .5f + 1e^(number of exp bit)
+	const static double	dme	= .5f-dmd;		//almost .5f = .5f - 1e^(number of exp bit)
 
 	double static inline	floor(double x)	{ return x - dme + dm - dm; }
+	double static inline	ceil (double x)	{ return x - dme + dm - dm + 1; }
 
 ////////////////////////////////////////////////////////////////////////////////////   INTEGER --> FP
 	

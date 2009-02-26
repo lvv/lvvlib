@@ -4,6 +4,9 @@
 
 //#include <boost/foreach.hpp>
 
+#include <boost/format.hpp>
+	using boost::format;
+
 #include <lvv/array.h>
 #include <lvv/lvv.h>
 	using lvv::array;
@@ -49,6 +52,7 @@ int main() {
 
 
 
+	/*
 	cout << "FOR_ARRAY "; 
 	typedef typeof(an) T;
 	for(
@@ -60,4 +64,12 @@ int main() {
 		cout << *a << " ";
 
 	cout << endl;
+	*/
+
+	{
+		cout << "\narray input test, type three whole number\n";
+		array<int, 3> A;
+		cin >> A;
+		cout << "got from  input: " << A << endl;
+	}
 }

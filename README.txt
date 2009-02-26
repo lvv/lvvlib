@@ -141,6 +141,8 @@ compile BOOST_CHECK. Implemented mostly in macros. See examples in any ++u-*.cc+
 | {gh-ll}float.h[float.h]  | {gh-ll}u-float.cc[u-float.cc]| floating point traits and bit-twiddling
 |==========================
 
+include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
+
 == Refrence
 http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
 

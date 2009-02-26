@@ -68,15 +68,15 @@
 	// TODO:  type specialization
 	// TODO:  add asserts 
 	// TODO:  fast pow with lookup table: http://www.hxa7241.org/articles/content/fast-pow-adjustable_hxa7241_2007.html
-			inline  static
-double		powi		(double x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c
-    double y;
+			template<typename T> inline  static
+T		powi		(T x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c
+    T y;
     if( n & 1 )
 	y = x;
     else
 	y = 1.0;
 
-    double w = x;
+    T w = x;
     n >>= 1;
     while( n ) {
 	w = w * w; 

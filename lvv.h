@@ -81,16 +81,17 @@
 		#define PR8(x1,x2,x3,x4,x5,x6,x7,x8)
 		#define PR9(x1,x2,x3,x4,x5,x6,x7,x8,x9)
 	#else
-		#define PR(x)               std::cerr << " " #x " = " << (x) << "  "<< flush;
-		#define PR1(x1)             std::cerr << "-- "; PR(x1)                            ;							std::cerr <<"   --- "<<__LINE__<<std::endl; 
-		#define PR2(x1,x2)          std::cerr << "-- "; PR(x1) PR(x2)                     ;							std::cerr <<"   --- "<<__LINE__<<std::endl; 
-		#define PR3(x1,x2,x3)       std::cerr << "-- "; PR(x1) PR(x2) PR(x3)              ;							std::cerr <<"   --- "<<__LINE__<<std::endl;
-		#define PR4(x1,x2,x3,x4)    std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4)       ;							std::cerr <<"   --- "<<__LINE__<<std::endl;
-		#define PR5(x1,x2,x3,x4,x5) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5);							std::cerr <<"   --- "<<__LINE__<<std::endl;
-		#define PR6(x1,x2,x3,x4,x5,x6) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6);					std::cerr <<"   --- "<<__LINE__<<std::endl;
-		#define PR7(x1,x2,x3,x4,x5,x6,x7) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7);				std::cerr <<"   --- "<<__LINE__<<std::endl;
-		#define PR8(x1,x2,x3,x4,x5,x6,x7,x8) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8);			std::cerr <<"   --- "<<__LINE__<<std::endl;
-		#define PR9(x1,x2,x3,x4,x5,x6,x7,x8,x9) std::cerr << "-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8) PR(x9);		std::cerr <<"   --- "<<__LINE__<<std::endl;
+		#define 	PR(x)		std::cerr << " " #x " = " << (x) << "  "<< flush;
+
+		#define PR1(x1)             			std::cerr << "--("<<__LINE__<< ")-- "; PR(x1)                            ;				std::cerr <<std::endl;
+		#define PR2(x1,x2)          			std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2)                     ;				std::cerr <<std::endl;
+		#define PR3(x1,x2,x3)       			std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2) PR(x3)              ;				std::cerr <<std::endl;
+		#define PR4(x1,x2,x3,x4)    			std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2) PR(x3) PR(x4)       ;				std::cerr <<std::endl;
+		#define PR5(x1,x2,x3,x4,x5)			std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5);				std::cerr <<std::endl;
+		#define PR6(x1,x2,x3,x4,x5,x6)			std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6);				std::cerr <<std::endl;
+		#define PR7(x1,x2,x3,x4,x5,x6,x7)		std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7);			std::cerr <<std::endl;
+		#define PR8(x1,x2,x3,x4,x5,x6,x7,x8)		std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8);		std::cerr <<std::endl;
+		#define PR9(x1,x2,x3,x4,x5,x6,x7,x8,x9)		std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8) PR(x9);	std::cerr <<std::endl;
 	#endif
     
 ///////////////////////////////////////////////////////////////////////////////////// MACROS
