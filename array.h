@@ -2,33 +2,6 @@
 #define LVV_ARRAY
 
 
-		// TODO 
-		//	try to inherit from tr1:array - 	/usr/local/include/c++/4.4.0/tr1_impl/array
-		//	
-		//	tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
-		//
-		//	memcpy specialization: file:///tr/boost-trunk.svn/libs/type_traits/doc/html/boost_typetraits/examples/copy.html
-		//
-		//	A+A (expresions templates:
-		// 		http://aszt.inf.elte.hu/~gsd/visit/eindhoven/material/ch01s06.html
-		// 		Portable Expression Template Engine	http://acts.nersc.gov/pete/
-		// 		Tiny Vector Matrix library - http://tvmet.sourceforge.net/
-
-						// According to the language definition, aggregate initialization only works
-						// for aggregate types. An array or class type is not an aggregate if it has
-						// any user-declared constructors, any private or protected nonstatic data
-						// members, any base classes, or any virtual functions.
-					
-		// overlaying arrays with 'placement new':
-		//
-		//	typedef array <int,4> A;
-		//	int init[] = {1, 2, 3, 4};
-		//	A& a = *new (init) A;
-		//	
-		//	Of course, this is equivalent to
-		//	
-		//	array<int,4> a = {1, 2, 3, 4};
-
 		#include	<lvv/lvv.h>
 		#include	<lvv/math.h>
 		#include	<cassert>
@@ -380,6 +353,34 @@ template <typename T, int N1, int N2, int B1=1, int B2=1>	struct  matrix: public
 	const T *				data()	const			{ return this->front().data(); }	// tr1 calls this data()
 	T *					data()				{ return this->front().data(); }
 };
-
 			};	// namespace lvv
 			#endif	// LVV_ARRAY
+
+		// TODO 
+		//	try to inherit from tr1:array - 	/usr/local/include/c++/4.4.0/tr1_impl/array
+		//	
+		//	tensor: http://www.sitmo.com/doc/A_Simple_and_Extremely_Fast_CPP_Template_for_Matrices_and_Tensors
+		//
+		//	memcpy specialization: file:///tr/boost-trunk.svn/libs/type_traits/doc/html/boost_typetraits/examples/copy.html
+		//
+		//	A+A (expresions templates:
+		// 		http://aszt.inf.elte.hu/~gsd/visit/eindhoven/material/ch01s06.html
+		// 		Portable Expression Template Engine	http://acts.nersc.gov/pete/
+		// 		Tiny Vector Matrix library - http://tvmet.sourceforge.net/
+
+						// According to the language definition, aggregate initialization only works
+						// for aggregate types. An array or class type is not an aggregate if it has
+						// any user-declared constructors, any private or protected nonstatic data
+						// members, any base classes, or any virtual functions.
+					
+		// overlaying arrays with 'placement new':
+		//
+		//	typedef array <int,4> A;
+		//	int init[] = {1, 2, 3, 4};
+		//	A& a = *new (init) A;
+		//	
+		//	Of course, this is equivalent to
+		//	
+		//	array<int,4> a = {1, 2, 3, 4};
+
+

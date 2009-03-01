@@ -2,16 +2,16 @@
 #include ../Makefile
 
 WEB_DESTDIR ?= /tmp/html
-ASCIIDOC ?= asciidoc
+ASCIIDOC ?= /usr/local/bin/asciidoc --unsafe
 
 show: web_install
 	firefox $(WEB_DESTDIR)/index.html
 
 
-index.html: index.txt
+%.html: %.txt
 	$(ASCIIDOC)  -o $@  $<
 
-web_install: index.html 
+web_install: index.html array.html
 	mkdir -p  $(WEB_DESTDIR)
 	cp -uv $^ $(WEB_DESTDIR)
 

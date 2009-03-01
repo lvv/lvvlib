@@ -48,17 +48,3 @@ clean:
 	git clean -df
 
 
-WEB_DESTDIR ?= /tmp/html-lopti
-ASCIIDOC ?= /usr/local/bin/asciidoc
-
-show: web_install                                                                                                                                              
-	firefox $(WEB_DESTDIR)/index.html
-
-index.html: README.txt
-	$(ASCIIDOC)  -o $@  $<
-
-web_install: index.html 
-	mkdir -p  $(WEB_DESTDIR)
-	cp -uv $^ $(WEB_DESTDIR)
-
-
