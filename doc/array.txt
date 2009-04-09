@@ -4,8 +4,9 @@
 
 :gh-lvvlib:		http://github.com/lvv/lvvlib/tree/master/
 
-This is array.h header,  part of C++ header-library http://volnitsky.com/project/lvvlib[LVVLIB], source code at {gh-lvvlib}/array.h[array.h].
-Static-size means "known at compile time size".  This is very simple data-wise class, it is just plain C array wrapped in class. 
+Class lvv::array is part of C++ header-library http://volnitsky.com/project/lvvlib[LVVLIB], source code at {gh-lvvlib}/array.h[array.h].
+Static-size means "known at compile time size".  C-arrays are static size.
+This is very simple data-wise class, it is just plain C array wrapped in class. 
 If you look at such array in debugger it looks exactly like C arrays (which means you can freely cast to and from C array).
 There are no mallocs,  no extra pointers, no extraneous class members.
 
@@ -61,8 +62,8 @@ Below are some {gh-lvvlib}b-array.cc[benchmarks] on two-core, 2200Mhz Core2 Duo 
 | plain for-loop, float		| 3.06              | 3.35e+07		| `float  sum=0;  for (int i=0; i<N; i++) sum += A[i];`
 | std::accumulate<float>()	| 3.06              | 3.35e+07		| `float  sum = accumulate(A.begin(), A.end(), 0.f));`
 |============================================================================================
-Note that two last lines have big rounding error.  SSE method will be auto-selected by
-lvv::array to do summation on 1st line in above table for mentioned CPU.
+SSE method will be auto-selected (through meta-programming) to do summation on 1st line for mentioned CPU.
+Note that two last lines have big rounding error. 
 
 
 .Maximum of 100,000,000 float-s
@@ -75,6 +76,13 @@ lvv::array to do summation on 1st line in above table for mentioned CPU.
 | std::max_element()	| 5.81              | `float  max = *std::max_element (A.begin(), A.end());`
 | SSE intrinsics	| 1.67              | `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
 |========================================================================================================================
+
+// Generate chart image file.
+sys2::[python barchart.py --format=png --output=barchart.png --scale=2]
+
+// Display chart image file.
+image::barchart.png[]
+
 
 So far I implemented only combinations needed for my work, so it is quite incomplete. Hopefully there will
 be less blank space in table bellow as I will have more time or there will be outside contributions.
@@ -118,6 +126,7 @@ See also sample use in test files `t-*.cc` and unit test `u-array.cc`.
 include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 
 == References
-http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
+- http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
+- http://eigen.tuxfamily.org/index.php?title=Main_Page[Eigen 2 - C++ template library for linear algebra]
 
 // vim:ft=asciidoc:

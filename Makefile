@@ -40,8 +40,9 @@ allt: t-timer t-equal t-gzstream t-gzip
 
 
 install:
-	mkdir -p /usr/local/include/lvvlib/
-	cp *.h   /usr/local/include/lvvlib/
+	mkdir -p /usr/local/include/lvv/
+	cp *.h   /usr/local/include/lvv/
+	ln -s    /usr/local/include/lvv/   /usr/local/include/lvvlib
 
 clean:
 	rm -f *.html

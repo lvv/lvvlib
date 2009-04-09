@@ -1,4 +1,4 @@
-== LvvLib - C++ utility library
+= LvvLib - C++ utility library
 
 //  HTML rendered version of this file is at:  http://volnitsky.com/project/lvvlib
 
@@ -7,10 +7,11 @@
 Initially collection of headers that I used in my projects.  'LVV' are my initials (Leonid V. Volnitsky).
 Needs some cleanup, dependency pruning and documentation. 
 
-=== array.h
+== array.h
 See link:array.html[array docs]
 
 
+== math.h
 === *eq()* - numeric comparison template function (http://github.com/lvv/lvvlib/tree/master/math.h[math.h])
 Used for numeric comparison in generic programming.  For floating point types
 comparison precision will scale proportionally to type used and will still work if
@@ -38,25 +39,25 @@ For integers: If one of arguments is `unsigned` then other argument converted to
 It is  assumed that if comparison is  with `unsigned` then it is guaranted that other value is positive (TODO: add assert check)
 
 
-=== check.h
+== check.h
 
 Very basic unit testing. I had to write my own unit testing because gcc44 can not
 compile BOOST_CHECK. Implemented mostly in macros. See examples in any ++u-*.cc++  file.
 
-=== Other
+== Other
 
 [width="80%",cols="3,3,6",frame="none",options="header"]
 |==========================
-| Header                 | Sample Use                    | Description
-| {gh-ll}mmap.h[mmap.h]  | {gh-ll}t-mmap.cc[t-mmap.cc]   | simplified mmap files ops.
-| {gh-ll}timer.h[timer.h]| {gh-ll}t-timer.cc[t-timer.cc] | timer of interval/total for cpu/wall/tick time.
-| {gh-ll}meta.h[meta.h]  | {gh-ll}u-meta.cc[u-meta.cc]   | meta programming
-| {gh-ll}float.h[float.h]  | {gh-ll}u-float.cc[u-float.cc]| floating point traits and bit-twiddling
+| Header   | Sample Use  | Description
+| mmap.h   | t-mmap.cc   | simplified mmap files ops.
+| timer.h  | t-timer.cc  | timer of interval/total for cpu/wall/tick time.
+| meta.h   | u-meta.cc   | meta programming
+| float.h  | u-float.cc  | floating point traits and bit-twiddling
 |==========================
 
 include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 
 == Refrence
-http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
+Dr. Dobb's Journal: 'Optimizing C/C++ with Inline Assembly Programming'.  June 01, 2005 -  www.ddj.com/cpp/184401967?pgno=1
 
 // vim:ft=asciidoc:

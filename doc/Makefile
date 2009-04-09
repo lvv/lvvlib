@@ -4,14 +4,14 @@
 WEB_DESTDIR ?= /tmp/html
 ASCIIDOC ?= /usr/local/bin/asciidoc --unsafe
 
-show: web_install
+show: localweb
 	firefox $(WEB_DESTDIR)/index.html
 
 
 %.html: %.txt
 	$(ASCIIDOC)  -o $@  $<
 
-web_install: index.html array.html
+localweb:	index.html array.html
 	mkdir -p  $(WEB_DESTDIR)
 	cp -uv $^ $(WEB_DESTDIR)
 
