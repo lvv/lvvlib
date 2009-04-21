@@ -203,13 +203,10 @@ T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = 
 float	max_impl (sse, float) 			const	{ // DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
 	const unsigned	sse_size	= 4;
 	const unsigned	unroll		= 2;
-									//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
-									// commented out: boost-1.37/SVN  error
-									//STATIC_ASSERT(N>=sse_size*unroll,"sse can be used for N>=8");
-									assert(N>=sse_size*unroll && "sse can be used for N>=8");
 	const unsigned	prefetch	= 512;
 	const unsigned	cycle_step	= unroll * sse_size;
 	const size_t	sse_cycles	= N - N % cycle_step;
+									static_assert (N>=sse_size*unroll, "{{{ SSE can be used only for N>=8 }}}");
 
 	__m128 m1 = mk_m128(elems[0]);
 	__m128 m2 = mk_m128(elems[sse_size]);
@@ -222,10 +219,10 @@ float	max_impl (sse, float) 			const	{ // DBG cerr <<" max<sse,float> " << N << 
 
 	m1 = _mm_max_ps(m1, m2);
 
-	float reg_save[4]  __attribute__((aligned(16)));
+	T reg_save[sse_size]  __attribute__((aligned(16)));
 	_mm_store_ps (reg_save, m1);
-	T reg_max   = reinterpret_cast<const array<float,4>* >            (reg_save)          -> max<plain>();    // vector register max
-	T tail_max  = reinterpret_cast<const array<float,N-sse_cycles>* > (elems +sse_cycles) -> max<plain>();    // tail max
+	T reg_max   = reinterpret_cast<const array<T,sse_size>* >     (reg_save)            -> max<plain>();    // vector register max
+	T tail_max  = reinterpret_cast<const array<T,N-sse_cycles>* > (&elems[sse_cycles])  -> max<plain>();    // tail max
 	return  std::max(reg_max, tail_max);
  }
  	#endif
@@ -236,12 +233,10 @@ float	max_impl (sse, float) 			const	{ // DBG cerr <<" max<sse,float> " << N << 
 int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << N << "(" << N-N%8 << ")"; 
 	const unsigned	sse_size	= 8;
 	const unsigned	unroll		= 2;
-									//BOOST_STATIC_ASSERT((N>=sse_size*unroll));  
-									//STATIC_ASSERT(N>=sse_size*unroll,"sse can be used for N>=8");
-									assert(N>=sse_size*unroll);
 	const unsigned	prefetch	= 1024;
 	const unsigned	cycle_step	= unroll * sse_size;
 	const size_t	sse_cycles	= N - N % cycle_step;
+									static_assert (N>=sse_size*unroll, "{{{ SSE can be used only for N>=8 }}}");
 
 	__m128i m1 = mk_m128i(elems[0]);
 	__m128i m2 = mk_m128i(elems[sse_size]);
@@ -249,32 +244,16 @@ int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << 
 	for (size_t i= cycle_step;  i < sse_cycles; i+=cycle_step) {
 		  m1 = _mm_max_epi16(m1, mk_m128i(elems[i]) );
 		  m2 = _mm_max_epi16(m2, mk_m128i(elems[i+sse_size]) );
-		 __builtin_prefetch((void*)(elems+prefetch),0,0);      
+		 __builtin_prefetch((void*)&elems[i+prefetch],0,0);      
 	}
 
 	m1 = _mm_max_epi16(m1, m2);
 
-
-	int16_t tmp8[8]  __attribute__((aligned(16)));
-	_mm_store_si128 ((__m128i *)tmp8, m1);
-	int16_t max = tmp8[0];
-	for (size_t i=1; i<8; i++)  max = max < tmp8[i] ? tmp8[i] : max;
-	for (size_t i=sse_cycles; i<N; i++)  max = max < elems[i] ? elems[i] : max;
-	// 123
-	//cout << " : " << *(array<int16_t,8>*) &m1;
-	
-
-	//int16_t max = reinterpret_cast < array<int16_t, sse_size, 0> > (m1) .max<plain>();  
-
-
-	/*
-	for ( size_t i=sse_cycles;  i<N;  i++) 
-		max = (max < elems[i])
-			? elems[i]
-			: max;
-	*/
-
-	return max;
+	T reg_save[sse_size]  __attribute__((aligned(16)));
+	_mm_store_si128 ((__m128i *)reg_save, m1);
+	T reg_max   = reinterpret_cast<const array<T,sse_size>* >     (reg_save)           -> max<plain>();    // vector register max
+	T tail_max  = reinterpret_cast<const array<T,N-sse_cycles>* > (&elems[sse_cycles]) -> max<plain>();    // tail max
+	return  std::max(reg_max, tail_max);
  }
  	#endif
 

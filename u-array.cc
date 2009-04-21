@@ -28,7 +28,7 @@ main() {
 
 	typedef array<int,5> a5_t;
 
-	cout << " *****  CTOR  *******\n"; //////////////////////////////////////////////////////////////////////
+	cout << "\n *****  CTOR  *******\n"; //////////////////////////////////////////////////////////////////////
 	array <int, 5   >       a0 = {{0,1,2,3,4}}; 			// index starts from 0 
 		CHECK(a0.ibegin()==0);
 		CHECK( a0.iend()==5);
@@ -47,7 +47,7 @@ main() {
 
 	//	cout << "a0: "       << a0 << endl;
 	
-	{ cout << " *****  VECTOR ASSIGNMENT  *******\n"; ///////////////////////////////////////////////
+	{ cout << "\n *****  VECTOR ASSIGNMENT  *******\n"; ///////////////////////////////////////////////
 	// = scalar
 	array<short,3,0>	a0s;
 	CHECK((a0s=0,	a0s[0]		== 0));
@@ -68,7 +68,7 @@ main() {
 	CHECKeq(bm1d.front(), 1.f);
 
 	}
-	cout << " *****  VECTOR OPS  *******\n"; ///////////////////////////////////////////////
+	cout << "\n *****  VECTOR OPS  *******\n"; ///////////////////////////////////////////////
 	an += 10;
 		CHECK( *an.begin()	== -2+10 );
 		CHECK( an[-1]		== -1+10 );
@@ -96,7 +96,7 @@ main() {
 	CHECK(	eq(distance_norm2(v1,v2), 5.));
 
 	#ifdef CONVERT_GSl_H
-	cout << " *****  CONVERT_GSL  *******\n"; ///////////////////////////////////////////////
+	cout << "\n *****  CONVERT_GSL  *******\n"; ///////////////////////////////////////////////
 	gsl_vector* gV; // 1st index == 0 
 	gV  = gsl_vector_alloc(a0.size()); 
 	gV <<= a0; 
@@ -120,7 +120,7 @@ main() {
 
 
 
-	cout << " *****  SSE ALIGNMENT  *******\n"; ///////////////////////////////////////////////
+	cout << "\n *****  SSE ALIGNMENT  *******\n"; ///////////////////////////////////////////////
 
 	//#define CHK(var)	cout << #var << " \t " << &var << " \t " <<  reinterpret_cast<size_t>(&var) % 16 << endl; 
 	#define CHK(x)
@@ -158,7 +158,7 @@ main() {
 	i4_t	i4;	
 	CHK(i4);     CHECK(IS_ALIGN16(i4)); 
 
-	cout << " *****  SELECT_METHOD  *******\n"; ///////////////////////////////////////////////
+	cout << "\n *****  SELECT_METHOD  *******\n"; ///////////////////////////////////////////////
 	CHECK(typeid(select_method<double , 2>::type  )  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<double , 200>::type)  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<int8_t , 2>::type  )  ==  typeid(plain) ) ;
@@ -167,7 +167,7 @@ main() {
 
 	cout << "\n #####  SSE SPECIALISATION  ##########################################\n"; ///////////////////////////////////////////////
 
-	{		cout << " *****  FLOAT-32  *******\n";
+	{		cout << "\n *****  FLOAT-32  *******\n";
 	{  array<float,6> f6 = {{1,2,3,4,5,6}};		CHECK( f6.max() == 6 ); }
 
 	CHECK(typeid(select_method<float  , 2>::type  )  ==  typeid(plain) ) ;
@@ -188,17 +188,18 @@ main() {
 	
 	}
 
-	{		cout << " *****  INT-16  *******\n";
+	{		cout << "\n *****  INT-16  *******\n";
 	CHECK(typeid(select_method<int16_t, 2>::type  )  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<int16_t, 200>::type)  ==  typeid(sse2) ) ;
 	array<int16_t,3>  h3 = {{1,2,3}};			CHECK(IS_ALIGN16(h3));
 	array<int16_t,10> h10 = {{1,2,3,4,5,6,7,8,9,10}};	CHECK(IS_ALIGN16(h10));
+	array<int16_t,20> h20 = {{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}};	CHECK(IS_ALIGN16(h10));
 	array<int16_t,1000> h1000 = {{1,2,3,4,5,6,7,8,9,10}};	CHECK(IS_ALIGN16(h1000));
 
 	// CHECKeq((f3.max<sse>()),3); 				should trigger static assert
 	CHECKeq((h10.max()),10);
-	//CHECKeq((h10.max<sse>()),10); 	// should trigger static assert  (sould be: sse2)
-	//CHECKeq((h10.max<sse2>()),10);	// assert will fail (no true:  10 > 8*2)
+	CHECKeq((h10.max<plain>()),10);		
+	CHECKeq((h20.max<sse2>()),20);	
 
 	CHECKeq((h1000.max<plain>()),10);
 	CHECKeq((h1000.max()),10);
