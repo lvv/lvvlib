@@ -2,7 +2,6 @@
 	#define CANUSE_SSE
 	#define CANUSE_SSE2
 	#define CANUSE_SSE3
-	#define GCC_BUG
 
 //#include <iostream>
 
@@ -166,7 +165,7 @@ main() {
 	CHECK(typeid(select_method<int8_t , 200>::type)  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<int8_t ,200>::type )  ==  typeid(plain));
 
-	cout << " *****  SSE SPECIALISATION  ******************************************\n"; ///////////////////////////////////////////////
+	cout << "\n #####  SSE SPECIALISATION  ##########################################\n"; ///////////////////////////////////////////////
 
 	{		cout << " *****  FLOAT-32  *******\n";
 	{  array<float,6> f6 = {{1,2,3,4,5,6}};		CHECK( f6.max() == 6 ); }
@@ -174,13 +173,18 @@ main() {
 	CHECK(typeid(select_method<float  , 2>::type  )  ==  typeid(plain) ) ;
 	CHECK(typeid(select_method<float  , 200>::type)  ==  typeid(sse) ) ;
 	array<float,3> f3 = {{1,2,3}};
+	array<float,4> f4 = {{1,2,3,4}};
+	array<float,8,1> f81 = {{1,2,3,4,5,6,7,8}};
 	array<float,10> f10 = {{1,2,3,4,5,6,7,8,9,10}};
 	array<float,20> f20 = {{1,2,3,4,5,6,7,8,9,10}};
+	
 	#ifdef CANUSE_SSE
 	// CHECKeq((f3.max<sse>()),3); 				should trigger static assert
 	CHECKeq((f10.max<sse>()),10);
 	#endif
 	CHECKeq(f20.max(),10);
+	CHECKeq(f4.max(),4);
+	CHECKeq(f81.max(),8);
 	
 	}
 
@@ -196,12 +200,11 @@ main() {
 	//CHECKeq((h10.max<sse>()),10); 	// should trigger static assert  (sould be: sse2)
 	//CHECKeq((h10.max<sse2>()),10);	// assert will fail (no true:  10 > 8*2)
 
-	#ifdef GCC_BUG
 	CHECKeq((h1000.max<plain>()),10);
 	CHECKeq((h1000.max()),10);
 	CHECKeq((h1000.max_impl(sse2(),int16_t())),10);
 	CHECKeq((h1000.max<sse2>()),10);
-	#endif
+
 	}
 
 	CHECK_EXIT;

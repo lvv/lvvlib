@@ -17,6 +17,8 @@
 
 		#include	<numeric>
 				using std::accumulate;
+		#include	<algorithm>
+				//using std::max;
 
 		#include <iterator>
 		#include <algorithm>
@@ -154,7 +156,7 @@ struct array {
 	template <typename TT, int NN,  int BB> friend   istream& operator>> (istream& is,       array<TT,NN,BB>&  a);
 
 
-	//// ================================================================================================================ SUM
+//// ================================================================================================================ SUM
 
 	template<typename method_type>	T	sum()	const	{ return sum_impl(method_type(), T()); } 			// explicit
 					T	sum()	const	{ return sum_impl(typename select_method<T,N>::type(), T()); }	// auto-selection
@@ -207,19 +209,24 @@ float	max_impl (sse, float) 			const	{ // DBG cerr <<" max<sse,float> " << N << 
 									assert(N>=sse_size*unroll && "sse can be used for N>=8");
 	const unsigned	prefetch	= 512;
 	const unsigned	cycle_step	= unroll * sse_size;
-	const size_t	sse_cycle	= N - N % cycle_step;
+	const size_t	sse_cycles	= N - N % cycle_step;
 
 	__m128 m1 = mk_m128(elems[0]);
 	__m128 m2 = mk_m128(elems[sse_size]);
 
-	for (size_t i= cycle_step;  i < sse_cycle; i+=cycle_step) { 			// SSE
+	for (size_t i= cycle_step;  i < sse_cycles; i+=cycle_step) { 			// SSE
 		  m1 = _mm_max_ps(m1, mk_m128(elems[i]) );
 		  m2 = _mm_max_ps(m2, mk_m128(elems[i+sse_size]) );
 		 __builtin_prefetch((void*)&elems[i+prefetch],0,0);      
 	}
 
 	m1 = _mm_max_ps(m1, m2);
-	T m  = mk_array<float,4,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  m = m < elems[i] ? elems[i] : m;   return  m;
+
+	float reg_save[4]  __attribute__((aligned(16)));
+	_mm_store_ps (reg_save, m1);
+	T reg_max   = reinterpret_cast<const array<float,4>* >            (reg_save)          -> max<plain>();    // vector register max
+	T tail_max  = reinterpret_cast<const array<float,N-sse_cycles>* > (elems +sse_cycles) -> max<plain>();    // tail max
+	return  std::max(reg_max, tail_max);
  }
  	#endif
 
@@ -234,12 +241,12 @@ int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << 
 									assert(N>=sse_size*unroll);
 	const unsigned	prefetch	= 1024;
 	const unsigned	cycle_step	= unroll * sse_size;
-	const size_t	sse_cycle	= N - N % cycle_step;
+	const size_t	sse_cycles	= N - N % cycle_step;
 
 	__m128i m1 = mk_m128i(elems[0]);
 	__m128i m2 = mk_m128i(elems[sse_size]);
 
-	for (size_t i= cycle_step;  i < sse_cycle; i+=cycle_step) {
+	for (size_t i= cycle_step;  i < sse_cycles; i+=cycle_step) {
 		  m1 = _mm_max_epi16(m1, mk_m128i(elems[i]) );
 		  m2 = _mm_max_epi16(m2, mk_m128i(elems[i+sse_size]) );
 		 __builtin_prefetch((void*)(elems+prefetch),0,0);      
@@ -247,16 +254,25 @@ int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << 
 
 	m1 = _mm_max_epi16(m1, m2);
 
-	/*
+
 	int16_t tmp8[8]  __attribute__((aligned(16)));
 	_mm_store_si128 ((__m128i *)tmp8, m1);
 	int16_t max = tmp8[0];
 	for (size_t i=1; i<8; i++)  max = max < tmp8[i] ? tmp8[i] : max;
-	for (size_t i=sse_cycle; i<N; i++)  max = max < elems[i] ? elems[i] : max;
+	for (size_t i=sse_cycles; i<N; i++)  max = max < elems[i] ? elems[i] : max;
+	// 123
 	//cout << " : " << *(array<int16_t,8>*) &m1;
-	*/
+	
 
-	int16_t max = mk_array<int16_t,sse_size,0>(m1).max<plain>();   for (size_t i=sse_cycle; i<N; i++)  max = max < elems[i] ? elems[i] : max;
+	//int16_t max = reinterpret_cast < array<int16_t, sse_size, 0> > (m1) .max<plain>();  
+
+
+	/*
+	for ( size_t i=sse_cycles;  i<N;  i++) 
+		max = (max < elems[i])
+			? elems[i]
+			: max;
+	*/
 
 	return max;
  }

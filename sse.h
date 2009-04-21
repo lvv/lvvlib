@@ -37,9 +37,31 @@
 	#define mk_m128(x) *(__m128*)&(x)
 	#define mk_m128i(x) *(__m128i*)&(x)
 	template<typename T, int N, int B> class array;
-	template<typename T, int N, int B>	array<T,N,B>&	mk_array(const __m128&  V) { return *(array<T,N,B>*)&(V); } // is there an overhead?
+	//template<typename T, int N, int B>	array<T,N,B>&	mk_array(const __m128&  V) { return *(array<T,N,B>*)&(V); } // is there an overhead?
 	//template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128&  V) { return *(array<T,N,B>*)&(V); } // is there an overhead?
-	template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128i& V) { return *(array<T,N,B>*)&(V); }
+
+
+		template<typename T, int N, int B>
+		union sse_vector{
+			__m128i  m128i;
+			array<T,N,B> arr; 
+		};
+
+	//template<typename T, int N, int B>	const array<T,N,B>&	mk_array(const __m128i& V) {
+
+	//	template<typename T, int N, int B>
+	//const array<T,N,B>&	mk_array(const __m128i& V) {
+	//	sse_vector<T,N,B>   SV;
+	//	SV.m128i = V;
+	//	return  SV.arr;
+	//}
+	//			#endif // __SSE__
+		template<typename T, int N, int B>
+	const array<T,N,B>&	mk_array(const __m128i& V) {
+		sse_vector<T,N,B>   SV;
+		SV.m128i = V;
+		return  SV.arr;
+	}
 				#endif // __SSE__
 
 
