@@ -67,12 +67,14 @@
 
 	// indicator what technology is available
 	struct plain	{};	// no OpenMP, no SSE
+	struct ooo	{};	// Out of Order Optimization
+	struct nofpu	{};	// FPU is not used  (bit twiddle)
 
-	struct mmx  	{};	// 
+	struct mmx  	{};
 	struct sse  	{};	// SSE, no OpenMP
-	struct sse2  	{};	// 
-	struct sse3  	{};	// 
-	struct ssse3  	{};	// 
+	struct sse2  	{};
+	struct sse3  	{};
+	struct ssse3  	{};
 
 	struct openmp   {};	// OpenMP + SSE
 	const unsigned	sse_threshould = 128;

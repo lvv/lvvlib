@@ -12,6 +12,11 @@
 	#include <stdint.h>
 	#include <iostream>
 	#include <iomanip>
+		using std::ostream;
+		using std::endl;
+		using std::cout;
+		using std::setprecision;
+	#include <string>
 
 
 	namespace lvv {
@@ -163,7 +168,7 @@ double	total_cpu	()	{ getrusage(RUSAGE_SELF, &now_ru);	return  cpu_time_at (now_
 double	operator() 	()	{ return interval_wall(); }
 
 	void
-print(string msg="") {
+print(std::string msg="") {
 
 	if (msg=="") 
 		std::cout << std::setw(13) << "(timer)   ";
@@ -184,7 +189,7 @@ print(string msg="") {
 	std::cout << std::endl;
  };
 
-        friend ostream& operator<< (ostream& os, Timer& t);
+        friend std::ostream& operator<< (std::ostream& os, Timer& t);
  };
 
 ostream& operator<< (ostream& os, Timer& t) {
@@ -194,7 +199,7 @@ ostream& operator<< (ostream& os, Timer& t) {
 
 
         void
-progress_dots(long var, long first, long last, string msg="" ) { //========================================================= progress_dots()
+progress_dots(long var, long first, long last, std::string msg="" ) { //=============================================== progress_dots()
 
 	static bool first_time = true;
 	static int  columns = 0; 
@@ -214,7 +219,7 @@ progress_dots(long var, long first, long last, string msg="" ) { //=============
 	if (!columns)   return;
 	if ( var==first)   cout << msg; 
 	int div=(last-first)/width;
-	if ( (var-first) % (div+1) == 0 )   cout << "." << flush;
+	if ( (var-first) % (div+1) == 0 )   cout << "." << std::flush;
 	if ( var == last )   cout << endl;
  }
 

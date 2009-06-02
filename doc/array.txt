@@ -11,7 +11,7 @@ If you look at such array in debugger it looks exactly like C arrays (which mean
 There are no mallocs,  no extra pointers, no extraneous class members.
 
 It is modelled on http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`]. 
-GCC 4.4 (not yet released) promoted `boost::array` to `tr1::array`.
+GCC 4.4 promoted `boost::array` to `tr1::array`.
 The `lvv::array` container have some additional capabilities.
 
 
@@ -77,11 +77,13 @@ Note that two last lines have big rounding error.
 | SSE intrinsics	| 1.67              | `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
 |========================================================================================================================
 
+//////////////
 // Generate chart image file.
 sys2::[python barchart.py --format=png --output=barchart.png --scale=2]
 
 // Display chart image file.
 image::barchart.png[]
+//////////////
 
 
 So far I implemented only combinations needed for my work, so it is quite incomplete. Hopefully there will

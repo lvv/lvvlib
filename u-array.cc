@@ -181,6 +181,7 @@ main() {
 	#ifdef CANUSE_SSE
 	// CHECKeq((f3.max<sse>()),3); 				should trigger static assert
 	CHECKeq((f10.max<sse>()),10);
+	CHECKeq((f10.max<nofpu>()),10);
 	#endif
 	CHECKeq(f20.max(),10);
 	CHECKeq(f4.max(),4);

@@ -143,7 +143,7 @@ struct array {
 
 	// assignment with type conversion
 	//template <typename T2>	array <T, N, B>	&operator=(const array < T2, N, B > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
-	template <typename T2, int N2, int B2>	array <T, N, B>	&operator=(const array<T2,N2,B2> &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
+	template <typename T2, int N2, int B2>	array <T, N, B>	&operator=(const array<T2,N2,B2>  &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
 	
 	//TODO memcpy assignment (without type conversion)
 
@@ -185,9 +185,10 @@ struct array {
 		return (float) sum;
 	}
 	#endif 
-//// ================================================================================================================ MAX
+//// ================================================================================================================ MIN
 T					min() 		const	{ return *std::min_element(begin(), end()); };
 
+//// ================================================================================================================ MAX
 template<typename method_type>	T	max()	const	{ return max_impl(method_type(), T()); } 			// explicit
 T					max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }	// auto-selection
 		// default template parameter:  Due to an unfortunate oversight, the standard simply bans
@@ -197,8 +198,36 @@ T					max()	const	{ return max_impl(typename select_method<T,N>::type(), T()); }
 T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = ((max>elems[i]) ? max : elems[i]); return max; }
 
 	
+// ----------------------------------------------------------------------------------------------------------------- MAX FLOAT-32  NO-FPU
+//  TO BENCHMARK, TO FIX STILE: no-fpu max:  http://bits.stephan-brumme.com/minmax.html
+int select(int x, int y, int ifXisSmaller, int ifYisSmaller) {
+	int diff  = x - y;
+	// sets bit31 to 0xFFFFFFFF if x<y, else 0x00000000
+	int bit31 = diff >> 31;
+
+	// return ifXisSmaller if x is smaller than y, else y
+	return (bit31 & (ifXisSmaller ^ ifYisSmaller)) ^ ifYisSmaller;
+  }
+
+int minimum(int x, int y)  {
+	// if x<y then return x, else y
+	return select(x,y,x,y);
+  }
+
+int maximum(int x, int y) {
+	// if x<y then return y, else x
+	return select(x,y,y,x);
+  }
+
+T	max_impl (nofpu, float) 		const {
+	T max=elems[0];
+	for(size_t i=1; i<N; i++) max = ((max>elems[i]) ? max : elems[i]);  // TO REWRITE WITH above select
+	return max;
+ }
+
 
 // ----------------------------------------------------------------------------------------------------------------- MAX FLOAT-32
+
 	#ifdef __SSE__
 float	max_impl (sse, float) 			const	{ // DBG cerr <<" max<sse,float> " << N << "(" << N-N%8 <<")"; 
 	const unsigned	sse_size	= 4;

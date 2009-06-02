@@ -189,7 +189,19 @@
 
     float f = Union_Cast<int, float> (my_int).m_to;
 
-and you can even add some static assert to verify that sizeof(From) == sizeof (To) if you want.
+	and you can even add some static assert to verify that sizeof(From) == sizeof (To) if you want.
+	-------------------
+	template<typename From, typename To>
+	union union_cast {
+	    From from;
+	    To   to;
+
+	    union_cast(From from)
+		:from(from) { }
+
+	    To getTo() const { return to; }
+	};
+
 */
 
 							}
