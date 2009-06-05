@@ -44,6 +44,7 @@ main() {
 		CHECK( an.size()==5);
 
 	array <int, 5, 1> const b1 = {{10,20,30,40,50}}; 			// index starts from 1
+	array <int, 5, 1>       res;
 
 	//	cout << "a0: "       << a0 << endl;
 	
@@ -78,6 +79,20 @@ main() {
 	a1 += b1;
 		CHECK( a1[1]		== 1+10 );
 		CHECK( a1[5]		== 5+50 );
+
+	//  array op= array 
+	cout << a1 << endl;
+	cout << b1 << endl;
+	cout << a1+b1 << endl;
+
+	res = a1+b1;
+	cout << res<< endl;
+
+	//for (int i=1; i <= 5; i++)
+	//	cout << res[i] << endl;
+	
+	exit(0);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// vector ops
 	array<float,2> c1={{1,2}};

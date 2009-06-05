@@ -152,7 +152,7 @@ struct array {
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
 	//TODO memset scalar assignment
 
-	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, const array<TT,NN,BB>&  a);
+	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, const array<TT,NN,BB> a);
 	template <typename TT, int NN,  int BB> friend   istream& operator>> (istream& is,       array<TT,NN,BB>&  a);
 
 
@@ -199,25 +199,25 @@ T	max_impl (plain, T) 		const { T max=elems[0]; for(size_t i=1; i<N; i++) max = 
 
 	
 // ----------------------------------------------------------------------------------------------------------------- MAX FLOAT-32  NO-FPU
-//  TO BENCHMARK, TO FIX STILE: no-fpu max:  http://bits.stephan-brumme.com/minmax.html
-int select(int x, int y, int ifXisSmaller, int ifYisSmaller) {
-	int diff  = x - y;
-	// sets bit31 to 0xFFFFFFFF if x<y, else 0x00000000
-	int bit31 = diff >> 31;
+			//  TO BENCHMARK, TO FIX STILE: no-fpu max:  http://bits.stephan-brumme.com/minmax.html
+			int select(int x, int y, int ifXisSmaller, int ifYisSmaller) {
+				int diff  = x - y;
+				// sets bit31 to 0xFFFFFFFF if x<y, else 0x00000000
+				int bit31 = diff >> 31;
 
-	// return ifXisSmaller if x is smaller than y, else y
-	return (bit31 & (ifXisSmaller ^ ifYisSmaller)) ^ ifYisSmaller;
-  }
+				// return ifXisSmaller if x is smaller than y, else y
+				return (bit31 & (ifXisSmaller ^ ifYisSmaller)) ^ ifYisSmaller;
+			  }
 
-int minimum(int x, int y)  {
-	// if x<y then return x, else y
-	return select(x,y,x,y);
-  }
+			int minimum(int x, int y)  {
+				// if x<y then return x, else y
+				return select(x,y,x,y);
+			  }
 
-int maximum(int x, int y) {
-	// if x<y then return y, else x
-	return select(x,y,y,x);
-  }
+			int maximum(int x, int y) {
+				// if x<y then return y, else x
+				return select(x,y,y,x);
+			  }
 
 T	max_impl (nofpu, float) 		const {
 	T max=elems[0];
@@ -291,28 +291,40 @@ int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << 
 
 
 // comparisons
-template<class T, int N, int B> bool operator==(const array<T, N, B> &x, const array<T, N, B> &y) { return std::equal(x.begin(), x.end(), y.begin()); }
-template<class T, int N, int B> bool operator< (const array<T, N, B> &x, const array<T, N, B> &y) { return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
-template<class T, int N, int B> bool operator!=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(x == y); }
-template<class T, int N, int B> bool operator> (const array<T, N, B> &x, const array<T, N, B> &y) { return   y < x; }
-template<class T, int N, int B> bool operator<=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(y < x); }
-template<class T, int N, int B> bool operator>=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(x < y); }
+ template<class T, int N, int B> bool operator==(const array<T, N, B> &x, const array<T, N, B> &y) { return std::equal(x.begin(), x.end(), y.begin()); }
+ template<class T, int N, int B> bool operator< (const array<T, N, B> &x, const array<T, N, B> &y) { return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end()); }
+ template<class T, int N, int B> bool operator!=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(x == y); }
+ template<class T, int N, int B> bool operator> (const array<T, N, B> &x, const array<T, N, B> &y) { return   y < x; }
+ template<class T, int N, int B> bool operator<=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(y < x); }
+ template<class T, int N, int B> bool operator>=(const array<T, N, B> &x, const array<T, N, B> &y) { return !(x < y); }
 
 // global swap()
-template < class T, size_t N, int B > inline void swap(array < T, N, B > &x, array < T, N, B > &y) { x.swap(y); }
+ template < class T, size_t N, int B > inline void swap(array < T, N, B > &x, array < T, N, B > &y) { x.swap(y); }
 
 // array op= scalar  ( conflict with google sparsehash if we not spell out type)
-template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
-template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
-template<typename T,int N, int B, typename D>  array<T,N,B>&  operator*=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
-template<typename T,int N, int B, typename D>  array<T,N,B>&  operator/=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
-//template<typename T,int N, int B, typename D>  array<T,N,B>&  operator= (array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it  = d; return A; }
+ template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
+ template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
+ template<typename T,int N, int B, typename D>  array<T,N,B>&  operator*=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
+ template<typename T,int N, int B, typename D>  array<T,N,B>&  operator/=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
+ //template<typename T,int N, int B, typename D>  array<T,N,B>&  operator= (array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it  = d; return A; }
 
 // array op= array  
-template<typename T,int N, int B> array<T,N,B>& operator+=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  +=  *rit++; return LA; }
-template<typename T,int N, int B> array<T,N,B>& operator-=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  -=  *rit++; return LA; }
-template<typename T,int N, int B> array<T,N,B>& operator*=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  *=  *rit++; return LA; }
-template<typename T,int N, int B> array<T,N,B>& operator/=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  /=  *rit++; return LA; }
+ template<typename T,int N, int B> array<T,N,B>& operator+=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  +=  *rit++; return LA; }
+ template<typename T,int N, int B> array<T,N,B>& operator-=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  -=  *rit++; return LA; }
+ template<typename T,int N, int B> array<T,N,B>& operator*=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  *=  *rit++; return LA; }
+ template<typename T,int N, int B> array<T,N,B>& operator/=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  /=  *rit++; return LA; }
+
+// array op array  
+ template<typename T,int N, int B>
+array<T,N,B>&&  operator+(const array<T,N,B>& LA, const array<T,N,B>& RA) {
+
+ 	array<T,N,B> RES;
+	for(int i=B;  i<N+B;  i++) {
+		RES[i] = LA[i] + RA[i];
+		PR4(i,LA[i], RA[i],RES[i]);
+	}
+	return std::move(RES);
+ }
 
 
 			template<typename T,int N, int B>  T
@@ -322,21 +334,21 @@ dot_prod 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 	T sum = 0;
 	while(lit != LA.end())  sum += (*lit++  *  *rit++);
 	return  sum;
-}
+ }
 
 			template<typename T,int N, int B>   array<T,N,B>
 operator-		(array<T,N,B> A) { // A passed by value
 	typename array<T,N,B>::iterator  it =  A.begin();
 	for(;it != A.end(); it++)     *it = -*it;
 	return  A;
-}
+ }
 			template<typename T,int N, int B>  T
 norm2 		(const array<T,N,B>& A) {
 	typename array<T,N,B>::const_iterator  it =  A.begin();
 	T sum = 0;
 	for(;it != A.end(); it++)    sum  +=  *it * *it;
 	return  sqrt(sum);
-}
+ }
 
 			template<typename T,int N, int B>  T
 distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
@@ -345,38 +357,38 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 	T sum = 0;
 	while(lit != LA.end())  sum  +=  pow2(*lit++  -  *rit++) ;
 	return  sqrt(sum);
-}
+ }
 
 		template <typename T, int N, int B>
 		std::ostream&
- operator<<  (ostream& os, const array<T,N,B>& A)  {
+operator<<  (ostream& os, const array<T,N,B> A)  {		// WHY: if we change A to const-ref or rval-ref it will pring garbage? 
 	//os << format("[%d..%d]=") %A.ibegin() %(A.iend()-1);
 	
-	/*
-	if (N > 10)  std::cout << endl;
-	std::cout << "[" << A.ibegin() << ".." << A.iend() << "] ";
-	if (N > 10)  std::cout << endl;
-	*/
+	//if (N > 10)  std::cout << endl;
+	//std::cout << "[" << A.ibegin() << ".." << A.iend() << "] ";
+	//if (N > 10)  std::cout << endl;
 
 	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, " "));
 	//for (long i=A.ibegin();  i< A.iend();  i++)
 	return os;
  };
 
+
 		template <typename T, int N, int B>
 		std::istream&
- operator>>  (istream& is, array<T,N,B>& A)  {
+operator>>  (istream& is, array<T,N,B>& A)  {
  	for (size_t i=B;  i<B+N;  i++)	 is >> A[i];
 	return is;
  };
 
 
 template <typename T, int N> 		class vector: public array<T,N,1> {}; // index start from 1
+
 template <typename T, int N1, int N2, int B1=1, int B2=1>	struct  matrix: public array<array<T,N1,B1>,N2,B2> {
 	enum { sz1 = N1, sz2=N2, sz0=N1*N2 };
 	const T *				data()	const			{ return this->front().data(); }	// tr1 calls this data()
 	T *					data()				{ return this->front().data(); }
-};
+ };
 			};	// namespace lvv
 			#endif	// LVV_ARRAY
 
