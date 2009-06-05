@@ -11,8 +11,8 @@ If you look at such array in debugger it looks exactly like C arrays (which mean
 There are no mallocs,  no extra pointers, no extraneous class members.
 
 It is modelled on http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`]. 
-GCC 4.4 promoted `boost::array` to `tr1::array`.
-The `lvv::array` container have some additional capabilities.
+The GCC 4.4 promoted `boost::array` to `tr1::array`.
+Class `lvv::array` container have some additional capabilities.
 
 
 == Vector Operations
@@ -23,20 +23,27 @@ using lvv::array;
 
 array<float,3>	A = {{1., 2., 3.}};
 array<float,3>	B;
+array<float,3>	C = {{10., 20., 30.}};
+array<float,3>	RES;
 
 B   =  1.0;
-A  +=  B;
+RES =  A+C;
+RES +=  B;
 
-cout  <<  "vector   A : "  <<  A               << endl;
-cout  <<  "vector   B : "  <<  B               << endl;
-cout  <<  "dot product: "  <<  dot_prod(A,B)   << endl;
--------------------------------------------------
+cout  <<  "vector   A : "  <<  A        << endl;
+cout  <<  "vector   B : "  <<  B        << endl;
+cout  <<  "vector   C : "  <<  C        << endl;
+cout  <<  "vector RES : "  <<  RES      << endl;
+cout  <<  "dot product: "  <<  dot(A,B) << endl;
+------------------------------------
 
 Outputs:
--------------------------------------
-vector   A : 2 3 4 
-vector   B : 1 1 1 
-dot product: 9
+------------------------------------
+vector   A : 1  2  3  
+vector   B : 1  1  1  
+vector   C : 10  20  30  
+vector RES : 12  23  34  
+dot product: 6
 -------------------------------------
 
 
@@ -56,25 +63,25 @@ Below are some {gh-lvvlib}b-array.cc[benchmarks] on two-core, 2200Mhz Core2 Duo 
 [cols="3,^2,^2, 16",frame="topbot",options="header"]
 |============================================================================================
 | *Method* 			| *Ticks per element* | *Computed Value*  | *Source*
-| lvv::array			| 1.74              | 1.5e+08           | `float  sum = A.sum();`
-| lvv::array, explicit OpenMP	| 1.67              | 1.5e+08           | `float  sum = A.sum<openmp>();`
-| plain for-loop, double	| 3.14              | 1.5e+08           | `double sum=0;  for (int i=0; i<N; i++) sum += A[i];`
-| plain for-loop, float		| 3.06              | 3.35e+07		| `float  sum=0;  for (int i=0; i<N; i++) sum += A[i];`
-| std::accumulate<float>()	| 3.06              | 3.35e+07		| `float  sum = accumulate(A.begin(), A.end(), 0.f));`
+| lvv::array			| 1.74                | 1.5e+08           | `float  sum = A.sum();`
+| lvv::array, explicit OpenMP	| 1.67                | 1.5e+08           | `float  sum = A.sum<openmp>();`
+| plain for-loop, double	| 3.14                | 1.5e+08           | `double sum=0;  for (int i=0; i<N; i++) sum += A[i];`
+| plain for-loop, float		| 3.06                | 3.35e+07          | `float  sum=0;  for (int i=0; i<N; i++) sum += A[i];`
+| std::accumulate<float>()	| 3.06                | 3.35e+07	  | `float  sum = accumulate(A.begin(), A.end(), 0.f));`
 |============================================================================================
-SSE method will be auto-selected (through meta-programming) to do summation on 1st line for mentioned CPU.
-Note that two last lines have big rounding error. 
+SSE method will be auto-selected (through meta-programming) to do summation on 1st line (if CPU supports SSE).
+Note that two last lines have incorrect computed values due to big rounding error. 
 
 
 .Maximum of 100,000,000 float-s
 [cols="2,^1,11",frame="topbot",options="header"]
 |=======================================================================================================================
-| *Method* 		| *Ticks per element* | * *Source*
-| lvv::array 		| 1.63              | `float  max = A.max()`
-| plain for-loop	| 5.81              | `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
-| OpenMP		| 1.88              | `(source same as above, 2xCPU, no check for race)`
-| std::max_element()	| 5.81              | `float  max = *std::max_element (A.begin(), A.end());`
-| SSE intrinsics	| 1.67              | `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
+| *Method* 		| *Ticks per element* |   *Source*
+| lvv::array 		| 1.63                | `float  max = A.max()`
+| plain for-loop	| 5.81                | `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
+| OpenMP		| 1.88                | `(source same as above, 2xCPU, no check for race)`
+| std::max_element()	| 5.81                | `float  max = *std::max_element (A.begin(), A.end());`
+| SSE intrinsics	| 1.67                | `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
 |========================================================================================================================
 
 //////////////
@@ -112,8 +119,10 @@ meta-programming, OpenMP) are platform independent.
 Appropriate specialisation selected automatically (but can be specified
 explicitly) based on CPU capabilities, array size and array element type.
 
+///////////
 I do have access to other platforms (thanks to GCC compile farm project) so it
 is possible that in future I will implement specialisations for other platforms too.
+////////////
 
 
 == Other lvv::array capabilities

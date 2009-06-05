@@ -152,9 +152,10 @@ struct array {
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
 	//TODO memset scalar assignment
 
-	template <typename TT, int NN,  int BB> friend   ostream& operator<< (ostream& os, const array<TT,NN,BB> a);
-	template <typename TT, int NN,  int BB> friend   istream& operator>> (istream& is,       array<TT,NN,BB>&  a);
+	template <typename TT, int NN,  int BB> friend  ostream& operator<<	(ostream& os, const array<TT,NN,BB>   a);
+	template <typename TT, int NN,  int BB> friend  istream& operator>>	(istream& is,       array<TT,NN,BB>&  a);
 
+	//template <typename TT, int NN,  int BB>	friend	T 	operator . 	(const array<TT,NN,BB>& LA, const array<TT,NN,BB>& RA);
 
 //// ================================================================================================================ SUM
 
@@ -301,40 +302,57 @@ int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << 
 // global swap()
  template < class T, size_t N, int B > inline void swap(array < T, N, B > &x, array < T, N, B > &y) { x.swap(y); }
 
-// array op= scalar  ( conflict with google sparsehash if we not spell out type)
+// array OP= scalar  ( conflict with google sparsehash if we not spell out type)
  template<typename T,int N, int B, typename D>  array<T,N,B>&  operator+=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it += d; return A; }
  template<typename T,int N, int B, typename D>  array<T,N,B>&  operator-=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it -= d; return A; }
  template<typename T,int N, int B, typename D>  array<T,N,B>&  operator*=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it *= d; return A; }
  template<typename T,int N, int B, typename D>  array<T,N,B>&  operator/=(array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it /= d; return A; }
  //template<typename T,int N, int B, typename D>  array<T,N,B>&  operator= (array<T,N,B>& A, const D d) { for(typename array<T,N,B>::iterator it =  A.begin(); it != A.end(); it++)  *it  = d; return A; }
 
-// array op= array  
+// array OP= array  
  template<typename T,int N, int B> array<T,N,B>& operator+=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  +=  *rit++; return LA; }
  template<typename T,int N, int B> array<T,N,B>& operator-=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  -=  *rit++; return LA; }
  template<typename T,int N, int B> array<T,N,B>& operator*=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  *=  *rit++; return LA; }
  template<typename T,int N, int B> array<T,N,B>& operator/=(array<T,N,B>& LA, const array<T,N,B>& RA) { typename array<T,N,B>::iterator lit =  LA.begin(); typename array<T,N,B>::const_iterator rit =  RA.begin(); for(; lit != LA.end();)  *lit++  /=  *rit++; return LA; }
 
-// array op array  
- template<typename T,int N, int B>
-array<T,N,B>&&  operator+(const array<T,N,B>& LA, const array<T,N,B>& RA) {
+// array OP array  
+ template<typename T,int N, int B> const array<T,N,B>&&  operator+(const array<T,N,B>& LA, const array<T,N,B>& RA) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = LA[i] + RA[i]; } return std::move(RES); }
+ template<typename T,int N, int B> const array<T,N,B>&&  operator-(const array<T,N,B>& LA, const array<T,N,B>& RA) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = LA[i] - RA[i]; } return std::move(RES); }
+ template<typename T,int N, int B> const array<T,N,B>&&  operator*(const array<T,N,B>& LA, const array<T,N,B>& RA) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = LA[i] * RA[i]; } return std::move(RES); }
+ template<typename T,int N, int B> const array<T,N,B>&&  operator/(const array<T,N,B>& LA, const array<T,N,B>& RA) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = LA[i] / RA[i]; } return std::move(RES); }
 
- 	array<T,N,B> RES;
-	for(int i=B;  i<N+B;  i++) {
-		RES[i] = LA[i] + RA[i];
-		PR4(i,LA[i], RA[i],RES[i]);
-	}
-	return std::move(RES);
- }
+// array OP scalar  
+ template<typename T,int N, int B> const array<T,N,B>&&  operator+(const array<T,N,B>& A, const T  s) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] + s; } return std::move(RES); }
+ template<typename T,int N, int B> const array<T,N,B>&&  operator-(const array<T,N,B>& A, const T  s) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] - s; } return std::move(RES); }
+ template<typename T,int N, int B> const array<T,N,B>&&  operator*(const array<T,N,B>& A, const T  s) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] * s; } return std::move(RES); }
+ template<typename T,int N, int B> const array<T,N,B>&&  operator/(const array<T,N,B>& A, const T  s) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] / s; } return std::move(RES); }
+
+// scalar OP array
+ template<typename T,int N, int B> const array<T,N,B>&&  operator+(const T  s, const array<T,N,B>& A) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] + s; } return std::move(RES); }
+ template<typename T,int N, int B> const array<T,N,B>&&  operator-(const T  s, const array<T,N,B>& A) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] - s; } return std::move(RES); }
+ template<typename T,int N, int B> const array<T,N,B>&&  operator*(const T  s, const array<T,N,B>& A) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] * s; } return std::move(RES); }
+ template<typename T,int N, int B> const array<T,N,B>&&  operator/(const T  s, const array<T,N,B>& A) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] / s; } return std::move(RES); }
 
 
 			template<typename T,int N, int B>  T
-dot_prod 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
+dot 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 	typename array<T,N,B>::const_iterator lit =  LA.begin();
 	typename array<T,N,B>::const_iterator rit =  RA.begin();
 	T sum = 0;
 	while(lit != LA.end())  sum += (*lit++  *  *rit++);
 	return  sum;
  }
+			/*
+			template<typename T,int N1, N2, N3, int B> 
+			matrix<T,N1,N3>&&
+DOT 		(const matrix<T,N1,N2,B>& LM, const matrix<T,N2, N3>& RM) {
+	typename array<T,N,B>::const_iterator lit =  LA.begin();
+	typename array<T,N,B>::const_iterator rit =  RA.begin();
+	T sum = 0;
+	while(lit != LA.end())  sum += (*lit++  *  *rit++);
+	return  sum;
+ }*/
+
 
 			template<typename T,int N, int B>   array<T,N,B>
 operator-		(array<T,N,B> A) { // A passed by value
@@ -361,14 +379,14 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 
 		template <typename T, int N, int B>
 		std::ostream&
-operator<<  (ostream& os, const array<T,N,B> A)  {		// WHY: if we change A to const-ref or rval-ref it will pring garbage? 
+operator<<  (ostream& os, const array<T,N,B> A)  { // WHY: if we change A to const-ref or rval-ref it will pring garbage?  std not updated yet?
 	//os << format("[%d..%d]=") %A.ibegin() %(A.iend()-1);
 	
 	//if (N > 10)  std::cout << endl;
 	//std::cout << "[" << A.ibegin() << ".." << A.iend() << "] ";
 	//if (N > 10)  std::cout << endl;
 
-	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, " "));
+	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, "  "));
 	//for (long i=A.ibegin();  i< A.iend();  i++)
 	return os;
  };

@@ -75,33 +75,51 @@ main() {
 		CHECK( an[-1]		== -1+10 );
 		CHECK( an[an.iend()-1]	==  2+10 );
 
-	//  array op= array 
-	a1 += b1;
-		CHECK( a1[1]		== 1+10 );
-		CHECK( a1[5]		== 5+50 );
+	//  array OP= array 
+	CHECK((res = a1, res+=b1,  res[1] == 1+10));
+	CHECK((res = a1, res+=b1,  res[5] == 5+50));
+	CHECK((res = a1, res*=b1,  res[1] == 1*10));
+	CHECK((res = a1, res*=b1,  res[5] == 5*50));
 
-	//  array op= array 
-	cout << a1 << endl;
-	cout << b1 << endl;
-	cout << a1+b1 << endl;
-
-	res = a1+b1;
-	cout << res<< endl;
-
-	//for (int i=1; i <= 5; i++)
-	//	cout << res[i] << endl;
+	//  array OP array 
+	CHECK((res = a1+b1,   res[1] == 1+10));
+	CHECK((res = a1+b1,   res[5] == 5+50));
 	
-	exit(0);
+	//  array OP scalar 
+	CHECK((res = a1+1,   res[1] == 1+1));
+	CHECK((res = a1+1,   res[5] == 5+1));
+	CHECK((res = a1*2,   res[1] == 1*2));
+	CHECK((res = a1*2,   res[5] == 5*2));
+	
+	//  scalar OP array
+	CHECK((res = 1+a1,   res[1] == 1+1));
+	CHECK((res = 1+a1,   res[5] == 5+1));
+	CHECK((res = 2*a1,   res[1] == 1*2));
+	CHECK((res = 2*a1,   res[5] == 5*2));
+
+	
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	cout << "\n *****  DOT PRODUCT  *******\n"; ///////////////////////////////////////////////
 	// vector ops
 	array<float,2> c1={{1,2}};
 	array<float,2> c2={{2,2}};
 	array<float,201> c201={};
 
-	// dot prod:  {1,2} x {2,2} = "
-	CHECK(	dot_prod(c1,c2) == 6 );
+	// dot prod:  vecot.vector    {1,2} x {2,2} = "
+	{
+		array<float,2> c1={{1,2}};
+		array<float,2> c2={{2,2}};
+		CHECK(	dot(c1,c2) == 6 );
 
+	// dot prod:  matrix.matrix   
+		//matrix<float,2,2> A22={ {{1,2}}, {{3,4}} };
+		//matrix<float,2,3> A23={ {{1,2}}, {{3,4}}, {{5,6}} };
+		////CHECK(	dot(A23, A23) == 6 );
+		//cout << "############################\n" << 	dot(A23, A23);
+	}
+
+	cout << "\n *****  NORM *******\n"; ///////////////////////////////////////////////
 	// norm2: : |{2,2}|
 	CHECK(	eq(norm2(c2), 2.82843f) );
 
