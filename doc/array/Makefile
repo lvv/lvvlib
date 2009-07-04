@@ -1,17 +1,19 @@
 
 #include ../Makefile
 
-WEB_DESTDIR ?= /tmp/html
-ASCIIDOC ?= /usr/local/bin/asciidoc --unsafe
+WEB_DESTDIR ?= /tmp/localweb
+ASCIIDOC ?= asciidoc --unsafe
+.PHONY = show localweb
 
 show: localweb
-	firefox $(WEB_DESTDIR)/index.html
+	firefox $(WEB_DESTDIR)/array.html
 
 
 %.html: %.txt
+	rm -f $@
 	$(ASCIIDOC)  -o $@  $<
 
-localweb:	index.html array.html
+localweb:	array.html
 	mkdir -p  $(WEB_DESTDIR)
 	cp -uv $^ $(WEB_DESTDIR)
 

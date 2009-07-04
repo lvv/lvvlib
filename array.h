@@ -333,6 +333,8 @@ int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << 
  template<typename T,int N, int B> const array<T,N,B>&&  operator*(const T  s, const array<T,N,B>& A) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] * s; } return std::move(RES); }
  template<typename T,int N, int B> const array<T,N,B>&&  operator/(const T  s, const array<T,N,B>& A) { array<T,N,B> RES; for(int i=B;  i<N+B;  i++) { RES[i] = A[i] / s; } return std::move(RES); }
 
+// matrix OP matrix
+//   TODO mutiply http://mindstudies.psy.soton.ac.uk/dmitri/blog/index.php/archives/160
 
 			template<typename T,int N, int B>  T
 dot 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {

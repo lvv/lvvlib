@@ -4,13 +4,14 @@
 
 :gh-lvvlib:		http://github.com/lvv/lvvlib/tree/master/
 
+
 Class lvv::array is part of C++ header-library http://volnitsky.com/project/lvvlib[LVVLIB], source code at {gh-lvvlib}/array.h[array.h].
 Static-size means "known at compile time size".  C-arrays are static size.
 This is very simple data-wise class, it is just plain C array wrapped in class. 
 If you look at such array in debugger it looks exactly like C arrays (which means you can freely cast to and from C array).
 There are no mallocs,  no extra pointers, no extraneous class members.
 
-It is modelled on http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`]. 
+It is modelled on http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`]. See also <<3>>.
 The GCC 4.4 promoted `boost::array` to `tr1::array`.
 Class `lvv::array` container have some additional capabilities.
 
@@ -37,7 +38,7 @@ cout  <<  "vector RES : "  <<  RES      << endl;
 cout  <<  "dot product: "  <<  dot(A,B) << endl;
 ------------------------------------
 
-Outputs:
+Output:
 ------------------------------------
 vector   A : 1  2  3  
 vector   B : 1  1  1  
@@ -54,6 +55,20 @@ Second set of curly braces needed because this is an array inside a class.
 
 
 == Speed
+
+
+["mpl", ".speed-sum.png"]
+---------------------------
+title('lvv::array.sum() speed')
+xlabel('Core2 ticks')
+benchmark(c[0], c[1])
+___________________________
+"lvv::array                  ", 1.74
+"lvv::array, explicit OpenMP ", 1.67
+"plain for-loop, double      ", 3.14
+"plain for-loop, float       ", 3.06
+"std::accumulate<float>()    ", 3.06
+----------------------------
 
 Some operation were substantially  accelerated (explicitly specialized) using meta-programing,
 explicit vectorisation (with SSE), parallel programming (with OpenMP), out of order optimization,  and some inline assembly. 
@@ -84,13 +99,23 @@ Note that two last lines have incorrect computed values due to big rounding erro
 | SSE intrinsics	| 1.67                | `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
 |========================================================================================================================
 
-//////////////
-// Generate chart image file.
-sys2::[python barchart.py --format=png --output=barchart.png --scale=2]
 
-// Display chart image file.
-image::barchart.png[]
+
+
+
+///////////////
+["graphviz", "sample1.png"]
+---------------------------------------------------------------------
+digraph G { rankdir=LR; Graphviz->AsciiDoc->HTML}
+--------------------------------------------------------------------
+/////////////////
+
+
+//////////////////////////////
+sys2::[python barchart.py --format=png --output=barchart.png --scale=2]    //  Generate chart image file.
+image::barchart.png[] // Display chart image file.
 //////////////
+
 
 
 So far I implemented only combinations needed for my work, so it is quite incomplete. Hopefully there will
@@ -137,7 +162,8 @@ See also sample use in test files `t-*.cc` and unit test `u-array.cc`.
 include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 
 == References
-- http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
-- http://eigen.tuxfamily.org/index.php?title=Main_Page[Eigen 2 - C++ template library for linear algebra]
+- [[[1]]] http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
+- [[[2]]] http://eigen.tuxfamily.org/index.php?title=Main_Page[Eigen 2 - C++ template library for linear algebra]
+- [[[3]]] http://www.devx.com/cplus/Article/42114/1954?pf=true[std::array: The Secure, Convenient Option for Fixed-Sized Sequences]
 
 // vim:ft=asciidoc:
