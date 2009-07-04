@@ -56,19 +56,18 @@ Second set of curly braces needed because this is an array inside a class.
 
 == Speed
 
-
 ["mpl", ".speed-sum.png"]
----------------------------
-title('lvv::array.sum() speed')
-xlabel('Core2 ticks')
+-----------------------------------------
+title('Benchmark  lvv::array.sum()')
+xlabel('CPU (Core2) ticks')
 benchmark(c[0], c[1])
-___________________________
-"lvv::array                  ", 1.74
-"lvv::array, explicit OpenMP ", 1.67
-"plain for-loop, double      ", 3.14
-"plain for-loop, float       ", 3.06
-"std::accumulate<float>()    ", 3.06
-----------------------------
+_________________________________________
+'lvv::array                  ', 1.74
+'lvv::array, explicit OpenMP ', 1.67
+'plain for-loop, double      ', 3.14
+'plain for-loop, float       ', 3.06
+'std::accumulate<float>()    ', 3.06
+-----------------------------------------
 
 Some operation were substantially  accelerated (explicitly specialized) using meta-programing,
 explicit vectorisation (with SSE), parallel programming (with OpenMP), out of order optimization,  and some inline assembly. 
