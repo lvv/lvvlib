@@ -1,168 +1,155 @@
-= Class lvv::array - STL-compatible, static-size container
 
-//  HTML rendered version of this file is at:  http://volnitsky.com/project/lvvlib
+LVV::ARRAY
+==========
+
+//  HTML rendered version of this file is at:  http://volnitsky.com/project/lvvlib/array
 
 :gh-lvvlib:		http://github.com/lvv/lvvlib/tree/master/
 
+include::summary.txt[]
 
-Class lvv::array is part of C++ header-library http://volnitsky.com/project/lvvlib[LVVLIB], source code at {gh-lvvlib}/array.h[array.h].
-Static-size means "known at compile time size".  C-arrays are static size.
-This is very simple data-wise class, it is just plain C array wrapped in class. 
-If you look at such array in debugger it looks exactly like C arrays (which means you can freely cast to and from C array).
-There are no mallocs,  no extra pointers, no extraneous class members.
+Quick Start
+-----------
 
-It is modelled on http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`]. See also <<3>>.
-The GCC 4.4 promoted `boost::array` to `tr1::array`.
-Class `lvv::array` container have some additional capabilities.
-
-
-== Vector Operations
-
-Sample use:
 -----------------------------------------------
 using lvv::array;
 
+		// These are plain C++, not a C++0x constructors.
+		// Second set of curly braces is required.
 array<float,3>	A = {{1., 2., 3.}};
 array<float,3>	B;
 array<float,3>	C = {{10., 20., 30.}};
 array<float,3>	RES;
 
-B   =  1.0;
-RES =  A+C;
-RES +=  B;
+B   =  1.0;     // all elements are assigned `1.0f`
+RES =  A+C;	// vector op
+RES +=  B;	// vector op
 
-cout  <<  "vector   A : "  <<  A        << endl;
-cout  <<  "vector   B : "  <<  B        << endl;
-cout  <<  "vector   C : "  <<  C        << endl;
-cout  <<  "vector RES : "  <<  RES      << endl;
-cout  <<  "dot product: "  <<  dot(A,B) << endl;
+		// you can send an array to iostream
+cout  <<  "vector   A :   "  <<  A        << endl;
+cout  <<  "vector   B :   "  <<  B        << endl;
+cout  <<  "vector   C :   "  <<  C        << endl;
+cout  <<  "vector RES :   "  <<  RES      << endl;
+cout  <<  "dot product:   "  <<  dot(A,B) << endl;
 ------------------------------------
 
 Output:
 ------------------------------------
-vector   A : 1  2  3  
-vector   B : 1  1  1  
-vector   C : 10  20  30  
-vector RES : 12  23  34  
-dot product: 6
+vector   A :   1  2  3  
+vector   B :   1  1  1  
+vector   C :   10  20  30  
+vector RES :   12  23  34  
+dot product:   6
 -------------------------------------
 
 
-All `B` elements are assigned scalar `1.0f`, then vector `B` added to `A`,  and then result along with dot product is sent to `iostream`.
-
-The `lvv::array` is an aggregate type, meaning that it can be initialised like C arrays.
-Second set of curly braces needed because this is an array inside a class. 
-
-
-== Speed
-
-["mpl", ".speed-sum.png"]
------------------------------------------
-title('Benchmark  lvv::array.sum()')
-xlabel('CPU (Core2) ticks')
-benchmark(c[0], c[1])
-_________________________________________
-'lvv::array                  ', 1.74
-'lvv::array, explicit OpenMP ', 1.67
-'plain for-loop, double      ', 3.14
-'plain for-loop, float       ', 3.06
-'std::accumulate<float>()    ', 3.06
------------------------------------------
+Speed
+-----
 
 Some operation were substantially  accelerated (explicitly specialized) using meta-programing,
 explicit vectorisation (with SSE), parallel programming (with OpenMP), out of order optimization,  and some inline assembly. 
 Below are some {gh-lvvlib}b-array.cc[benchmarks] on two-core, 2200Mhz Core2 Duo CPU:
 
-.Sum of 100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ...}
+=== array.sum()
+
+["mpl", "speed-sum.png"]
+-----------------------------------------
+title('SUM - benchmark  lvv::array.sum()')
+xlabel('CPU ticks per array element')
+benchmark(c[0], c[1])
+_________________________________________
+'plain for-loop, double      ', 3.14
+'plain for-loop, float       ', 3.06
+'std::accumulate<float>()    ', 3.06
+'lvv::array.sum()            ', 1.74
+'lvv::array.sum<openmp>()    ', 1.67
+-----------------------------------------
+
+Sum was done for  100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ...}. Same benchmark is in below table: 
+
 [cols="3,^2,^2, 16",frame="topbot",options="header"]
 |============================================================================================
 | *Method* 			| *Ticks per element* | *Computed Value*  | *Source*
-| lvv::array			| 1.74                | 1.5e+08           | `float  sum = A.sum();`
-| lvv::array, explicit OpenMP	| 1.67                | 1.5e+08           | `float  sum = A.sum<openmp>();`
 | plain for-loop, double	| 3.14                | 1.5e+08           | `double sum=0;  for (int i=0; i<N; i++) sum += A[i];`
 | plain for-loop, float		| 3.06                | 3.35e+07          | `float  sum=0;  for (int i=0; i<N; i++) sum += A[i];`
 | std::accumulate<float>()	| 3.06                | 3.35e+07	  | `float  sum = accumulate(A.begin(), A.end(), 0.f));`
+| lvv::array			| 1.74                | 1.5e+08           | `float  sum = A.sum();`
+| lvv::array, explicit OpenMP	| 1.67                | 1.5e+08           | `float  sum = A.sum<openmp>();`
 |============================================================================================
-SSE method will be auto-selected (through meta-programming) to do summation on 1st line (if CPU supports SSE).
-Note that two last lines have incorrect computed values due to big rounding error. 
+
+SSE method is selected (through meta-programming) if no summation method explicitly specified (if CPU supports SSE).
+Note that float plain-for-loop and std::accumulate methods have incorrect computed values due to rounding error. 
 
 
-.Maximum of 100,000,000 float-s
+=== array.max()
+
+// Now benchmark for .max() method:
+
+["mpl", "speed-max.png"]
+-----------------------------------------
+title('MAX -- lvv::array.max() benchmark')
+xlabel('CPU ticks per array element')
+benchmark(c[0], c[1])
+_________________________________________
+'plain for-loop		', 5.81
+'std::max_element()	', 5.81
+'SSE intrinsics		', 1.67
+'lvv::array.sum()	', 1.63
+-----------------------------------------
+// RETEST:  'OpenMP			', 1.88
+
+Maximum search was done on  100,000,000 float-s
+
 [cols="2,^1,11",frame="topbot",options="header"]
 |=======================================================================================================================
 | *Method* 		| *Ticks per element* |   *Source*
-| lvv::array 		| 1.63                | `float  max = A.max()`
 | plain for-loop	| 5.81                | `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
-| OpenMP		| 1.88                | `(source same as above, 2xCPU, no check for race)`
 | std::max_element()	| 5.81                | `float  max = *std::max_element (A.begin(), A.end());`
 | SSE intrinsics	| 1.67                | `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
+| lvv::array 		| 1.63                | `float  max = A.max()`
 |========================================================================================================================
+//RETEST | OpenMP		| 1.88                | `(source same as above, 2xCPU, no check for race)`
 
-
-
-
-
-///////////////
-["graphviz", "sample1.png"]
----------------------------------------------------------------------
-digraph G { rankdir=LR; Graphviz->AsciiDoc->HTML}
---------------------------------------------------------------------
-/////////////////
-
-
-//////////////////////////////
-sys2::[python barchart.py --format=png --output=barchart.png --scale=2]    //  Generate chart image file.
-image::barchart.png[] // Display chart image file.
-//////////////
-
-
-
-So far I implemented only combinations needed for my work, so it is quite incomplete. Hopefully there will
-be less blank space in table bellow as I will have more time or there will be outside contributions.
+So far I implemented only combinations needed for my work, so it is quite incomplete.
+If there is no a type specialization than generic implementation is used.
 
 .Implemented optimized specialisation
-[cols="1,^1,^1,^1,^1,^1",frame="topbot",options="header"]
-|========================================================================
-| *Type*         |  *sum*  | *max* | *V1 += V2* | *V1 -= V2* | *...*
-| *generic*      |  std::  |  std::| for-loop   | for-loop   | 
-| *float*        |  sse    |  sse  |            |            | 
-| *double*       |         |       |            |            | 
-| *long double*  |         |       |            |            | 
-| *int8_t*       |         |       |            |            | 
-| *int16_t*      |         |  sse2 |            |            | 
-| *int32_t*      |         |       |            |            | 
-| *int64_t*      |         |       |            |            | 
-| *uint8_t*      |         |       |            |            | 
-| *uint16_t*     |         |       |            |            | 
-| *uint32_t*     |         |       |            |            | 
-| *uint64_t*     |         |       |            |            | 
-|========================================================================
+[cols="1,^1,^1,^1,^1",frame="topbot",options="header"]
+|=============================================================
+| *Type*         |  *sum*  | *max* | *V1 OP= V2* | *V1 OP V2* 
+| *generic*      |  std::  |  std::| for-loop    | for-loop   
+| *float*        |  sse    |  sse  |             |            
+| *double*       |         |       |             |            
+| *long double*  |         |       |             |            
+| *int8_t*       |         |       |             |            
+| *int16_t*      |         |  sse2 |             |            
+| *int32_t*      |         |       |             |            
+| *int64_t*      |         |       |             |            
+| *uint8_t*      |         |       |             |            
+| *uint16_t*     |         |       |             |            
+| *uint32_t*     |         |       |             |            
+| *uint64_t*     |         |       |             |            
+|=============================================================
 
 Though I've targeted only x86-64, some optimized specialisation (out-of-order,
 meta-programming, OpenMP) are platform independent.
 Appropriate specialisation selected automatically (but can be specified
 explicitly) based on CPU capabilities, array size and array element type.
 
-///////////
-I do have access to other platforms (thanks to GCC compile farm project) so it
-is possible that in future I will implement specialisations for other platforms too.
-////////////
-
 
 == Other lvv::array capabilities
 
 - Index of first element defaults to 0, but can be any number (third template parameter).
 - Index value for `opertator[]` tested if it is in valid range when `NDEBUG` macro  is not defined (not optimized compile). 
-- basic linear algebra functions:  `norm2(A)`, `distance_norm2(A1,A2)`, `dot_product(A1,A2)`, etc
+- basic linear algebra functions:  `norm2(A)`, `distance_norm2(A1,A2)`, `dot(A1,A2)`, etc
 
 See also sample use in test files `t-*.cc` and unit test `u-array.cc`.
-
 
 include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 
 == References
 - [[[1]]] http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
-- [[[2]]] http://eigen.tuxfamily.org/index.php?title=Main_Page[Eigen 2 - C++ template library for linear algebra]
+- [[[2]]] httpx://eigen.tuxfamily.org/index.php?title=Main_Page[Eigen 2 - C++ template library for linear algebra]
 - [[[3]]] http://www.devx.com/cplus/Article/42114/1954?pf=true[std::array: The Secure, Convenient Option for Fixed-Sized Sequences]
 
-// vim:ft=asciidoc:
+// vim:ft=asciidoc ts=8 sw=8:

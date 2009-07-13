@@ -1,0 +1,2 @@
+Initially collection of headers that I used in my projects.  'LVV' are my initials (Leonid V. Volnitsky).
+Needs some cleanup, dependency pruning and documentation.
