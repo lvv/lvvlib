@@ -4,7 +4,14 @@
 					#ifndef LVV_META_H
 					#define LVV_META_H
 
+					#ifndef __GXX_EXPERIMENTAL_CXX0X__
+						#error "lvvlib: not c++0x compiler"
+					#endif
+
 	#include	<type_traits>
+	
+
+	//#include	<cassert>
 	//#include	<boost/type_traits/integral_constant.hpp>
 	#define		LVV_TRUE_TYPE		std::tr1::true_type
 	#define		LVV_FALSE_TYPE		std::tr1::false_type

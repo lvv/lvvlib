@@ -32,7 +32,5 @@ int main() {
 	cout << "norm2: : |{2,2}| = " << norm2(c2) << endl;
 	cout << "distance_norm2: : |{1,2}-{2,2}| = " << distance_norm2(c1,c2) << endl;
 
-
-
 	cout << endl;
 }

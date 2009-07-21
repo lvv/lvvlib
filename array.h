@@ -47,7 +47,9 @@
 
 				template<typename TT, int NN>
 	struct select_alignment {
-		typedef TT	elem_t[NN]; 
+
+	
+		typedef TT	elem_t[NN ? NN : 1]; // Support for zero-sized arrays mandatory.
 		typedef TT	elem_align_t[NN] __attribute__((aligned(16))); 
 
 		#ifdef __SSE__
@@ -66,22 +68,27 @@ struct array {
 
 	typename select_alignment<T,N>::type 	elems;
 
-	enum { sz = N, ibg=B, ien=B+N };  // gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
+	enum { sz = N, ibg=B, ien=B+N };	// ibg and ien are  <first-index> and <last-index +1>
+						// sz  is ugly work around for gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
 
       public:
 	// type definitions
-	typedef T		value_type;
-	typedef T *		iterator;
-	typedef const T *	const_iterator;
-	typedef T &		reference;
-	typedef const T &	const_reference;
+	typedef T					value_type;
+	typedef value_type&                             reference;
+	typedef const value_type&                       const_reference;
+	typedef value_type*                             iterator;
+	typedef const value_type*                       const_iterator;
+	typedef std::size_t                             size_type;
+	typedef std::ptrdiff_t                          difference_type;
+	typedef std::reverse_iterator<iterator>         reverse_iterator;
+	typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
 
-	typedef int		size_type;
 	typedef int		index_type;
+	
 
 	// CTOR 
-	
 	// n/a (impossible with having aggregate constructor)
+
 
 	// index
 	index_type				ibegin()	const		{ return B; }
@@ -92,10 +99,6 @@ struct array {
 	iterator				end()				{ return elems + N; }
         const_iterator				begin()		const		{ return elems; }
         const_iterator				end() 		const		{ return elems+N; }
-
-	// reverse iterator
-	typedef std::reverse_iterator<iterator>		reverse_iterator;
-        typedef std::reverse_iterator<const_iterator>	const_reverse_iterator;
 
 	reverse_iterator			rbegin()			{ return reverse_iterator(end()); }
 	reverse_iterator			rend()				{ return reverse_iterator(begin()); }

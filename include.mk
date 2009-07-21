@@ -76,8 +76,8 @@ CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEB
 CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS_COMMON)  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF) $(CFLAGS) 
 
 
-.SUFFIXES: .cc -r -c -g  -gp
-.PHONY  = %-r %-g %-gr  %-gp *-r
+.SUFFIXES:	.cc -r -c -g  -gp
+.PHONY:		%-r %-g %-gr  %-gp *-r
 
 b-%  u-%  : MAKEFLAGS	+= -B
 

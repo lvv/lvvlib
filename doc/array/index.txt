@@ -151,5 +151,6 @@ include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 - [[[1]]] http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
 - [[[2]]] httpx://eigen.tuxfamily.org/index.php?title=Main_Page[Eigen 2 - C++ template library for linear algebra]
 - [[[3]]] http://www.devx.com/cplus/Article/42114/1954?pf=true[std::array: The Secure, Convenient Option for Fixed-Sized Sequences]
+- [[[4]]] Nicolai Josuttis httpx://boost.cowic.de/rc/pdf/array.pdf[Boost.Array] 
 
 // vim:ft=asciidoc ts=8 sw=8:

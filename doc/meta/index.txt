@@ -1,0 +1,63 @@
+= Template Metaprograming -  META.H
+
+See list of avalable functions and sample use in meta.h unit test output: 
+
+-----------------------------------------------------------------------------
+#@make u-meta.cc
+make[1]: Leaving directory `/home/lvv/p/lvvlib'
+./u-meta
+*********  PROMOTE<>  **********
+--(26)--  (type_descriptor<boost::promote<int>::type >() ) = int32_t  
+--(27)--  (type_descriptor<boost::promote<float>::type >() ) = double  
+--(29)--  (type_descriptor<boost::numeric::ublas::promote_traits<float,double>::promote_type >() ) = double  
+--(30)--  (type_descriptor<boost::numeric::ublas::promote_traits<int,int>::promote_type >() ) = int32_t  
+--(31)--  (type_descriptor<boost::numeric::ublas::promote_traits<int,float>::promote_type >() ) = float  
+--(32)--  (type_descriptor<boost::numeric::ublas::promote_traits<int,float>::promote_type >() ) = float  
+--(33)--  (type_descriptor<boost::numeric::ublas::promote_traits<float,float>::promote_type >() ) = float  
+--(34)--  (type_descriptor<boost::numeric::ublas::promote_traits<int,int>::promote_type >() ) = int32_t  
+--(35)--  (type_descriptor<boost::numeric::ublas::promote_traits<char,unsigned>::promote_type >() ) = uint32_t  
+--(36)--  (type_descriptor<boost::numeric::ublas::promote_traits<long double,char>::promote_type >() ) = long double  
+
+
+ *** Test is_integral ***
+--(39)--  std::tr1::is_integral<int>::value = 1  
+--(40)--  std::tr1::is_integral<float>::value = 0  
+--(41)--  std::tr1::is_integral<double>::value = 0  
+*********  RATIO_<>  **********
+    pass     45 	are equal:     	(ratio_<2>::denominator)	 ==  1
+    pass     46 	are equal:     	(ratio_<2,3>::denominator)	 ==  3
+    pass     47 	are equal:     	(ratio_<2,3>::numerator)	 ==  2
+    pass     48 	are equal:     	(ratio_<2,3>::convert<float>())	 ==  float(2./3.)
+    pass     49 	are equal:     	(ratio_<2,3>::convert<int>())	 ==  0
+    pass     50 	are equal:     	(ratio_<1,2>::convert<float>())	 ==  1./2.
+    pass     51 	are equal:     	(ratio_<0,3>::convert<float>())	 ==  float(0.)
+    pass     52 	are equal:     	(ratio_<-2,3>::convert<float>())	 ==  float(2./-3.)
+    pass     53 	are equal:     	(ratio_<1,1000>::convert<float>())	 ==  float(0.001)
+*********  FP<>  **********
+    pass     58 	are equal:     	(fp<float,2,-1>::value)	 ==  float(0.2)
+    pass     59 	are equal:     	(fp<float,2,0>::value)	 ==  2
+    pass     60 	are equal:     	(fp<float,2,1>::value)	 ==  20
+*********  INT_<>  **********
+    pass     64 	are equal:     	(int_<3>::value)	 ==  3
+    pass     65 	are equal:     	(int_<-3>::value)	 ==  -3
+    pass     66 	are equal:     	(int_<3>::numerator)	 ==  3
+    pass     67 	are equal:     	(int_<3>::denominator)	 ==  1
+    pass     68 	are equal:     	(int_<3>::convert<float>())	 ==  3.
+*********  PLUS<>  and MINUS<> **********
+    pass     71 	are equal:     	(lvv::plus < ratio_<1,3>, ratio_<1,3> >::type::convert<double>())	 ==  2./3.
+    pass     72 	are equal:     	(lvv::plus < ratio_<1,3>, int_<2> >::type::convert<double>())	 ==  2.+1./3.
+    pass     73 	are equal:     	(lvv::minus< ratio_<1,3>, int_<2> >::type::convert<double>())	 ==  1./3.-2.
+    pass     74 	are equal:     	(lvv::minus< int_<2>, ratio_<1,3> >::type::convert<double>())	 ==  2.-1./3.
+ ***** IPOW  *******
+    pass     80 	are equal:     	(lvv::ipow<3,0>::value)	 ==  1
+    pass     81 	are equal:     	(lvv::ipow<3,1>::value)	 ==  3
+    pass     82 	are equal:     	(lvv::ipow<3,2>::value)	 ==  9
+ ***** ILOG2  *******
+    pass     85 	are equal:     	(lvv::ilog2<1>::value)	 ==  0
+    pass     86 	are equal:     	(lvv::ilog2<2>::value)	 ==  1
+    pass     87 	are equal:     	(lvv::ilog2<4>::value)	 ==  2
+    pass     88 	are equal:     	(lvv::ilog2<256>::value)	 ==  8
+
+------------ all pass ------------
+-------------------------------------------------------------------------
+
