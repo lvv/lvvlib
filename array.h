@@ -61,6 +61,7 @@
 
 		//namespace array {
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////   ARRAY CLASS
 			template < class T, int N, int B=0>
 struct array {
@@ -144,7 +145,7 @@ struct array {
 	const T *				data()	const			{ return elems; }	// tr1 calls this data()
 	T *					data()				{ return elems; }
 
-	// assignment with type conversion
+	// assignment with implicit type conversion
 	//template <typename T2>	array <T, N, B>	&operator=(const array < T2, N, B > &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
 	template <typename T2, int N2, int B2>	array <T, N, B>	&operator=(const array<T2,N2,B2>  &rhs) { std::copy(rhs.begin(), rhs.end(), begin()); return *this; };
 	
@@ -152,11 +153,14 @@ struct array {
 
 	// assign one value to all elements
 	template<typename T2> 	array<T,N,B>&  operator= ( const  T2 value) {  std::fill_n(begin(), size(), value);  return *this; }
+	// pre c++0x: assign(); c++0x calls this fill():
 	void					assign(const T & value)		{ std::fill_n(begin(), size(), value); }
+	void					fill  (const T & value)		{ std::fill_n(begin(), size(), value); }
 	//TODO memset scalar assignment
 
-	template <typename TT, int NN,  int BB> friend  ostream& operator<<	(ostream& os, const array<TT,NN,BB>   a);
-	template <typename TT, int NN,  int BB> friend  istream& operator>>	(istream& is,       array<TT,NN,BB>&  a);
+	//template <typename TT, int NN,  int BB> friend  ostream& operator<<	(ostream& os, const array<TT,NN,BB>   a);
+	//template <             int NN,  int BB> friend  ostream& operator<<	(ostream& os, const array<const char,NN,BB>   a);
+	//template <typename TT, int NN,  int BB> friend  istream& operator>>	(istream& is,       array<TT,NN,BB>&  a);
 
 	//template <typename TT, int NN,  int BB>	friend	T 	operator . 	(const array<TT,NN,BB>& LA, const array<TT,NN,BB>& RA);
 
@@ -396,6 +400,9 @@ operator<<  (ostream& os, const array<T,N,B> A)  { // WHY: if we change A to con
 	return os;
  };
 
+template <int N, int B>   std::ostream&   operator<<(ostream& os, const array<const char,N,B> A)  { copy (A.begin(), A.end(), ostream_iterator<const char>(os, ""));  return os; };
+template <int N, int B>   std::ostream&   operator<<(ostream& os, const array<      char,N,B> A)  { copy (A.begin(), A.end(), ostream_iterator<      char>(os, ""));  return os; };
+
 
 		template <typename T, int N, int B>
 		std::istream&
@@ -403,6 +410,7 @@ operator>>  (istream& is, array<T,N,B>& A)  {
  	for (size_t i=B;  i<B+N;  i++)	 is >> A[i];
 	return is;
  };
+
 
 
 template <typename T, int N> 		class vector: public array<T,N,1> {}; // index start from 1

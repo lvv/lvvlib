@@ -246,7 +246,9 @@ main() {
 
 	{	
 	array<char,5> str = {"abcd"};
+	array<const char,5> cstr = {"ABCD"};
 	cout << str << endl; 
+	cout << cstr << endl; 
 	}
 
 	cout << "\n #####  0-size  ##########################################\n"; ///////////////////////////////////////////////

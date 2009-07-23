@@ -1,12 +1,2 @@
-
 Class lvv::array is a STL compatible container capable of vector operation and
 optimized (through template specialization) for x86_64 achitectrue.  It is part of C++ header-library LVVLIB.
-
-This is very simple data-wise class, it is just plain C-array wrapped in class. 
-If you look at such array in debugger it looks exactly like C-arrays (which means you can freely cast to and from C-array).
-As C-arrays the lvv::array is static-sized,  meaning "known at compile time size".
-There are no mallocs, no extra pointers, no extraneous class members.
-
-It can be seen as exended http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`].
-The GCC 4.4 promoted `boost::array` to `tr1::array`.
-
