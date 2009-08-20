@@ -1,2 +1,3 @@
-Class lvv::array is a STL compatible container capable of vector operation and
-optimized (through template specialization) for x86_64 achitectrue.  It is part of C++ header-library LVVLIB.
+Class 'lvv::array' is faster and vector operation capable  drop-in replacement
+for 'boost::array' with specialisation for 'x86/x86_64' architecture.
+The 'boost::array' promoted to 'tr1::' in GCC-4.4 and became 'std::' in 'C++0x'.

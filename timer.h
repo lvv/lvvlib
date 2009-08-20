@@ -14,7 +14,7 @@
 	#include <iomanip>
 		using std::ostream;
 		using std::endl;
-		using std::cout;
+		using std::cerr;
 		using std::setprecision;
 	#include <string>
 
@@ -121,7 +121,7 @@ Timer(bool dtor=false) : verbose_dtor(dtor)     {
 
 ~Timer()    {
 	if (verbose_dtor)
-		cout  << "(*) on exit: cpu time: "  << total_cpu()  << "s    " << "wall time: " << total_wall() << "s " << endl; 
+		cerr  << "(*) on exit: cpu time: "  << total_cpu()  << "s    " << "wall time: " << total_wall() << "s " << endl; 
 	// memory report
 	//system("egrep -r '^Vm(Peak|Size|RSS|Data|Stk|Exe|Lib)' /proc/$PPID/status |sed 's/^Vm//; s/ kB/k/; s/  *//'|tr '	\n' ' '");
 	    // amount of unrequested memory  -   CommitLimit - Committed_AS
@@ -132,6 +132,7 @@ void reset() {
 	interval_ticks();
 			#endif
 	interval_cpu();
+	interval_wall();
 }
 	
 			#if defined(__x86_64) || defined (__i386)
@@ -171,22 +172,22 @@ double	operator() 	()	{ return interval_wall(); }
 print(std::string msg="") {
 
 	if (msg=="") 
-		std::cout << std::setw(13) << "(timer)   ";
+		std::cerr << std::setw(13) << "(timer)   " << std::flush();
 	else {
-		std::cout <<"   ⌛ " << msg << "    "; 
+		std::cerr <<"   ⌛ " << msg << "    " << std::flush(); 
 	};
 
-	std::cout << std::setprecision(4);
+	std::cerr << std::setprecision(4);
 			#if defined(__x86_64) || defined (__i386)
-	std::cout << "overhead:" << overhead << "t   " ;
-	std::cout << "interval:" << interval_ticks() << "t   " ;
-	std::cout << "total:   " << total_ticks(   ) << "t   " ;
+	std::cerr << "overhead:" << overhead << "t   " ;
+	std::cerr << "interval:" << interval_ticks() << "t   " ;
+	std::cerr << "total:   " << total_ticks(   ) << "t   " ;
 			#endif
-	std::cout << "interval-wall:" << interval_wall() << "s   " ;
-	std::cout << "interval-cpu: " << interval_cpu( ) << "s   " ;
-	std::cout << "total-wall:   " << total_wall(   ) << "s   " ;
-	std::cout << "total-cpu:    " << total_cpu(    ) << "s   " ;
-	std::cout << std::endl;
+	std::cerr << "interval-wall:" << interval_wall() << "s   " ;
+	std::cerr << "interval-cpu: " << interval_cpu( ) << "s   " ;
+	std::cerr << "total-wall:   " << total_wall(   ) << "s   " ;
+	std::cerr << "total-cpu:    " << total_cpu(    ) << "s   " ;
+	std::cerr << std::endl;
  };
 
         friend std::ostream& operator<< (std::ostream& os, Timer& t);
@@ -217,10 +218,10 @@ progress_dots(long var, long first, long last, std::string msg="" ) { //========
 	}
 	
 	if (!columns)   return;
-	if ( var==first)   cout << msg; 
+	if ( var==first)   cerr << msg; 
 	int div=(last-first)/width;
-	if ( (var-first) % (div+1) == 0 )   cout << "." << std::flush;
-	if ( var == last )   cout << endl;
+	if ( (var-first) % (div+1) == 0 )   cerr << "." << std::flush;
+	if ( var == last )   cerr << endl;
  }
 
 	} // namespace lvv

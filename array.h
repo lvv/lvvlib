@@ -127,6 +127,13 @@ struct array {
 		return elems[i-B];
 	}
 
+			// TODO: checked iterator ops
+			// look for   __normal_iterator  in  /usr/lib/gcc/x86_64-pc-linux-gnu/4.4.1/include/g++-v4/bits/stl_iterator.h
+			// operator*() 
+			// operator->() 
+			// operator++() 
+			// operator+(differense_type) 
+
 	reference				at(size_type i)			{ assert(i<N+B && i>=B && "out of range"); return elems[i-B]; }
 	const_reference				at(size_type i)	const		{ assert(i<N+B && i>=B && "out of range"); return elems[i-B]; }
 	reference				front()				{ return elems[0]; }

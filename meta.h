@@ -211,6 +211,10 @@
 
 */
 
+// TO test http://cocoawithlove.com/2008/04/using-pointers-to-recast-in-c-is-bad.html)
+// #define UNION_CAST(x, destType) \
+// 	(((union {__typeof__(x) a; destType b;})x).b)
+
 							}
 							#endif // LVV_META_H
  

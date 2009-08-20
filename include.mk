@@ -8,14 +8,14 @@ FC	= gfortran
 TMPDIR ?=/v
 
 ################################################################################ LABEL
-_cc = $(CXX)-$(shell $(CXX) -v 2>&1 | sed  -n 's/^.*ersion *\([0-9.]*\) .*/\1/p')
-_date = $(shell date +'%y%m%d_%H%M%S')
-_rev=$(shell test -d .git && git rev-parse HEAD|sed -n 's/^\(........\).*/\1/p')++$(shell test -d .git && git branch |sed -n 's/master/M/; s/^* //p')
+_cc := $(CXX)-$(shell $(CXX) -v 2>&1 | sed  -n 's/^.*ersion *\([0-9.]*\) .*/\1/p')
+_date := $(shell date +'%y%m%d_%H%M%S')
+_rev :=$(shell test -d .git && git rev-parse HEAD|sed -n 's/^\(........\).*/\1/p')++$(shell test -d .git && git branch |sed -n 's/master/M/; s/^* //p')
 #_cpu=$(shell uname -m -p  |sed 's/Intel(R)//;s/(TM)//;s/@//;s/CPU//;s/ \+/-/g')
-_cpu=$(shell sed -n '/^model name/!d; s/.*: //; s/(tm) Processor//; s/Intel(R)//; s/(TM)//; s/@//; s/^ //; s/ \+/-/g;p;q' /proc/cpuinfo )
-_cores=$(shell awk '/^processor/{cores=$$3+1}; END{print cores}' /proc/cpuinfo)
-_mhz=$(shell awk '/^cpu MHz/{mhz=$$4}; END{print mhz}' /proc/cpuinfo |sed 's/\.[0-9]\+//')
-ID = $(shell echo "$(_date)-$(_cc)-$(SPEED:DEBUG=g)-$(_rev)-$(_cpu)-x$(_cores)@$(_mhz)" | tr -d ' ')
+_cpu :=$(shell sed -n '/^model name/!d; s/.*: //; s/(tm) Processor//; s/Intel(R)//; s/(TM)//; s/@//; s/^ //; s/ \+/-/g;p;q' /proc/cpuinfo )
+_cores := $(shell awk '/^processor/{cores=$$3+1}; END{print cores}' /proc/cpuinfo)
+_mhz := $(shell awk '/^cpu MHz/{mhz=$$4}; END{print mhz}' /proc/cpuinfo |sed 's/\.[0-9]\+//')
+ID := $(shell echo "$(_date)-$(_cc)-$(SPEED:DEBUG=g)-$(_rev)-$(_cpu)-x$(_cores)@$(_mhz)" | tr -d ' ')
 
 ########################################################################################
 #SPEED := $(s:o=OPTIMZE)
@@ -25,6 +25,13 @@ SPEED := $(s:d=DEBUG)
 SPEED  	?= DEBUG
 
 #######################################################################################  COMPILE SPECIFIC
+#
+#  TO TRY (new in 4.4.1)
+#  	-findirect-inlining
+#  	-ftree-switch-conversion
+#   	-floop-block
+#   	-floop-strip-mine
+#   	-floop-interchange
 g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare # -fstrict-aliasing # -Wmissing-braces
 
 # SAFE

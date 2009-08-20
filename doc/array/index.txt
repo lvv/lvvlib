@@ -4,17 +4,12 @@ LVV::ARRAY
 
 //  HTML rendered version of this file is at:  http://volnitsky.com/project/lvvlib/array
 
-:gh-lvvlib:		http://github.com/lvv/lvvlib/tree/master/
+:gh-lvvlib:		httpx://github.com/lvv/lvvlib/tree/master/
 
 include::summary.txt[]
 
-This is very simple data-wise class, it is just plain C-array wrapped in class. 
-If you look at such array in debugger it looks exactly like C-arrays (which means you can freely cast to and from C-array).
-As C-arrays the lvv::array is static-sized,  meaning "known at compile time size".
-There are no mallocs, no extra pointers, no extraneous class members.
-
-It can be seen as exended http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[`boost::array`].
-The GCC 4.4 promoted `boost::array` to `tr1::array`.
+lvv::array is just plain C-array wrapped in class. Wrapping adds zero memory and speed overhead.
+As C-arrays the lvv::array is static-sized,  meaning "known at compile time size" and typically allocated on stack.
 
 Quick Start
 -----------
@@ -23,7 +18,8 @@ Quick Start
 using lvv::array;
 
 		// These are plain C++, not a C++0x constructors.
-		// Second set of curly braces is required.
+		// Second set of curly braces is optional, but 
+		// some compilers issues warning if single set of braces is used.
 array<float,3>	A = {{1., 2., 3.}};
 array<float,3>	B;
 array<float,3>	C = {{10., 20., 30.}};
@@ -58,7 +54,7 @@ Some operation were substantially  accelerated (explicitly specialized) using me
 explicit vectorisation (with SSE), parallel programming (with OpenMP), out of order optimization,  and some inline assembly. 
 Below are some {gh-lvvlib}b-array.cc[benchmarks] on two-core, 2200Mhz Core2 Duo CPU:
 
-=== array.sum()
+=== array::sum()
 
 ["mpl", "speed-sum.png"]
 -----------------------------------------
@@ -89,7 +85,7 @@ SSE method is selected (through meta-programming) if no summation method explici
 Note that float plain-for-loop and std::accumulate methods have incorrect computed values due to rounding error. 
 
 
-=== array.max()
+=== array::max()
 
 // Now benchmark for .max() method:
 
@@ -124,19 +120,19 @@ If there is no a type specialization than generic implementation is used.
 .Implemented optimized specialisation
 [cols="1,^1,^1,^1,^1",frame="topbot",options="header"]
 |=============================================================
-| *Type*         |  *sum*  | *max* | *V1 OP= V2* | *V1 OP V2* 
-| *generic*      |  std::  |  std::| for-loop    | for-loop   
-| *float*        |  sse    |  sse  |             |            
-| *double*       |         |       |             |            
-| *long double*  |         |       |             |            
-| *int8_t*       |         |       |             |            
-| *int16_t*      |         |  sse2 |             |            
-| *int32_t*      |         |       |             |            
-| *int64_t*      |         |       |             |            
-| *uint8_t*      |         |       |             |            
-| *uint16_t*     |         |       |             |            
-| *uint32_t*     |         |       |             |            
-| *uint64_t*     |         |       |             |            
+| *Type*         |  *sum*  | *max*  | *V1 OP= V2* | *V1 OP V2* 
+| *generic*      |  std::  |  std:: | for-loop    | for-loop   
+| *float*        | 'sse'   | 'sse'  | generic     | generic    
+| *double*       | generic | generic| generic     | generic    
+| *long double*  | generic | generic| generic     | generic    
+| *int8_t*       | generic | generic| generic     | generic    
+| *int16_t*      | generic | 'sse2' | generic     | generic    
+| *int32_t*      | generic | generic| generic     | generic    
+| *int64_t*      | generic | generic| generic     | generic            
+| *uint8_t*      | generic | generic| generic     | generic           
+| *uint16_t*     | generic | generic| generic     | generic           
+| *uint32_t*     | generic | generic| generic     | generic           
+| *uint64_t*     | generic | generic| generic     | generic           
 |=============================================================
 
 Though I've targeted only x86-64, some optimized specialisation (out-of-order,
@@ -159,6 +155,8 @@ include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 - [[[1]]] http://www.ddj.com/cpp/184401967?pgno=1[Dr. Dobb's Journal: Optimizing C/C++ with Inline Assembly Programming.  June 01, 2005 ]
 - [[[2]]] httpx://eigen.tuxfamily.org/index.php?title=Main_Page[Eigen 2 - C++ template library for linear algebra]
 - [[[3]]] http://www.devx.com/cplus/Article/42114/1954?pf=true[std::array: The Secure, Convenient Option for Fixed-Sized Sequences]
-- [[[4]]] Nicolai Josuttis httpx://boost.cowic.de/rc/pdf/array.pdf[Boost.Array] 
+- [[[4]]] httpx://www.research.att.com/~bs/C++0xFAQ.html#std-array[+++C++0x+++ - the next ISO C++ standard / atd::array]
+- [[[5]]] Nicolai Josuttis httpx://boost.cowic.de/rc/pdf/array.pdf[Boost.Array] 
+- [[[6]]] http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[boost::array]
 
 // vim:ft=asciidoc ts=8 sw=8:
