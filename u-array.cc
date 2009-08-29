@@ -1,9 +1,15 @@
+// don't touch this line, it is used for array<char> input test 
 
 	#define CANUSE_SSE
 	#define CANUSE_SSE2
 	#define CANUSE_SSE3
 
-//#include <iostream>
+#include <iostream>
+	using std::cout;
+	using std::endl;
+#include <fstream>
+	using std::ifstream;
+
 
 #include <lvv/math.h>
 	using lvv::eq;
@@ -21,6 +27,7 @@
 //#include <lopti/convert-gsl.h>
 	using namespace std;
 	using namespace lvv;
+
 	
 
                 int
@@ -245,10 +252,15 @@ main() {
 	cout << "\n #####  CHAR[]  ##########################################\n"; ///////////////////////////////////////////////
 
 	{	
-	array<char,5> str = {"abcd"};
-	array<const char,5> cstr = {"ABCD"};
-	cout << str << endl; 
-	cout << cstr << endl; 
+	array<char,9>		s_dont = {{'/', '/', ' ', 'd', 'o', 'n', '\'', 't', '\0'}};
+	array<char,9>		s_in;
+	array<const char,6>	cstr = {"ABCDE"}; // zero terminated
+
+	ifstream in("u-array.cc");
+	in >> s_in; 
+	CHECKeq(s_in,s_dont);
+											//cout << s_in << endl; 
+											//cout << s_dont << endl; 
 	}
 
 	cout << "\n #####  0-size  ##########################################\n"; ///////////////////////////////////////////////

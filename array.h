@@ -414,7 +414,8 @@ template <int N, int B>   std::ostream&   operator<<(ostream& os, const array<  
 		template <typename T, int N, int B>
 		std::istream&
 operator>>  (istream& is, array<T,N,B>& A)  {
- 	for (size_t i=B;  i<B+N;  i++)	 is >> A[i];
+ 	for (size_t i=B;   i<B+N-1 && is;  i++)	 is.read(&A[i],1);
+	A.back() = '\0';
 	return is;
  };
 
