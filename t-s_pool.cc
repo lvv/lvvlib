@@ -6,17 +6,15 @@
 	#include <iostream>
 	#include <deque>
 
-
 	using namespace std;
-
 
 int main() {
 
-	/////////////////////////////////////////////////
-
-	spool_t<20,50>		spool;
-	deque<spool_ref_t>	s_list;
-	spool_ref_t		ref;
+			typedef 	lvv::spool_t <20,50>	SPOOL_t;
+			typedef 	SPOOL_t::ref_t		REF_t;
+		SPOOL_t		spool;
+		deque<REF_t>	s_list;
+		REF_t		ref;
 
 	while (cin.getline (spool.get_new(ref), 1000))  {
 		cout << "in: " << spool.get(ref) << "   \t ref: " << int(ref.buf) << " / " << ref.offset << endl;	

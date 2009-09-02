@@ -8,8 +8,8 @@
 	#include <sys/time.h>
 	#include <sys/resource.h>
 
-	#include <stdlib.h>
-	#include <stdint.h>
+	#include <cstdlib>
+	#include <cstdint>
 	#include <iostream>
 	#include <iomanip>
 		using std::ostream;
