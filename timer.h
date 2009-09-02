@@ -32,34 +32,39 @@
 */
 
 /////////////////////////////////////////////////////////////////////////////////////  READ_TICK
+
 #if defined(__x86_64) || defined (__i386)
-uint64_t	read_tick() {				// tested with with x86_64 only. 
-	uint64_t now_tick;			
-       	asm volatile (	"subl	%%eax,	%%eax;"
-		"cpuid;"
-		"rdtsc;"
-		#if defined(__x86_64) 
-			"shlq	$32,	%%rdx;"
-			"orq	%%rdx,	%%rax;"		// combine into 64 bit register        
-			"movq	%%rax,	%[now_tick];"
-		#endif
-		#if defined(__i386) 
-			"movl	%%eax,	%[now_tick];"
-			"lea	%0, 	%%eax;"
-			"movl	%%edx,	4(%%eax);"
-		#endif
-		"cpuid;"
-                         :[now_tick] "=m"(now_tick)        // output
-                         :
-		#if defined(__x86_64) 
-                         :"rax", "rdx", "rbx","rcx", "rdx"         // clobbered register
-		#else
-                         :"ebx","ecx", "edx"         // clobbered register
-		#endif
-         );  
-	return now_tick;
-}
+
+	uint64_t static	read_tick() {				// tested with with x86_64 only. 
+		uint64_t now_tick;			
+		asm volatile (	"subl	%%eax,	%%eax;"
+			"cpuid;"
+			"rdtsc;"
+			#if defined(__x86_64) 
+				"shlq	$32,	%%rdx;"
+				"orq	%%rdx,	%%rax;"		// combine into 64 bit register        
+				"movq	%%rax,	%[now_tick];"
+			#endif
+			#if defined(__i386) 
+				"movl	%%eax,	%[now_tick];"
+				"lea	%0, 	%%eax;"
+				"movl	%%edx,	4(%%eax);"
+			#endif
+			"cpuid;"
+				 :[now_tick] "=m"(now_tick)        // output
+				 :
+			#if defined(__x86_64) 
+				 :"rax", "rdx", "rbx","rcx", "rdx"         // clobbered register
+			#else
+				 :"ebx","ecx", "edx"         // clobbered register
+			#endif
+		 );  
+		return now_tick;
+	}
 #endif
+
+	class Timer;
+	static ostream&   operator<< (ostream& os, Timer& t) __attribute__((unused)) ;
 
 class Timer { //=========================================== TIMER
 			// article about hi-res timers: http://www.devx.com/cplus/Article/35375/0/page/2
@@ -125,7 +130,7 @@ Timer(bool dtor=false) : verbose_dtor(dtor)     {
 	// memory report
 	//system("egrep -r '^Vm(Peak|Size|RSS|Data|Stk|Exe|Lib)' /proc/$PPID/status |sed 's/^Vm//; s/ kB/k/; s/  *//'|tr '	\n' ' '");
 	    // amount of unrequested memory  -   CommitLimit - Committed_AS
-};
+ };
 
 void reset() {
 			#if defined(__x86_64) || defined (__i386)
@@ -133,7 +138,7 @@ void reset() {
 			#endif
 	interval_cpu();
 	interval_wall();
-}
+ }
 	
 			#if defined(__x86_64) || defined (__i386)
                         uint64_t
@@ -165,16 +170,18 @@ interval_cpu()		{
 double	total_ticks	()	{ return  read_tick() - ctor_tick; }
 			#endif
 double	total_wall	()	{ gettimeofday(&now_tv, NULL);		return  wall_time_at(now_tv) - wall_time_at(ctor_tv); }
+
 double	total_cpu	()	{ getrusage(RUSAGE_SELF, &now_ru);	return  cpu_time_at (now_ru) - cpu_time_at (ctor_ru); }
+
 double	operator() 	()	{ return interval_wall(); }
 
 	void
 print(std::string msg="") {
 
 	if (msg=="") 
-		std::cerr << std::setw(13) << "(timer)   " << std::flush();
+		std::cerr << std::setw(13) << "(timer)   " << std::flush;
 	else {
-		std::cerr <<"   ⌛ " << msg << "    " << std::flush(); 
+		std::cerr <<"   ⌛ " << msg << "    " << std::flush; 
 	};
 
 	std::cerr << std::setprecision(4);
@@ -191,22 +198,24 @@ print(std::string msg="") {
  };
 
         friend std::ostream& operator<< (std::ostream& os, Timer& t);
- };
+};
 
-ostream& operator<< (ostream& os, Timer& t) {
+
+	static ostream& 
+operator<< (ostream& os, Timer& t)   {
 	os << setprecision(5) << " " << t() << "s ";
 	return os;
  }
 
 
-        void
+        void static  __attribute__((unused))
 progress_dots(long var, long first, long last, std::string msg="" ) { //=============================================== progress_dots()
 
 	static bool first_time = true;
 	static int  columns = 0; 
 	static int  width;
 	
-	if (first_time) {
+	if (first_time)  {
 	
 		first_time=false;
 		char* columns_str=getenv("COLUMNS");

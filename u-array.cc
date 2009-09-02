@@ -254,13 +254,14 @@ main() {
 	{	
 	array<char,9>		s_dont = {{'/', '/', ' ', 'd', 'o', 'n', '\'', 't', '\0'}};
 	array<char,9>		s_in;
-	array<const char,6>	cstr = {"ABCDE"}; // zero terminated
+	array<const char,16>	cstr = {"ABCDE"}; // zero terminated
 
 	ifstream in("u-array.cc");
 	in >> s_in; 
 	CHECKeq(s_in,s_dont);
 											//cout << s_in << endl; 
 											//cout << s_dont << endl; 
+											cout << cstr << endl; 
 	}
 
 	cout << "\n #####  0-size  ##########################################\n"; ///////////////////////////////////////////////

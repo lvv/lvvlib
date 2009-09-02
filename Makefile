@@ -49,4 +49,6 @@ clean:
 	rm -f *.html
 	git clean -df
 
+t-s_pool-r: 
+	bash -c 'for i in  {1..222};  do echo ===== $$i ======== ; done  |  ./t-s_pool' 
 

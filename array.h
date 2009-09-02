@@ -407,8 +407,8 @@ operator<<  (ostream& os, const array<T,N,B> A)  { // WHY: if we change A to con
 	return os;
  };
 
-template <int N, int B>   std::ostream&   operator<<(ostream& os, const array<const char,N,B> A)  { copy (A.begin(), A.end(), ostream_iterator<const char>(os, ""));  return os; };
-template <int N, int B>   std::ostream&   operator<<(ostream& os, const array<      char,N,B> A)  { copy (A.begin(), A.end(), ostream_iterator<      char>(os, ""));  return os; };
+template <int N, int B>   std::ostream&   operator<<(ostream& os, const array<const char,N,B> A)  {  os<< A.data();  return os; };
+template <int N, int B>   std::ostream&   operator<<(ostream& os, const array<      char,N,B> A)  {  os<< A.data();  return os; };
 
 
 		template <typename T, int N, int B>
