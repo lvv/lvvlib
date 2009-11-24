@@ -17,30 +17,43 @@ MATH.H
 ------
 
 *eq()* - numeric comparison template function (http://github.com/lvv/lvvlib/tree/master/math.h[math.h])
-Used for numeric comparison in generic programming.  For floating point types
-comparison precision will scale proportionally to type used and will still work if
-integral type used. If different types are compared, ulp of lowest precision type is used. 
+Used for numeric comparison in generic programming. 
 
-Error in floating point expression is proportional to absolute value of a
-number and precision of a type used.  Error will be bigger for `10000` than for
-`0.00001` and bigger for `float` than for `double`. This absolute value here is
-called  _characteristic value_.  Usually characteristic value is equal to value
-that we want to compare, and that is what `eq` defaults to: average of
-absolutes of compared values (1st and 2nd argument).  But in chain of calculations characteristic
-value can be different.  For example in: `x=1000.1;  y=x-1000.` characteristic
-value of `y` is `1000` even though it is approximately equal `0.1`
+Usually you can not in some programe define numeric type  to a name (let say T)
+and then change it to other type if it used in sufishently complex
+computations.  For example when you compare integer type you can use exact
+comparision but for floating types you need to account for an floating ops error
+(we will call it epsilon).  And even when you change floating type to another floating type
+(let say from float to double), you still can not do it because epsilon will be
+very different.
 
-Type-precision is expressed as http://en.wikipedia.org/wiki/Unit_in_the_last_place[ULP]
-for value `1.0`  (`== std::numeric_limits<T>::epsilon()`).  This is only possible way to make it
-invariant to type used. That is error expressed in ULP is about the same when
-we change type (needed for generic programming).
+eq() will allow you do this.
 
-The longer chain of calculation is the bigger accumulated error is. 
-In `eq` acceptable error specified as integer ULP
-multiplier (3th template argument). Default is 100. 
+For floating point types we need two values (3rd and 4th arg) to specify
+precision.  Both have reasonable defautls.
 
-For integers: If one of arguments is `unsigned` then other argument converted to unsigned type too (to avoid overflows).
+The 3rd arg is whole number of ULPs
+(http://en.wikipedia.org/wiki/Unit_in_the_last_place[Unit in the Last Place])
+and defaults to 100.  It is inherent precision of type.  It depends on
+variable value (characteristic type) and  for value `1.0`  is equal to
+`std::numeric_limits<T>::epsilon()`.
+
+// FIXME add example
+
+Error in floating point expression is proportional to absolute value of
+compared values.  Error will be bigger for `10000` than for `0.00001` and
+bigger for `float` than for `double`. This absolute value here is called
+_characteristic value_.  Usually characteristic value is equal to value that we
+want to compare, and that is what `eq` defaults to: average of absolutes of
+compared values (1st and 2nd argument).  But in chain of calculations
+characteristic value can be different and this is why we might need to
+explicitly specify it.  For example in: `x=1000.1;  y=x-1000.` characteristic
+value of `y` is `1000` even though it is approximately equal to `0.1`.
+
+For integer types exact comparison will be used and ULPs and characteristic value are ignored.
+Also  if one of arguments is `unsigned` then other argument converted to unsigned type too (to avoid overflows).
 It is  assumed that if comparison is  with `unsigned` then it is guaranted that other value is positive (TODO: add assert check)
+
 
 
 check.h

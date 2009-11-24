@@ -8,6 +8,8 @@
 	#include <csetjmp>
 	#include <limits>
 		using std::numeric_limits;
+
+	#include <tr1/type_traits>
 	
 	//#include <sys/resource.h>
 	#include <cassert>
@@ -130,12 +132,12 @@ T		powi		(T x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/li
             return (T)n1==(T)n2;
      };  
 
-    template<typename T1, typename T2, typename T>   bool static inline   eq_impl (T1 n1, T2 n2, boost::false_type integral_flag, ulp_t ulps, T characteristic_value) {  // floating point
+    template<typename T1, typename T2, typename T>   bool static inline   eq_impl (T1 n1, T2 n2, std::tr1::false_type integral_flag, ulp_t ulps, T characteristic_value) {  // floating point
             // algorithm taken from: http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
             if (n1==n2)   return true;
             T abs_diff      = n1-n2 > 0 ? n1-n2 : n2-n1;   // |n1-n2|
             if  ( characteristic_value == 0 ) 
-                  characteristic_value   =  (lvv::abs(n1)+  lvv::abs(n2)) / 2.0;   // (|n1| + |n2|) /2
+                  characteristic_value   =  (lvv::abs(n1)+  lvv::abs(n2)) * 0.5;   // (|n1| + |n2|) /2
             T max_error = std::numeric_limits<T>::epsilon() * ulps * characteristic_value ;
                                                                                                         //PR(diff/divider); PR(max_error);
             return abs_diff < max_error;
@@ -145,7 +147,7 @@ T		powi		(T x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/li
                                 template<typename T1, typename T2> static inline
 bool		eq		(T1 n1,T2 n2, ulp_t ulps=100, typename LVV_PROMOTE2(T1,T2) characteristic_value=0)  {
         typedef typename LVV_PROMOTE2(T1,T2)  T;
-        typename boost::is_integral<T>::type  integral_flag;
+        typename std::tr1::is_integral<T>::type  integral_flag;
         return eq_impl<T1,T2,T>(n1, n2, integral_flag, ulps, characteristic_value);
  }
 

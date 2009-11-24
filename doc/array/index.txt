@@ -59,7 +59,7 @@ Below are some {gh-lvvlib}b-array.cc[benchmarks] on two-core, 2200Mhz Core2 Duo 
 ["mpl", "speed-sum.png"]
 -----------------------------------------
 title('SUM - benchmark  lvv::array.sum()')
-xlabel('CPU ticks (~0.45ns)  per array element')
+xlabel('CPU ticks per array element')
 benchmark(c[0], c[1])
 _________________________________________
 'plain for-loop, double      ', 3.14
@@ -69,7 +69,8 @@ _________________________________________
 'lvv::array.sum<openmp>()    ', 1.67
 -----------------------------------------
 
-Sum was done for  100,000,000 float-s with values {1, 2, 1, 2, 1, 2 ...}. Same benchmark is in below table: 
+Tick refer to CPU tick and is about 0.45 nano seconds.
+Sum was done for  100,000,000 float-s with values {1.f, 2.f, 1.f, 2.f, 1.f, 2.f ...}. Same benchmark is in below table: 
 
 [cols="3,^2,^2, 16",frame="topbot",options="header"]
 |============================================================================================
@@ -115,7 +116,7 @@ Maximum search was done on  100,000,000 float-s
 //RETEST | OpenMP		| 1.88                | `(source same as above, 2xCPU, no check for race)`
 
 So far I implemented only combinations needed for my work, so it is quite incomplete.
-If there is no a type specialization than generic implementation is used.
+If there is no a type specialization then generic implementation is used.
 
 .Implemented optimized specialisation
 [cols="1,^1,^1,^1,^1",frame="topbot",options="header"]
@@ -158,5 +159,6 @@ include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 - [[[4]]] httpx://www.research.att.com/~bs/C++0xFAQ.html#std-array[+++C++0x+++ - the next ISO C++ standard / atd::array]
 - [[[5]]] Nicolai Josuttis httpx://boost.cowic.de/rc/pdf/array.pdf[Boost.Array] 
 - [[[6]]] http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[boost::array]
+- [[[7]]] http://www.eld.leidenuniv.nl/~moene/Home/tips/matrix2d/[Three ways to allocate memory for a 2-dimensional matrix in C++]
 
 // vim:ft=asciidoc ts=8 sw=8:

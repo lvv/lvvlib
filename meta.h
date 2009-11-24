@@ -9,6 +9,7 @@
 					#endif
 
 	#include	<type_traits>
+	#include	<cstdint>
 	
 
 	//#include	<cassert>
@@ -178,9 +179,27 @@
 
 //------------------------------------------------------------------------------------------	BINARY
 
-	// useage:   const uint32_t bin_val2=binary<101010>::value;
+	// useage:   const uint32_t mask=binary<101010>::value;
 	template <uint32_t N>	struct binary	 { static uint32_t const	value	= binary<N/10>::value <<1 | N%10; };
 	template <> 		struct binary<0> { static uint32_t const	value	= 0; };
+
+	// useage: cout << to_binary(0x1f);
+	template <typename T>	
+	char* to_binary(T n) {
+		static char	s[256];
+		int 		ni;
+		size_t 		si;
+		for (ni=8*sizeof(T)-1, si=0;   ni>=0;   ni--, si++)  {
+			int bit = ((n >> ni) & 1);
+			if (bit)	s[si] = '1';
+			else    	s[si] = '0';
+			if (ni%8==0 && si)  { s[++si]=' ';  s[++si]=' '; }
+			if (ni%4==0 && si)  { s[++si]=' '; }
+		}
+		s[si] = '\0';
+		return s;
+	    };
+
 
 //------------------------------------------------------------------------------------------    TODO FIXED NUMBERS
 //  TR http://msdn.microsoft.com/en-us/library/ms972705.aspx

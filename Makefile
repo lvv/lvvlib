@@ -25,6 +25,9 @@ testall:	u-array u-powi
 	./u-array
 	./u-powi
 
+t-lin-r: t-lin
+	echo -e "aaaa\n1 2 3\nA: 11 22 33 44" | ./t-lin
+
 b-array: SPEED = OPTIMIZE
 
 b-array-m: b-array
@@ -43,6 +46,12 @@ install:
 	rm -rf   /usr/local/include/{lvv,lvvlib}/
 	mkdir -p /usr/local/include/lvv/
 	cp *.h   /usr/local/include/lvv/
+	ln -sf    /usr/local/include/lvv/   /usr/local/include/lvvlib
+
+debug_install:
+	rm -rf   /usr/local/include/{lvv,lvvlib}/
+	mkdir -p /usr/local/include/lvv/
+	cd /;  ln -vs $(PWD)/*.h   /usr/local/include/lvv/
 	ln -sf    /usr/local/include/lvv/   /usr/local/include/lvvlib
 
 clean:

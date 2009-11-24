@@ -50,11 +50,12 @@ g++FLAGS_PROFILE := -pg -g -O2 -march=native -fno-omit-frame-pointer -fno-inline
 # 2try(but deps on libs with exception?): -DBOOST_NO_EXCEPTIONS -fno-exceptions -fno-enforce-eh-specs  -freorder-blocks-and-partition
 # -ftree-vectorizer-verbose=3 -fdump-tree-vect 
 #
-g++FLAGS_COMMON +=  -march=native -I /usr/local/include -l:/opt/intel/Compiler/11.0/074/lib/intel64/libimf.so  -Wstrict-aliasing=2
+#g++FLAGS_COMMON +=  -march=native -I /usr/local/include -l:/opt/intel/Compiler/11.0/074/lib/intel64/libimf.so  -Wstrict-aliasing=2
+g++FLAGS_COMMON +=  -march=native -I /usr/local/include  -Wstrict-aliasing=2
 ##################################################################################33
 
 # CHECK+DEBUG
-g++FLAGS_DEBUG    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK -ggdb3 -p -Wpacked -fsignaling-nans 
+g++FLAGS_DEBUG    :=  -ggdb3 -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK
 
 #g++FLAGS_CHECK    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK
 #g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
@@ -71,13 +72,14 @@ iccFLAGS_CHECK    := -check-uninit -fmudflap -fstack-security-check -ftrapuv -Wc
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
 #######################################################################################  NOT COMPILE SPECIFIC
-CXXFLAGS_COMMON		 = -Wall -std=c++0x -DID='"$(ID)"'   -I /home/lvv/p/ -I /usr/include/boost-1_37/ 
+CXXFLAGS_COMMON		 = -Wall -std=c++0x -DID='"$(ID)"'   -I /home/lvv/p/ 
+#CXXFLAGS_COMMON		 = -Wall -std=c++0x -DID='"$(ID)"'   -I /home/lvv/p/ -I /usr/include/boost-1_37/ 
 #-frecord-gcc-switches
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK 
 #-D_GLIBCXX_PARALLEL
 #CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
-CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_ON
-CXXFLAGS_CHECK		:= -DDEBUG   -lgzstream -lz -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEBUG  
+CXXFLAGS_DEBUG		:= -DDEBUG   -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_ON
+CXXFLAGS_CHECK		:= -DDEBUG   -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEBUG  
 
 #######################################################################################  EVALUATE CXXFLAGS
 CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS_COMMON)  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF) $(CFLAGS) 
