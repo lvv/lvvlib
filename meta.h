@@ -1,15 +1,13 @@
 
-					// template metaprogramming and conveniance macros
+					// template metaprogramming and convenience macros
 					
 					#ifndef LVV_META_H
 					#define LVV_META_H
 
-					#ifndef __GXX_EXPERIMENTAL_CXX0X__
-						#error "lvvlib: not c++0x compiler"
-					#endif
-
+					#ifdef __GXX_EXPERIMENTAL_CXX0X__
 	#include	<type_traits>
-	#include	<cstdint>
+					#endif
+	#include	<stdint.h>
 	
 
 	//#include	<cassert>
@@ -135,7 +133,6 @@
 
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////  META   MATH
 
 
@@ -167,13 +164,19 @@
        template<unsigned X>                    struct  ipow<X, 0>      {  enum { value =  1 };  };
        template<unsigned X>                    struct  ipow<X, 1>      {  enum { value =  X };  };
 
-       /*
-       template<float X, unsigned  P>       struct  fpow            {  float const static value =  fpow<X, P % 2>::value  *  fpow<X*X, P / 2>::value }; };
-       template<float X>                    struct  fpow<X, 0>      {  float const static value =  1;  };
-       template<float X>                    struct  fpow<X, 1>      {  float const static value =  X;  };
-       */
+ 
+       //template<float X, unsigned  P>       struct  fpow            {  float const static value =  fpow<X, P % 2>::value  *  fpow<X*X, P / 2>::value }; };
+       //template<float X>                    struct  fpow<X, 0>      {  float const static value =  1;  };
+       //template<float X>                    struct  fpow<X, 1>      {  float const static value =  X;  };
+
 //------------------------------------------------------------------------------------------	ILOG2
-	template<unsigned N>	struct  ilog2		{  static_assert(N%2==0, "ilot2:  N must be even number"); enum { value =  1 + ilog2<N/2>::value}; };
+	template<unsigned N>	struct  ilog2		{  
+					#ifdef __GXX_EXPERIMENTAL_CXX0X__
+					static_assert(N%2==0, "ilot2:  N must be even number");  
+					#endif
+		enum { value =  1 + ilog2<N/2>::value};
+	};
+
 	template<>		struct  ilog2<1>	{  enum { value =  0 }; };
 	template<>		struct  ilog2<2>	{  enum { value =  1 }; };
 
@@ -186,19 +189,23 @@
 	// useage: cout << to_binary(0x1f);
 	template <typename T>	
 	char* to_binary(T n) {
-		static char	s[256];
+		static char	s[500];
 		int 		ni;
 		size_t 		si;
 		for (ni=8*sizeof(T)-1, si=0;   ni>=0;   ni--, si++)  {
 			int bit = ((n >> ni) & 1);
 			if (bit)	s[si] = '1';
 			else    	s[si] = '0';
-			if (ni%8==0 && si)  { s[++si]=' ';  s[++si]=' '; }
-			if (ni%4==0 && si)  { s[++si]=' '; }
+			if (ni%4==0 && si)  {
+				if (ni%8==0 && si)   {  s[++si]=' ';   s[++si]=' '; }
+				else			s[++si]=',';
+			}
 		}
 		s[si] = '\0';
 		return s;
 	    };
+
+
 
 
 //------------------------------------------------------------------------------------------    TODO FIXED NUMBERS
