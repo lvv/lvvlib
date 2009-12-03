@@ -60,7 +60,7 @@
     namespace lvv {
 
  ///////////////////////////////////////////////////////////////////////////////////
-
+ 
 	#define LVV_STR(x) __LVV_STR__(x)
 	#define __LVV_STR__(x) #x
 
@@ -94,6 +94,9 @@
 		#define PR9(x1,x2,x3,x4,x5,x6,x7,x8,x9)		std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8) PR(x9);	std::cerr <<std::endl;
 	#endif
     
+    	#undef	NL
+    	#define NL	cerr << endl;
+
 ///////////////////////////////////////////////////////////////////////////////////// MACROS
 
 #define  FOR_ARRAY_I(i,A)   for(int i  = A.ibegin(); i  <  A.iend();  i++)

@@ -70,16 +70,17 @@
 	#define		SKIP_SPACE              while ( IS_SPACE             )    cin.ignore(1);
 	#define		SKIP_SPACE_N_COMMA      while ( IS_SPACE || IS_COMMA )    cin.ignore(1);
 
-	//////// integral to bin string 
+	//////// integral to binary string 
 
-			template<typename T>
+			template<typename T> inline
 	const string binstr (T v) {
 		string binstr(sizeof(T)*8,'#') ;
 		for (int i=0; i<sizeof(T)*8; i++) {
 			binstr[sizeof(T)*8-1-i] = (v>>i) & 1 ? '1' : '0' ;
 			//v = v / 2 ;
 		}
-		return std::move(binstr) ;
+		//return std::move(binstr) ;
+		return binstr ;
 	}
 
 

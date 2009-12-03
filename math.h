@@ -246,6 +246,14 @@ double		polynomial_derivative_eval	(const double x, ARRAY_t C)	{
 	return sum;
  };
 
+//		template<typename T>
+//int		ilog2	(T n)	{
+//	int ilog = 0; 
+//	if (!n)  return 0;
+////	while (n >>= 1)  { ilog++; }
+//	return ilog;
+//}
+
 
     ////////////////////////////////////////////////////////////////////////////////// END
     }
