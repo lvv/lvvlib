@@ -123,7 +123,7 @@ operator<<      (ostream& os, const L<E, std::allocator<E> >& LL) {
         return os;
 };
 
-// print any std::set<printable>  with std comparator and allocator
+// SET -- print any std::set<printable>  with std comparator and allocator
 template<typename K> inline std::ostream&                                              
 operator<<      (ostream& os, const set<K, std::less<K>, std::allocator<K> >& C) {              
         os << "{sz:" << C.size() <<"} ";
@@ -137,8 +137,8 @@ operator<<      (ostream& os, const set<K, std::less<K>, std::allocator<K> >& C)
         return os;
 };
 
-	
-// print any std::pair<printable1, printable2>
+
+// PAIR -- print any std::pair<printable1, printable2>
 template<typename T, typename U> inline std::ostream&  
 operator<<      (ostream& os, const typename std::pair<T,U>& p) {               
 	os << "{" << p.first << "," << p.second <<"}";
@@ -146,7 +146,23 @@ operator<<      (ostream& os, const typename std::pair<T,U>& p) {
 };
 
 
-// used as:    copy(V.begin(), V.end(), osi<int>());
+
+// MAP -- print any std::map<printable, printable>  with std comparator and allocator
+template<typename K, typename V> inline std::ostream&                                              
+operator<<      (ostream& os, const map<K, V, std::less<K>, std::allocator<std::pair<const K,V> > > & C) {              
+        os << "{sz:" << C.size() <<"} ";
+
+        if (C.empty()) return os;
+
+	auto it = C.begin();
+	os  <<  *it++;
+        for (; it !=C.end();   it++)
+                os <<  ", " << *it;
+        return os;
+};
+	
+
+// OSI -- used as:    copy(V.begin(), V.end(), osi<int>());
 template<typename T>
 struct	osi : ostream_iterator<T> {
 	osi(): ostream_iterator<T>(cout, " ") { self_addr = (void*) this; }; 
