@@ -68,8 +68,8 @@
 
 
 	//////// LINE INPUT
-	static std::istringstream	lin_sstream;
-	static char			lin_line[1000];	
+	static std::istringstream		lin_sstream;
+	static char __attribute__((unused))	lin_line[1000];	
 
 	
 	#define		nlin   		( \
@@ -107,17 +107,33 @@
 	template<typename T> struct list_t;
 	
 
-// print any std::containter<printable>
+// print any std::sequance-containter<printable>
 template<typename E, template<typename E, typename L> class L > inline std::ostream&                                              
 operator<<      (ostream& os, const L<E, std::allocator<E> >& LL) {              
-        os << "[" << LL.size() <<"]: ";
+        os << "{sz:" << LL.size() <<"} ";
 
-        if (LL.size()==0) return os;
+        if (LL.empty()) return os;
 
-        for (size_t i=0; i<LL.size()-1; i++)
-                os<<LL[i]<<", ";
+        //for (size_t i=0; i<LL.size()-1; i++)
+        //        os<<LL[i]<<", ";
+	auto it=LL.begin();
+	os  <<  *it++;
+        for (; it !=LL.end();   it++)
+                os <<  ", " << *it;
+        return os;
+};
 
-        os << LL.back() << "  ";  
+// print any std::set<printable>  with std comparator and allocator
+template<typename K> inline std::ostream&                                              
+operator<<      (ostream& os, const set<K, std::less<K>, std::allocator<K> >& C) {              
+        os << "{sz:" << C.size() <<"} ";
+
+        if (C.empty()) return os;
+
+	auto it=C.begin();
+	os  <<  *it++;
+        for (; it !=C.end();   it++)
+                os <<  ", " << *it;
         return os;
 };
 
@@ -125,7 +141,7 @@ operator<<      (ostream& os, const L<E, std::allocator<E> >& LL) {
 // print any std::pair<printable1, printable2>
 template<typename T, typename U> inline std::ostream&  
 operator<<      (ostream& os, const typename std::pair<T,U>& p) {               
-	os << "(" << p.first << "," << p.second <<")";
+	os << "{" << p.first << "," << p.second <<"}";
 	return os;
 };
 
