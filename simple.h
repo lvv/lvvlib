@@ -10,55 +10,25 @@
 #include <sstream> 
 #include <iostream> 
 #include <iomanip>
-	using std::flush;
-	using std::string;
-	using std::cout;
-	using std::cerr;
-	using std::endl;
-	using std::setw;
-	using std::ostream;
-	using std::setprecision;
-	using std::showpoint;
-
 #include <iterator>
-	using std::ostream_iterator;
-
 #include <algorithm>
-	using std::find;
-	using std::swap;
-
 #include <cmath>
 #include <cstdlib>
-	using std::max;
-	using std::min;
-
 #include <cctype>
-	using std::islower;
-
 #include <cstring>
-	using std::strchr;
-	using std::strcspn;
-	using std::memset;
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <tr1/tuple>
-	using std::tr1::tuple;
-	using std::tr1::make_tuple;
-
+#include <tuple>
 #include <utility>
-        using std::pair;
-        using std::make_pair;
-
 #include <vector>
-	using std::vector;
 #include <deque>
-	using std::deque;
 #include <set>
-	using std::deque;
+#include <list>
+#include <map>
 
-	using namespace std;
+using namespace std;
 
 // FOREACH
 #include <boost/foreach.hpp>
@@ -163,13 +133,24 @@ operator<<      (ostream& os, const map<K, V, std::less<K>, std::allocator<std::
 	
 
 // OSI -- used as:    copy(V.begin(), V.end(), osi<int>());
-template<typename T>
+template<typename T=int>
 struct	osi : ostream_iterator<T> {
 	osi(): ostream_iterator<T>(cout, " ") { self_addr = (void*) this; }; 
 	~osi() { if (self_addr == (void*) this)   cout << endl; };	
 	void* self_addr;	// to check if we are iriginal instance of osi
 };
 
+
+/*
+// TUPLE -- print any std::tuple<printable ...>
+template<typename T0, typename... REST> inline std::ostream&  
+operator<<      (ostream& os, const std::tuple<T0, REST...>& tup) {               
+	os <<  get<0>(tup) << " ";
+	tuple<REST...> sub_tup;
+	tie(ignore, sub_tup) = tup;
+	os << sub_tup; 
+	return os;
+};*/
 
 
 #endif
