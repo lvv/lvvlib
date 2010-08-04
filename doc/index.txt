@@ -124,6 +124,7 @@ Other
 | mmap.h   | t-mmap.cc   | simplified mmap files ops.
 | meta.h   | u-meta.cc   | meta programming
 | float.h  | u-float.cc  | floating point traits and bit-twiddling
+| sse.h    | u-array.cc  | sse
 |==========================
 
 include::~/p/volnitsky.com/project/howto-submit-patch.txt[]

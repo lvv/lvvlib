@@ -1,16 +1,18 @@
+
+
+	#include <lvv/benchmark.h>
+
+		using lvv::sse;
+		using lvv::sse2;
+		using lvv::plain;
+		using lvv::mk_array;
+	#include <algorithm>
 	
+
 	///////////////////   CONFIG
 	//#define		I16
 	#define		F32
-	#define		REPEAT		7
 
-
-	#ifndef INCLUDE
-		//#define 	INCLUDE		"b-lower_bound.h"
-		#define 	INCLUDE		"b-cmp.h"
-		//#define 	INCLUDE		"b-sum.h"
-	#endif
-		
 	#ifdef	F32
 		#define		TYPE		float
 		//#define		CANUSE_OMP
@@ -56,27 +58,7 @@
 
 	#define dID 1
 
-	///////////////////////////////////
-	#include <iostream>
-		using  namespace std;
-
-	#include <lvv/array.h>
-		using lvv::array;
-		using lvv::sse;
-		using lvv::sse2;
-		using lvv::plain;
-		using lvv::mk_array;
-
-	#include <lvv/timer.h>
-		using lvv::Timer;
-
-	#include <lvv/sse.h>
-	#include <lvv/math.h>
-
-	#include <algorithm>
-
-
-int main(int argc, char *argv[]) {
+int main() {
 
 	///////////////////////////////////  ID
 	cout << ID   //<< "    << " 
@@ -96,25 +78,13 @@ int main(int argc, char *argv[]) {
 
 	///////////////////////////////////
 
-
 	Timer	t(true);
 	float sec, ticks;
-
 	cout <<  "\nValue\tSeconds\t\tTick/Cycle ...   Min-Tick/Cycle \t Method\n" << setprecision(4);
 
-	array<float,REPEAT> tick;
-
-	// one-test -> one-line print
-	// called multile time from test-cycle (cycle var: r)
-	// print EXPR value (on r==0), individual times,  minumal time,  test name
-	#define PRINT(NAME,EXPR)	\
-		tick[r] = ticks = t.interval_ticks() / float (N); sec = t.interval_cpu();		\
-		if (r==0)		cout	<< setprecision(6) << setw(11) << (EXPR) << "  " << setprecision(3) << setw(8) << sec <<"\t";\
-		/* any r */		cout	<< "\t" <<  ticks; \
-		if (r==(REPEAT-1))	cout	<< "\t\t" <<  tick.min() << "  \t" << NAME << endl;\
-		t.interval_ticks();
-
 	// include tests
-	#include INCLUDE
+	#include "b-cmp.h"
+				
+
 	cerr << endl;  
  }

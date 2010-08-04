@@ -555,19 +555,5 @@ for(int r=0; r<REPEAT; r++) { double sum = A.sum<plain>(); PRINT(".sum<plain>()"
 
 	PRINT("SSE ooo4*f2d: (no load; inline-sum)", sum);
  }
+ #endif  // sse3
  #endif  // DO_SIMD
-
-
-
-/*
-lvv::array<float,10>  A = {0,1,2,3,4,5,6,7,8,9};
-std::vector<float> V (A.begin(), A.end());
-cout << A << endl;
-for (int i; i<10; i++) cout << V[i] << " "; cout << endl;
-//float max=0;  for (int i; i<10; i++) max = max <? V[i]; 
-cout << std::accumulate(A.begin(), A.end(), 0) << endl;
-cout << std::accumulate(V.begin(), V.end(), 0) << endl;
-*/
-
-
-#endif // DO_SSE
