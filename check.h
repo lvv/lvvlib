@@ -3,6 +3,8 @@
 				#ifndef LVV_CHECK_H
 				#define LVV_CHECK_H
 #include <iostream>
+	using std::cout;
+	using std::endl;
 #include <lvv/math.h>
 
 				namespace lvv {
@@ -13,7 +15,7 @@ static __attribute__((unused)) bool all_pass=true;
 static bool result=false;
 #define PASS "    pass    "
 #define FAIL ">>> FAIL <<<"
-#define RESULT   std::cout << (result ? PASS : FAIL) << " "  << __LINE__ << " \t";
+#define RESULT   std::cout << (result ? PASS : FAIL) << " "  << __LINE__ << "\t\t";
 
 
 #define CHECK(e)                result=(e);           all_pass = (all_pass && result); RESULT; std::cout << "check:        \t" #e  << std::endl;

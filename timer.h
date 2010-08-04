@@ -15,6 +15,7 @@
 		using std::ostream;
 		using std::endl;
 		using std::cerr;
+		using std::cout;
 		using std::setprecision;
 	#include <string>
 
@@ -83,29 +84,31 @@ class Timer { //=========================================== TIMER
 			//      evident at a glance.
 			//
     private: 
-    	bool		verbose_dtor;
+		bool		verbose_dtor;
 
-	// Tick (cpu cycle)
-	#if defined(__x86_64) || defined (__i386)
-	uint64_t ctor_tick;
-	uint64_t interval_start_tick;
-	uint64_t now_tick;
-	uint64_t overhead;
-	#endif
-	
-	// TV - wall clock time
-        timeval		ctor_tv; 
-        timeval		interval_start_tv; 
-        timeval		now_tv; 
+		// Tick (cpu cycle)
+		#if defined(__x86_64) || defined (__i386)
+		uint64_t ctor_tick;
+		uint64_t interval_start_tick;
+		uint64_t now_tick;
+		uint64_t overhead;
+		#endif
+		
+		// TV - wall clock time
+		timeval		ctor_tv; 
+		timeval		interval_start_tv; 
+		timeval		now_tv; 
 
-	// RU - CPU time
-        struct rusage	ctor_ru;        
-        struct rusage	interval_start_ru;        
-        struct rusage	now_ru;        
+		// RU - CPU time
+		struct rusage	ctor_ru;        
+		struct rusage	interval_start_ru;        
+		struct rusage	now_ru;        
 
-        double wall_time_at(timeval tv) { return tv.tv_sec + tv.tv_usec / 1000000.;  };
+		double
+	wall_time_at(timeval tv) { return tv.tv_sec + tv.tv_usec / 1000000.;  };
 
-double cpu_time_at(struct rusage ru) {
+		double
+	cpu_time_at(struct rusage ru) {
             return 
                 ru.ru_utime.tv_sec + ru.ru_utime.tv_usec / 1000000. +
                 ru.ru_stime.tv_sec + ru.ru_stime.tv_usec / 1000000.; 
@@ -115,7 +118,7 @@ public:
 
 
 
-Timer(bool dtor=false) : verbose_dtor(dtor)     {
+Timer(bool verbose_dtor=false) : verbose_dtor(verbose_dtor)     {
 	#if defined(__x86_64) || defined (__i386)
 	ctor_tick = interval_start_tick = read_tick();
 	overhead = interval_ticks();
@@ -167,7 +170,7 @@ interval_cpu()		{
 
 
 			#if defined(__x86_64) || defined (__i386)
-double	total_ticks	()	{ return  read_tick() - ctor_tick; }
+uint64_t total_ticks	()	{ return  read_tick() - ctor_tick; }
 			#endif
 double	total_wall	()	{ gettimeofday(&now_tv, NULL);		return  wall_time_at(now_tv) - wall_time_at(ctor_tv); }
 

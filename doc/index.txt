@@ -63,31 +63,57 @@ It is  assumed that if comparison is  with `unsigned` then it is guaranted that 
 
 CHECK.H
 -------
-Very basic unit testing.  Implemented mostly in macros. See example use in any ++u-*.cc++  file.
+Very basic unit testing. 
+
+Example use:
+---------------------------------
+include::e-check.cc[]
+----------------------------------
+
+
+Output:
+---------------------
+    pass     6		check:        	1+2 == 3
+    pass     7		check:        	2*2 == 4
+>>> FAIL <<< 8		check:        	1/2 == 0.5
+
+!!!!!!!!!  SOME FAILED  !!!!!!!!
+
+---------------------
+
+See also any ++u-*.cc++  file.
+
 
 SIMPLE.H
 --------
-Used for something like Google CodeJam.  Includes most common STL headers, can print any 
-any STL containers simply by `cout << C`. 
+Used for something like Google CodeJam.  Includes most common STL headers; can print 
+any STL containers simply by `cout << C`;  simplified line-oriented input (for CodeJam). 
 
 
 Example use:
 ---------------------------------
-include::t-print-any.cc[]
+include::e-print-any.cc[]
 ----------------------------------
 
-output:
+Output:
 -----------------------
-0, 1, 2, 3, 4, 5, 6
-0, 1, 2, 3, 4, 5, 6
-0, 1, 2, 3, 4, 5, 6
-{A,1}, {B,2}, {C,3}
-{abcd,123}
+0, 1, 2, 3, 4, 5, 6   size:7  
+0, 1, 2, 3, 4, 5, 6   size:7  
+0, 1, 2, 3, 4, 5, 6   size:7  
+<A,1>, <B,2>, <C,3>   size:3  
+<abcd,123>
 -----------------------
 
 TIMER.H
 -------
-Various timer funcion: interval/total for cpu/wall/tick time.
+Various timer funcion: interval/total for cpu/wall/tick time.  Extensivly used
+for benchmarking.
+
+Example use:
+---------------------------------
+include::e-timer.cc[]
+----------------------------------
+
 
 
 Other

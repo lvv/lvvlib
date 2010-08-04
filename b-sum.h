@@ -24,7 +24,7 @@ cout << "*** PLAIN ***" << endl;
 		fsum1 += A[i] + A[i+1] + A[i+2] + A[i+3];
 		fsum2 += A[i+4]+ A[i+5]+ A[i+6] + A[i+7];
 	}
-PRINT("O-ORDER ooo2+4:",fsum1+fsum2)
+	PRINT("O-ORDER ooo2+4:",fsum1+fsum2)
  }
 
  for(int r=0; r<REPEAT; r++) { ////////////  OUT-OF-ORDER-LOOP-F2+3
@@ -34,7 +34,7 @@ PRINT("O-ORDER ooo2+4:",fsum1+fsum2)
 		fsum1 += A[i] + A[i+1] + A[i+2];
 		fsum2 += A[i+3]+ A[i+4]+ A[i+5];
 	}
-PRINT("O-ORDER ooo2+3:", fsum1+fsum2);
+	PRINT("O-ORDER ooo2+3:", fsum1+fsum2);
  }
 
  for(int r=0; r<REPEAT; r++) { ////////////  OUT-OF-ORDER-LOOP-F2+2
@@ -44,7 +44,7 @@ PRINT("O-ORDER ooo2+3:", fsum1+fsum2);
 		fsum1 += A[i] + A[i+1];
 		fsum2 += A[i+2]+ A[i+3];
 	}
-PRINT("O-ORDER OPT ooo2+2:", fsum1+fsum2);
+	PRINT("O-ORDER OPT ooo2+2:", fsum1+fsum2);
  }		
 
  for(int r=0; r<REPEAT; r++) { ////////////  OUT-OF-ORDER-LOOP-F2
@@ -54,7 +54,7 @@ PRINT("O-ORDER OPT ooo2+2:", fsum1+fsum2);
 		fsum1 += A[i];
 		fsum2 += A[i+1];
 	}
-PRINT( "O-ORDER ooo2:", fsum1+fsum2);
+	PRINT( "O-ORDER ooo2:", fsum1+fsum2);
  }
 
  for(int r=0; r<REPEAT; r++) { ////////////  OUT-OF-ORDER-LOOP-F3
@@ -66,7 +66,7 @@ PRINT( "O-ORDER ooo2:", fsum1+fsum2);
 		fsum2 += A[i+1];
 		fsum3 += A[i+2];
 	}
-PRINT("O-ORDER ooo3:", fsum1+fsum2+fsum3);
+	PRINT("O-ORDER ooo3:", fsum1+fsum2+fsum3);
  }
 
  for(int r=0; r<REPEAT; r++) { ////////////  OUT-OF-ORDER-LOOP-F4
@@ -80,50 +80,50 @@ PRINT("O-ORDER ooo3:", fsum1+fsum2+fsum3);
 		fsum3 += A[i+2];
 		fsum4 += A[i+3];
 	}
-PRINT("O-ORDER ooo4:", fsum1+fsum2+fsum3+fsum4);
+	PRINT("O-ORDER ooo4:", fsum1+fsum2+fsum3+fsum4);
  }
 
  for(int r=0; r<REPEAT; r++) { //////////// PLAIN-LOOP-D
 	double dsum=0;
 	for (int i=0; i<N; i++) dsum += A[i];
-PRINT("PLAIN LOOP-D:",dsum);
+	PRINT("PLAIN LOOP-D:",dsum);
  }
 
 
  for(int r=0; r<REPEAT; r++) { ////////////  PLAIN-LOOP-F
 	float fsum=0;
 	for (int i=0; i<N; i++) fsum += A[i];
-PRINT("PLAIN LOOP:", fsum);
+	PRINT("PLAIN LOOP:", fsum);
  }
 
  for(int r=0; r<REPEAT; r++) { ////////////  PLAIN-LOOP-F+4
 	float fsum=0;
 	for (int i=0; i<N; i+=4) fsum += A[i] + A[i+1] +A[i+2] +A[i+3];
-PRINT("PLAIN LOOP-unr4:", fsum);
+	PRINT("PLAIN LOOP-unr4:", fsum);
  }
 
  for(int r=0; r<REPEAT; r++) { ////////////  PLAIN-LOOP-F+8
 	float fsum=0;
 	for (int i=0; i<N; i+=8) fsum += A[i] + A[i+1] +A[i+2] +A[i+3] +A[i+4] + A[i+5] +A[i+6] +A[i+7];
-PRINT("PLAIN LOOP-unr8:", fsum);
+	PRINT("PLAIN LOOP-unr8:", fsum);
  }
 
  for(int r=0; r<REPEAT; r++) {
 	float fsum=0;
 	for (int i=0; i<N; i+=8) fsum += ((A[i] + A[i+1]) +(A[i+2] +A[i+3])) +((A[i+4] + A[i+5]) + (A[i+6] +A[i+7]));
-PRINT("PLAIN LOOP-ooo8(by2):", fsum);
+	PRINT("PLAIN LOOP-ooo8(by2):", fsum);
  }
  
  for(int r=0; r<REPEAT; r++) {
 	float fsum=0;
 	for (int i=0; i<N; i+=8) fsum += (A[i] + A[i+1] +A[i+2] +A[i+3]) +(A[i+4] + A[i+5] + A[i+6] +A[i+7]);
-PRINT("PLAIN LOOP-ooo8(by4):", fsum);
+	PRINT("PLAIN LOOP-ooo8(by4):", fsum);
  }
 
  for(int r=0; r<REPEAT; r++) {
 	double dsum=0;
 	for (int i=0; i<N; i+=8) dsum += ((A[i] + A[i+1]) + (A[i+2] +A[i+3])) + ((A[i+4] + A[i+5]) + (A[i+6] +A[i+7]));
-PRINT("PLAIN LOOP-ooo8F->2D:", dsum);
+	PRINT("PLAIN LOOP-ooo8F->2D:", dsum);
  }
 
  #endif
@@ -136,14 +136,14 @@ cout << "*** OMP ***" << endl;
 	float fsum=0;
 	#pragma omp parallel for reduction(+:fsum)
 	for (long i=0; i<N; i++) fsum += A[i];
-PRINT("PLAIN LOOP-omp:", fsum);
+	PRINT("PLAIN LOOP-omp:", fsum);
  }
 
  for(int r=0; r<REPEAT; r++) {
 	double dsum=0;
 	#pragma omp parallel for reduction(+:dsum)
 	for (long i=0; i<N; i+=8) dsum += ((A[i] + A[i+1]) + (A[i+2] +A[i+3])) + ((A[i+4] + A[i+5]) + (A[i+6] +A[i+7]));
-PRINT("PLAIN LOOP-DF+8+omp:", dsum);
+	PRINT("PLAIN LOOP-DF+8+omp:", dsum);
  }
 
  for(int r=0; r<REPEAT; r++) {
@@ -165,7 +165,7 @@ PRINT("PLAIN LOOP-DF+8+omp:", dsum);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
 
-PRINT("SSE 4*f2d+omp:", sum);
+	PRINT("SSE 4*f2d+omp:", sum);
  }
 
  for(int r=0; r<REPEAT; r++) {
@@ -188,7 +188,7 @@ PRINT("SSE 4*f2d+omp:", sum);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
 
-PRINT("SSE 4*f2d+omp+pf512:", sum);
+	PRINT("SSE 4*f2d+omp+pf512:", sum);
  }
 
  #endif
@@ -208,7 +208,7 @@ cout << "*** SIMD ***" << endl;
 		  s4 = MM_ADD_OP(s4, A4);
 	}
 	_mm_store_ps(sum4,s4);
-PRINT("sse in plain loop", sum4[0]+sum4[1]+sum4[2]+sum4[3]);
+	PRINT("sse in plain loop", sum4[0]+sum4[1]+sum4[2]+sum4[3]);
  }
 
 for(int r=0; r<REPEAT; r++) { double sum = std::accumulate(A.begin(), A.end(), float());  PRINT("stl::accumulate(,,float())", sum); }
@@ -245,7 +245,7 @@ for(int r=0; r<REPEAT; r++) { double sum = A.sum<plain>(); PRINT(".sum<plain>()"
 	}
 	_mm_store_sd(&sum, _sum);
 
-PRINT("SSE3 ooo4*f2d (Hadd):", sum);
+	PRINT("SSE3 ooo4*f2d (Hadd):", sum);
  }
  #endif
 
@@ -274,7 +274,7 @@ PRINT("SSE3 ooo4*f2d (Hadd):", sum);
 	}
 	_mm_store_sd(&sum, _sum);
 
-PRINT("SSE3 ooo4*f2d +pf512 (Hadd):", sum);
+	PRINT("SSE3 ooo4*f2d +pf512 (Hadd):", sum);
  }
 
  for(int r=0; r<REPEAT; r++) {
@@ -301,7 +301,7 @@ PRINT("SSE3 ooo4*f2d +pf512 (Hadd):", sum);
 		;
 	}
 
-PRINT("SSE ooo4*f2d (no-load, no-store):", sum);
+	PRINT("SSE ooo4*f2d (no-load, no-store):", sum);
  }
 
  for(int r=0; r<REPEAT; r++) {
@@ -323,7 +323,7 @@ PRINT("SSE ooo4*f2d (no-load, no-store):", sum);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
 
-PRINT("SSE ooo4*f2d (no-load, store):", sum);
+	PRINT("SSE ooo4*f2d (no-load, store):", sum);
  }
 
  for(int r=0; r<REPEAT; r++) {
@@ -355,7 +355,7 @@ PRINT("SSE ooo4*f2d (no-load, store):", sum);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
 
-PRINT("SSE ooo4*f2d (with load)", sum);
+	PRINT("SSE ooo4*f2d (with load)", sum);
  }
 
  for(int r=0; r<REPEAT; r++) {
@@ -382,7 +382,7 @@ PRINT("SSE ooo4*f2d (with load)", sum);
 		;
 	}
 
-PRINT("SSE ooo4*f2d: (no load; no store sum )", sum);
+	PRINT("SSE ooo4*f2d: (no load; no store sum )", sum);
  }
 
  for(int r=0; r<REPEAT; r++) {
@@ -419,7 +419,7 @@ PRINT("SSE ooo4*f2d: (no load; no store sum )", sum);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
 
-PRINT("SSE ooo8*f2d +pf128: (no load; inline-sum)", sum);
+	PRINT("SSE ooo8*f2d +pf128: (no load; inline-sum)", sum);
  }
 
  for(int r=0; r<REPEAT; r++) {
@@ -456,7 +456,7 @@ PRINT("SSE ooo8*f2d +pf128: (no load; inline-sum)", sum);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
 
-PRINT("SSE ooo8*f2d +pf256: (no load; inline-sum;)", sum);
+	PRINT("SSE ooo8*f2d +pf256: (no load; inline-sum;)", sum);
  }
 
  for(int r=0; r<REPEAT; r++) {
@@ -492,7 +492,7 @@ PRINT("SSE ooo8*f2d +pf256: (no load; inline-sum;)", sum);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
 
-PRINT("SSE unr8*f2d", sum);
+	PRINT("SSE unr8*f2d", sum);
  }
 
 
@@ -529,7 +529,7 @@ PRINT("SSE unr8*f2d", sum);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);
 	}
 
-PRINT("SSE ooo8*f2d: ", sum);
+	PRINT("SSE ooo8*f2d: ", sum);
  }
 
 
@@ -553,7 +553,7 @@ PRINT("SSE ooo8*f2d: ", sum);
 		sum +=  (sum4[0]+sum4[1]) + (sum4[2]+sum4[3]);		// TODO: inline assambly
 	}
 
-PRINT("SSE ooo4*f2d: (no load; inline-sum)", sum);
+	PRINT("SSE ooo4*f2d: (no load; inline-sum)", sum);
  }
  #endif  // DO_SIMD
 

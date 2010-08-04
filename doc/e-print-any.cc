@@ -13,4 +13,6 @@ int main()  {
 
 	map<string,int>	M = { {"A",1}, {"B",2}, {"C",3} };
 	cout <<  M << endl;
+
+	cout <<  make_pair("abcd", 123) << endl;
 }

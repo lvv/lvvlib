@@ -92,7 +92,7 @@ operator<<      (ostream& os, const L<E, std::allocator<E> >& LL) {
 	os  <<  *it++;
         for (; it !=LL.end();   it++)
                 os <<  ", " << *it;
-        os << "(total:" << LL.size() <<") ";
+        os << "   size:" << LL.size() <<"  ";
         return os;
 };
 
@@ -106,7 +106,7 @@ operator<<      (ostream& os, const set<K, std::less<K>, std::allocator<K> >& C)
 	os  <<  *it++;
         for (; it !=C.end();   it++)
                 os <<  ", " << *it;
-        os << "(total:" << C.size() <<") ";
+        os << "   size:" << C.size() << "  ";
         return os;
 };
 
@@ -131,7 +131,7 @@ operator<<      (ostream& os, const map<K, V, std::less<K>, std::allocator<std::
         for (; it !=C.end();   it++)
                 os <<  ", " << *it;
 
-        //os << "  (total:" << C.size() <<") ";
+        os << "   size:" << C.size() <<"  ";
         return os;
 };
 	
