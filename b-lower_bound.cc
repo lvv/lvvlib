@@ -1,14 +1,29 @@
 
+	///////////////////////////////////  BENCHMARK CONFIG
+	#define		TYPE		float		
+	#define		REPEAT		4
 	const static unsigned long	N = 	10000;
-	const float test_step = 0.2f;
+	const float			test_step = 0.2f;
+
+	//////////////////////////////////
+
+	#include <lvv/benchmark.h>
+	#include <algorithm>
+
+int main() {
+
+
+	BENCHMARK_HEADER
+
 	////////////   CREATE ARRAY
 	//TYPE volatile  A[N];
-	cout << "type: " << typeid(TYPE).name() << setprecision(10) << endl;
+
+
+//	cout << "type: " << typeid(TYPE).name() << setprecision(10) << endl;
 
 	array<TYPE, N,1> A; for (size_t i=A.ibg; i<A.ien; i++) { A[i]  =float(i); }
 
-cout << "*** COMPARE  type:"  << typeid(TYPE).name() << endl;
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 for (int r=0; r<REPEAT; r++) {
 	TYPE s=0;
 	for (TYPE val=A.ibg+1; val<A.ien-1; val+=test_step) {
@@ -60,22 +75,25 @@ for (int r=0; r<REPEAT; r++) {
 }
 
 
-/*
-	while (__len > 0) {                                                                                                                                                 
-	    __half = __len >> 1;
-	    __middle = __first;
-	    std::advance(__middle, __half);
-	    if (*__middle < __val)
-	      {
-	        __first = __middle;
-	        ++__first;
-	        __len = __len - __half - 1;
-	      }
-	    else
-	      __len = __half;
-	}
-	return __first;
-*/
+	/*
+		while (__len > 0) {                                                                                                                                                 
+		    __half = __len >> 1;
+		    __middle = __first;
+		    std::advance(__middle, __half);
+		    if (*__middle < __val)
+		      {
+			__first = __middle;
+			++__first;
+			__len = __len - __half - 1;
+		      }
+		    else
+		      __len = __half;
+		}
+		return __first;
+	*/
 
-//for (size_t r=0; r<REPEAT; r++) { PRINT("max<sse>:", A.max<sse>() ); }
+	//for (size_t r=0; r<REPEAT; r++) { PRINT("max<sse>:", A.max<sse>() ); }
 
+
+	cerr << endl;  
+ }

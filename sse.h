@@ -78,5 +78,6 @@
 
 	struct openmp   {};	// OpenMP + SSE
 	const unsigned	sse_threshould = 128;
+
 				} // namespace lvv
 				#endif // LVV_SSE_H
