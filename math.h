@@ -65,8 +65,11 @@
 	 };
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////  POWI()
+	// Depricated, use any of:
+	// 	__gnu_cxx::power
+	// 	http://www.sgi.com/tech/stl/power.html
+	// 	http://www.boost.org/doc/libs/1_36_0/libs/math/doc/sf_and_dist/html/math_toolkit/special/powers/ct_pow.html
 	//  glibc pow vs std::pow   - https://twiki.cern.ch/twiki/bin/view/Atlas/CalculatingIntegerPowers
-	// TODO:  now depricated, use http://www.boost.org/doc/libs/1_36_0/libs/math/doc/sf_and_dist/html/math_toolkit/special/powers/ct_pow.html
 	// TODO:  type specialization
 	// TODO:  add asserts 
 	// TODO:  fast pow with lookup table: http://www.hxa7241.org/articles/content/fast-pow-adjustable_hxa7241_2007.html

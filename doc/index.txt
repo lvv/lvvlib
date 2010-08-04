@@ -10,6 +10,7 @@ LvvLib - C++ utility library
 ARRAY.H
 -------
 
+Static sized container, similar to tr1::array, but faster and more capable.
 See link:array/index.html[array docs]
 
 
@@ -17,12 +18,15 @@ MATH.H
 ------
 
 *eq()* - numeric comparison template function (http://github.com/lvv/lvvlib/tree/master/math.h[math.h])
-Used for numeric comparison in generic programming. 
+Used in generic numeric comparison for integer and floating point type of different precision). 
 
-Usually you can not in some programe define numeric type  to a name (let say T)
-and then change it to other type if it used in sufishently complex
-computations.  For example when you compare integer type you can use exact
-comparision but for floating types you need to account for an floating ops error
+/////////////////////////
+Usually you can not in a program define numeric type  to a name (let say T)
+and then change it to other type if it used in sufficiently complex
+computations. 
+
+For example when you compare integer type you can use exact
+comparison but for floating types you need to account for an floating ops error
 (we will call it epsilon).  And even when you change floating type to another floating type
 (let say from float to double), you still can not do it because epsilon will be
 very different.
@@ -53,22 +57,45 @@ value of `y` is `1000` even though it is approximately equal to `0.1`.
 For integer types exact comparison will be used and ULPs and characteristic value are ignored.
 Also  if one of arguments is `unsigned` then other argument converted to unsigned type too (to avoid overflows).
 It is  assumed that if comparison is  with `unsigned` then it is guaranted that other value is positive (TODO: add assert check)
+////////////////////////////
 
 
 
-check.h
------------------------------------------------------------
-Very basic unit testing. I had to write my own unit testing because gcc44 can not
-compile BOOST_CHECK. Implemented mostly in macros. See examples in any ++u-*.cc++  file.
-See also http://github.com/apenwarr/wvtest/tree/master[]
+CHECK.H
+-------
+Very basic unit testing.  Implemented mostly in macros. See example use in any ++u-*.cc++  file.
+
+SIMPLE.H
+--------
+Used for something like Google CodeJam.  Includes most common STL headers, can print any 
+any STL containers simply by `cout << C`. 
+
+
+Example use:
+---------------------------------
+include::t-print-any.cc[]
+----------------------------------
+
+output:
+-----------------------
+0, 1, 2, 3, 4, 5, 6
+0, 1, 2, 3, 4, 5, 6
+0, 1, 2, 3, 4, 5, 6
+{A,1}, {B,2}, {C,3}
+{abcd,123}
+-----------------------
+
+TIMER.H
+-------
+Various timer funcion: interval/total for cpu/wall/tick time.
+
 
 Other
-----------------------------------------------------------
+-----
 [width="80%",cols="3,3,6",frame="none",options="header"]
 |==========================
 | Header   | Sample Use  | Description
 | mmap.h   | t-mmap.cc   | simplified mmap files ops.
-| timer.h  | t-timer.cc  | timer of interval/total for cpu/wall/tick time.
 | meta.h   | u-meta.cc   | meta programming
 | float.h  | u-float.cc  | floating point traits and bit-twiddling
 |==========================

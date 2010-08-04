@@ -1,39 +1,42 @@
 #ifndef  LVV_SIMPLE_H
 #define  LVV_SIMPLE_H
 
+// C
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
+#include <cmath>
+
+// C++
+#include <algorithm>
+#include <deque>
+#include <iomanip>
+#include <iomanip>
+#include <iostream>
+#include <iostream> 
+#include <iterator>
+#include <list>
+#include <map>
+#include <set>
+#include <sstream> 
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
+
+// local
 #include <lvv/lvv.h>
 #include <lvv/meta.h>
 #include <lvv/array.h>
 	using lvv::array;
 //	using std::to_binary;
 
-#include <sstream> 
-#include <iostream> 
-#include <iomanip>
-#include <iterator>
-#include <algorithm>
-#include <cmath>
-#include <cstdlib>
-#include <cctype>
-#include <cstring>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <tuple>
-#include <utility>
-#include <vector>
-#include <deque>
-#include <set>
-#include <list>
-#include <map>
-
 using namespace std;
 
 // FOREACH
-#include <boost/foreach.hpp>
-#define         foreach         BOOST_FOREACH  
-#define reverse_foreach		BOOST_REVERSE_FOREACH
+//#include <boost/foreach.hpp>
+//#define         foreach         BOOST_FOREACH  
+//#define reverse_foreach		BOOST_REVERSE_FOREACH
 
 
 
@@ -80,7 +83,6 @@ using namespace std;
 // print any std::sequance-containter<printable>
 template<typename E, template<typename E, typename L> class L > inline std::ostream&                                              
 operator<<      (ostream& os, const L<E, std::allocator<E> >& LL) {              
-        os << "{sz:" << LL.size() <<"} ";
 
         if (LL.empty()) return os;
 
@@ -90,13 +92,13 @@ operator<<      (ostream& os, const L<E, std::allocator<E> >& LL) {
 	os  <<  *it++;
         for (; it !=LL.end();   it++)
                 os <<  ", " << *it;
+        os << "(total:" << LL.size() <<") ";
         return os;
 };
 
 // SET -- print any std::set<printable>  with std comparator and allocator
 template<typename K> inline std::ostream&                                              
 operator<<      (ostream& os, const set<K, std::less<K>, std::allocator<K> >& C) {              
-        os << "{sz:" << C.size() <<"} ";
 
         if (C.empty()) return os;
 
@@ -104,6 +106,7 @@ operator<<      (ostream& os, const set<K, std::less<K>, std::allocator<K> >& C)
 	os  <<  *it++;
         for (; it !=C.end();   it++)
                 os <<  ", " << *it;
+        os << "(total:" << C.size() <<") ";
         return os;
 };
 
@@ -111,7 +114,7 @@ operator<<      (ostream& os, const set<K, std::less<K>, std::allocator<K> >& C)
 // PAIR -- print any std::pair<printable1, printable2>
 template<typename T, typename U> inline std::ostream&  
 operator<<      (ostream& os, const typename std::pair<T,U>& p) {               
-	os << "{" << p.first << "," << p.second <<"}";
+	os << "<" << p.first << "," << p.second <<">";
 	return os;
 };
 
@@ -120,7 +123,6 @@ operator<<      (ostream& os, const typename std::pair<T,U>& p) {
 // MAP -- print any std::map<printable, printable>  with std comparator and allocator
 template<typename K, typename V> inline std::ostream&                                              
 operator<<      (ostream& os, const map<K, V, std::less<K>, std::allocator<std::pair<const K,V> > > & C) {              
-        os << "{sz:" << C.size() <<"} ";
 
         if (C.empty()) return os;
 
@@ -128,6 +130,8 @@ operator<<      (ostream& os, const map<K, V, std::less<K>, std::allocator<std::
 	os  <<  *it++;
         for (; it !=C.end();   it++)
                 os <<  ", " << *it;
+
+        //os << "  (total:" << C.size() <<") ";
         return os;
 };
 	
@@ -136,8 +140,8 @@ operator<<      (ostream& os, const map<K, V, std::less<K>, std::allocator<std::
 template<typename T=int>
 struct	osi : ostream_iterator<T> {
 	osi(): ostream_iterator<T>(cout, " ") { self_addr = (void*) this; }; 
-	~osi() { if (self_addr == (void*) this)   cout << endl; };	
 	void* self_addr;	// to check if we are iriginal instance of osi
+	~osi() { if (self_addr == (void*) this)   cout << endl; };	
 };
 
 
