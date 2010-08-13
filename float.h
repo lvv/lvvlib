@@ -37,7 +37,21 @@
 ////////////////////////////////////////////////////////////////////////////////////   TODO ABS
 	/* make x = abs(x) */
 	// TO TRY:  *(((int *) &x) + 1) &= 0x7fffffff;
-	//
+	//------------------------------------------------------------
+	// TO TRY
+	// bool is_negative(float x) {
+	//     unsigned int *ui = (unsigned int *)&x;
+	//     return (*ui & 0x80000000 != 0);
+	// }
+
+	// bool is_negative(float x) {
+	//     union {
+	// 	unsigned int ui;
+	// 	float d;
+	//     } my_union;
+	//     my_union.d = x;
+	//     return (my_union.ui & 0x80000000 != 0);
+	// }
 ////////////////////////////////////////////////////////////////////////////////////   TODO COMPARE
 	//  FROM http://aggregate.org/MAGIC/#Absolute%20Value%20of%20a%20Float
 	//  #define FasI(f)  (*((int *) &(f)))

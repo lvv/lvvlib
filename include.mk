@@ -8,7 +8,7 @@ FC	= gfortran
 TMPDIR ?=/v
 
 ################################################################################ LABEL
-_cc := $(CXX)-$(shell $(CXX) -v 2>&1 | sed  -n 's/^.*ersion *\([0-9.]*\) .*/\1/p')
+_cc := $(CXX)-$(shell $(CXX) -v 2>&1 | sed  -n 's/^.*ersion *\(4[^ ]*\) .*/\1/p')
 _date := $(shell date +'%y%m%d_%H%M%S')
 _rev :=$(shell test -d .git && git rev-parse HEAD|sed -n 's/^\(........\).*/\1/p')++$(shell test -d .git && git branch |sed -n 's/master/M/; s/^* //p')
 #_cpu=$(shell uname -m -p  |sed 's/Intel(R)//;s/(TM)//;s/@//;s/CPU//;s/ \+/-/g')
@@ -90,12 +90,12 @@ CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS_COM
 
 b-%  u-%  : MAKEFLAGS	+= -B
 
-% : %.cc
-	@tput sgr0; tput setaf 4
-	$(CXX)	 $< -o $(name_prefix)$@     $(CXXFLAGS)  $(LDFLAGS)
-	@tput sgr0
-
-	#@make $<
+#% : %.cc
+#	@tput sgr0; tput setaf 4
+#	$(CXX)	 $< -o $(name_prefix)$@     $(CXXFLAGS)  $(LDFLAGS)
+#	@tput sgr0
+#
+#	#@make $<
 
 %-gp: %
 	@tput sgr0; tput setaf 4

@@ -2,7 +2,9 @@
 #define  LVV_SIMPLE_H
 
 // C
-#include <cstdlib>
+//#include <cstdlib>
+#include <cstddef>
+#include <cstdint>
 #include <cstring>
 #include <cctype>
 #include <cmath>
@@ -140,7 +142,7 @@ operator<<      (ostream& os, const map<K, V, std::less<K>, std::allocator<std::
 template<typename T=int>
 struct	osi : ostream_iterator<T> {
 	osi(): ostream_iterator<T>(cout, " ") { self_addr = (void*) this; }; 
-	void* self_addr;	// to check if we are iriginal instance of osi
+	void* self_addr;	// to check if we are original instance of osi
 	~osi() { if (self_addr == (void*) this)   cout << endl; };	
 };
 

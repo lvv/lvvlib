@@ -8,7 +8,7 @@ LVV::ARRAY
 
 include::summary.txt[]
 
-lvv::array is just plain C-array wrapped in class. Wrapping adds zero memory and speed overhead.
+lvv::array is plain C-array wrapped in class. Wrapping adds zero memory and speed overhead.
 As C-arrays the lvv::array is static-sized,  meaning "known at compile time size".
 
 Quick Start
@@ -66,21 +66,22 @@ _________________________________________
 'plain for-loop, float       ', 3.06
 'std::accumulate<float>()    ', 3.06
 'lvv::array.sum()            ', 1.74
-'lvv::array.sum<openmp>()    ', 1.67
 -----------------------------------------
+
+//'lvv::array.sum<openmp>()    ', 1.67
 
 Tick refer to CPU tick and is about 0.45 nano seconds.
 Sum was done for  100,000,000 float-s with values {1.f, 2.f, 1.f, 2.f, 1.f, 2.f ...}. Same benchmark is in below table: 
 
-[cols="3,^2,^2, 16",frame="topbot",options="header"]
+[cols="3s,^2,^2, 16",frame="topbot",options="header"]
 |============================================================================================
-| *Method* 			| *Ticks per element* | *Computed Value*  | *Source*
+^.^| *Method* 			| *Ticks per element* | *Computed Value*  ^.^| *Source*
 | plain for-loop, double	| 3.14                | 1.5e+08           | `double sum=0;  for (int i=0; i<N; i++) sum += A[i];`
 | plain for-loop, float		| 3.06                | 3.35e+07          | `float  sum=0;  for (int i=0; i<N; i++) sum += A[i];`
 | std::accumulate<float>()	| 3.06                | 3.35e+07	  | `float  sum = accumulate(A.begin(), A.end(), 0.f));`
 | lvv::array			| 1.74                | 1.5e+08           | `float  sum = A.sum();`
-| lvv::array, explicit OpenMP	| 1.67                | 1.5e+08           | `float  sum = A.sum<openmp>();`
 |============================================================================================
+//| lvv::array, explicit OpenMP	| 1.67                | 1.5e+08           | `float  sum = A.sum<openmp>();`
 
 SSE method is selected (through meta-programming) if no summation method explicitly specified (if CPU supports SSE).
 Note that float plain-for-loop and std::accumulate methods have incorrect computed values due to rounding error. 
@@ -98,21 +99,21 @@ benchmark(c[0], c[1])
 _________________________________________
 'plain for-loop		', 5.81
 'std::max_element()	', 5.81
-'SSE intrinsics		', 1.67
 'lvv::array.sum()	', 1.63
 -----------------------------------------
+//'SSE intrinsics		', 1.67
 // RETEST:  'OpenMP			', 1.88
 
 Maximum search was done on  100,000,000 float-s
 
 [cols="2,^1,11",frame="topbot",options="header"]
 |=======================================================================================================================
-| *Method* 		| *Ticks per element* |   *Source*
+^.^| *Method* 		| *Ticks per element* ^.^|   *Source*
 | plain for-loop	| 5.81                | `float  max=0;  for (size_t i=0; i<N; i++) if (A[i] >  max) max = A[i];`
 | std::max_element()	| 5.81                | `float  max = *std::max_element (A.begin(), A.end());`
-| SSE intrinsics	| 1.67                | `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
 | lvv::array 		| 1.63                | `float  max = A.max()`
 |========================================================================================================================
+//| SSE intrinsics	| 1.67                | `__m128 m = mk_m128(A[0]);  for (size_t i=4; i<N; i+=4) { m = _mm_max_ps(m, mk_m128(A[i]) ); } ...`
 //RETEST | OpenMP		| 1.88                | `(source same as above, 2xCPU, no check for race)`
 
 So far I implemented only combinations needed for my work, so it is quite incomplete.
@@ -157,11 +158,12 @@ include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 - [[[2]]] httpx://eigen.tuxfamily.org/index.php?title=Main_Page[Eigen 2 - C++ template library for linear algebra]
 - [[[3]]] http://www.devx.com/cplus/Article/42114/1954?pf=true[std::array: The Secure, Convenient Option for Fixed-Sized Sequences]
 - [[[4]]] httpx://www.research.att.com/~bs/C++0xFAQ.html#std-array[+++C++0x+++ - the next ISO C++ standard / atd::array]
-- [[[5]]] Nicolai Josuttis -- httpx://boost.cowic.de/rc/pdf/array.pdf[Boost.Array] 
+- [[[5]]] httpx://boost.cowic.de/rc/pdf/array.pdf[Nicolai Josuttis -- Boost.Array] 
 - [[[6]]] http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[boost::array]
 - [[[7]]] http://www.eld.leidenuniv.nl/~moene/Home/tips/matrix2d/[Three ways to allocate memory for a 2-dimensional matrix in C++]
-- [[[8]]] Igor Ostrovsky -- http://igoro.com/archive/gallery-of-processor-cache-effects/[Gallery of Processor Cache Effects]
-- [[[9]]] GCC Wiki -- http://gcc.gnu.org/wiki/Graphite/Parallelization[Automatic parallelization in Graphite]
-- [[[10]]] WikiPedia -- http://en.wikipedia.org/wiki/Kahan_summation_algorithm[Kahan summation algorithm]
+- [[[8]]] http://igoro.com/archive/gallery-of-processor-cache-effects/[Igor Ostrovsky -- Gallery of Processor Cache Effects]
+- [[[9]]] http://gcc.gnu.org/wiki/Graphite/Parallelization[GCC Wiki -- Automatic parallelization in Graphite]
+- [[[10]]] http://en.wikipedia.org/wiki/Kahan_summation_algorithm[WikiPedia -- Kahan summation algorithm]
+- [[[11]]] http://www.ibm.com/developerworks/library/pa-dalign/[Developer works — Data alignment]
 
 // vim:ft=asciidoc ts=8 sw=8:

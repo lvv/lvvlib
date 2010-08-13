@@ -15,15 +15,11 @@ int main() {
 
 	BENCHMARK_HEADER
 
-	////////////   CREATE ARRAY
-	//TYPE volatile  A[N];
-
-
-//	cout << "type: " << typeid(TYPE).name() << setprecision(10) << endl;
 
 	array<TYPE, N,1> A; for (size_t i=A.ibg; i<A.ien; i++) { A[i]  =float(i); }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////  TESTS
+
 for (int r=0; r<REPEAT; r++) {
 	TYPE s=0;
 	for (TYPE val=A.ibg+1; val<A.ien-1; val+=test_step) {

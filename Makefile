@@ -28,7 +28,6 @@ testall:	u-array u-powi
 t-lin-r: t-lin
 	echo -e "aaaa\n1 2 3\nA: 11 22 33 44" | ./t-lin
 
-b-array: SPEED = OPTIMIZE
 
 b-array-m: b-array
 	g++      -DID='"."' b-array.cc -o b-array   -Wall -std=c++0x  -I /home/lvv/p/ -I /usr/include/boost-1_41/  -DNDEBUG  -DNOCHECK   -I /usr/local/include -Wstrict-aliasing=2  -pipe -Wno-reorder -Wno-sign-compare  -O3 -fwhole-program --combine  -fopenmp -fomit-frame-pointer -funsafe-loop-optimizations  -march=opteron -static	
@@ -56,6 +55,7 @@ debug_install:
 
 clean:
 	rm -f *.html
+	find -type f -executable -exec rm {} \;
 	git clean -df
 
 t-s_pool-r: 
