@@ -33,16 +33,17 @@
 
 	template<typename T, int N>	struct	select_method			{typedef	plain		type;}; // default method
 
-	#if	defined(__MMX__)  &&  defined(__i386__)
-	template<int N>			struct	select_method<int16_t,N>	{typedef	typename IF< (N>127), mmx, plain>::type 	type;};
-	#endif
 
 	#ifdef __SSE__
 	template<int N>			struct	select_method<float,N>		{typedef	typename IF< (N>127), sse,  plain>::type 	type;};
 	#endif
 
 	#ifdef __SSE2__
-	template<int N>			struct	select_method<int16_t,N>	{typedef	typename IF< (N>127), sse2, plain>::type 	type;};
+		template<int N>			struct	select_method<int16_t,N>	{typedef	typename IF< (N>127), sse2, plain>::type 	type;};
+	#else 
+		#if	defined(__MMX__)  &&  defined(__i386__)
+		template<int N>			struct	select_method<int16_t,N>	{typedef	typename IF< (N>127), mmx, plain>::type 	type;};
+		#endif
 	#endif
 
 				template<typename TT, int NN>

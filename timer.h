@@ -30,6 +30,8 @@
  
          int static cnt = 0;   
          MSG("(%d/%.1fs ? :%.1fs elapsed)%8t") % cnt++  %timer() %(omp_time-last_omp_time);  
+	--------------------------------
+	Timers:  http://www.strchr.com/performance_measurements_with_rdtsc
 */
 
 /////////////////////////////////////////////////////////////////////////////////////  READ_TICK

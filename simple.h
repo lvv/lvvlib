@@ -9,18 +9,18 @@
 #include <cctype>
 #include <cmath>
 
-// C++
+// C++ IO
+#include <iostream>
+#include <iomanip>
+#include <sstream> 
+
+// C++ STL
 #include <algorithm>
 #include <deque>
-#include <iomanip>
-#include <iomanip>
-#include <iostream>
-#include <iostream> 
 #include <iterator>
 #include <list>
 #include <map>
 #include <set>
-#include <sstream> 
 #include <string>
 #include <tuple>
 #include <utility>
