@@ -36,7 +36,7 @@ int main() {
 	cout << "\n array op= array \n";
 	cout << "a1+=b1  " << (a1 += b1)<< endl;
 
-	cout << "-a1  " << -a1 << endl;
+	//cout << "-a1  " << -a1 << endl;
 	
 
 	// vector ops
@@ -66,10 +66,12 @@ int main() {
 	cout << endl;
 	*/
 
+	/*
 	{
 		cout << "\narray input test, type three whole number\n";
 		array<int, 3> A;
 		cin >> A;
 		cout << "got from  input: " << A << endl;
 	}
+	*/
 }

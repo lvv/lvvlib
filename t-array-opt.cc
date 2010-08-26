@@ -16,7 +16,7 @@ int main() {
 	array <int, 5, 1> const b1 = {{10,20,30,40,50}}; 			// index starts from 1
 	array <int, 5, -2>      an = *new array <int, 5, -2>;		// test new
 
-	for (int i = a1.ibegin(); i < a1.iend(); ++i)	{           cout << format("i=%d   a1[i]=%d") %i  % (a1[i]) << endl; };
+	for (int i = a1.ibegin(); i < a1.iend(); ++i)	{           cout << "i=" << i << "  a1[i]=" << a1[i] << endl; };
 
 
 	cout << "\n array op= array \n";

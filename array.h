@@ -352,7 +352,7 @@ int16_t	max_impl (sse2, int16_t)		const { // DBG cerr << " max<sse2,int16> " << 
 //   TODO mutiply http://mindstudies.psy.soton.ac.uk/dmitri/blog/index.php/archives/160
 
 			template<typename T,int N, int B>  T
-dot 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
+dot_prod 	(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 	typename array<T,N,B>::const_iterator lit =  LA.begin();
 	typename array<T,N,B>::const_iterator rit =  RA.begin();
 	T sum = 0;
@@ -396,15 +396,15 @@ distance_norm2 		(const array<T,N,B>& LA, const array<T,N,B>& RA) {
 
 		template <typename T, int N, int B>
 		std::ostream&
-operator<<  (ostream& os, const array<T,N,B> A)  { // WHY: if we change A to const-ref or rval-ref it will pring garbage?  std not updated yet?
-	//os << format("[%d..%d]=") %A.ibegin() %(A.iend()-1);
-	
-	//if (N > 10)  std::cout << endl;
-	//std::cout << "[" << A.ibegin() << ".." << A.iend() << "] ";
-	//if (N > 10)  std::cout << endl;
-
+operator<<  (ostream& os, array<T,N,B>& A)  { // WHY: if we change A to const-ref or rval-ref it will pring garbage?  std not updated yet?
 	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, "  "));
-	//for (long i=A.ibegin();  i< A.iend();  i++)
+	return os;
+ };
+
+		template <typename T, int N, int B>	// for const& (for temproraries)
+		std::ostream&
+operator<<  (ostream& os, const array<T,N,B>& A)  { // WHY: if we change A to const-ref or rval-ref it will pring garbage?  std not updated yet?
+	copy (A.begin(),  A.end(),  ostream_iterator<T>(os, "  "));
 	return os;
  };
 
@@ -422,7 +422,7 @@ operator>>  (istream& is, array<T,N,B>& A)  {
 
 
 
-template <typename T, int N> 		class vector: public array<T,N,1> {}; // index start from 1
+//template <typename T, int N> 		class vector: public array<T,N,1> {}; // index start from 1
 
 template <typename T, int N1, int N2, int B1=1, int B2=1>	struct  matrix: public array<array<T,N1,B1>,N2,B2> {
 	enum { sz1 = N1, sz2=N2, sz0=N1*N2 };
