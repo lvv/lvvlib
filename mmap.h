@@ -11,9 +11,14 @@
 
 	#include <cstdlib>
 	#include <iostream>
+	#include <stdexcept>
 	using  std::cerr;
 	namespace lvv {
 
+struct  no_file: std::exception {};
+struct  no_free_space: std::exception {};
+struct  open_error: std::exception {};
+struct  io_error: std::exception {};
 
 void * mmap_read  ( const char *name,  int flags=MAP_SHARED)   {
 
@@ -22,7 +27,8 @@ void * mmap_read  ( const char *name,  int flags=MAP_SHARED)   {
 
 	if (src_fd  < 0) {
 		cerr  << "mmap_read error: couldn't open  \"" << name << "\"  file\n";
-		exit(1);
+		//exit(1);
+		throw no_file();
 	}
 	
 	struct stat sb;
@@ -30,7 +36,8 @@ void * mmap_read  ( const char *name,  int flags=MAP_SHARED)   {
 	if (fstat(src_fd, &sb) < 0) {
 		cerr << "mmap_read error: couldn't stat  \"" << name << "\"   file\n";
 		close(src_fd);
-		exit(3);
+		throw io_error();
+		//exit(3);
 	}
 
 	//void *p =  mmap(NULL, sb.st_size , PROT_READ | PROT_WRITE , flags, src_fd, 0);
@@ -39,7 +46,8 @@ void * mmap_read  ( const char *name,  int flags=MAP_SHARED)   {
 	if  ( p == MAP_FAILED ) {
 		cerr  << "mmap_read error: couldn't mmap  \"" << name << "\"  file\n";
 		close(src_fd);
-		exit(5);
+		//exit(5);
+		throw io_error();
 	}
 
 	return p;
@@ -53,13 +61,15 @@ void	mmap_write(const char* name, T &obj, size_t size=sizeof(T)) {
 	int	trg_fd = open(name, O_CREAT | O_RDWR, S_IRWXU);
 	if (trg_fd  < 0) {
 		cerr  << "mmap_write error: couldn't open  \"" << name << "\"  file\n";
-		exit(2);
+		//exit(2);
+		throw open_error();
 	}
 
 	if (ftruncate(trg_fd, size) < 0) {
 		cerr << "mmap_write error: couldn't allocate space for  \"" << name << "\" file\n";
 		close(trg_fd);
-		exit(4);
+		//exit(4);
+		throw no_free_space();
 	}
 
 
@@ -67,7 +77,8 @@ void	mmap_write(const char* name, T &obj, size_t size=sizeof(T)) {
 	if ( p == MAP_FAILED ) {
 		cerr << "mmap_write error: couldn't mmap \"" << name << "\" file\n";
 		close(trg_fd);
-		exit(6);
+		//exit(6);
+		throw io_error();
 	}
 
 	/*	MAP_FIXED
@@ -79,13 +90,15 @@ void	mmap_write(const char* name, T &obj, size_t size=sizeof(T)) {
 	if (memcpy(p, &obj, size) < 0) {
 		cerr << "mmap_write error: couldn't memcpy() for \"" << name << "\" file\n";
 		close(trg_fd);
-		exit(8);
+		//exit(8);
+		throw exception();
 	}
 
 	if (munmap(p, size) < 0) {
 		cerr << "mmap_write error: couldn't munmap() for \"" << name << "\" file\n";
 		close(trg_fd);
-		exit(10);
+		//exit(10);
+		throw exception();
 	}
  }
  } // namespace lvv

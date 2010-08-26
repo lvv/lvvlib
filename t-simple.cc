@@ -1,7 +1,7 @@
 
 	#include "simple.h"
-	#include <boost/type_traits.hpp>
-		using boost::is_base_of;
+	//#include <boost/type_traits.hpp>
+	//	using boost::is_base_of;
 
 int main() {
 	pair<int,double> p = make_pair(1,2.0);
@@ -14,13 +14,10 @@ int main() {
 	cout << vv << endl;
 
 
-	const pair<int,string> ps = make_pair(1,string("aaa"));
-	deque<pair<int,string> > vps;
-	vps.push_back(ps);
-	PR1(vps)
+	deque<pair<int,string> > vps = {{1, "aaa"}, {2,"bbb"}};
+	cout << vps << endl;
 
 
-	// cout << p == p;
-
-	//cout << sv << endl;
+	array<int,5> A = {1, 2, 3, 4, 5};
+	cout << A << endl;
 }

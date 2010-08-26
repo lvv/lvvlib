@@ -34,15 +34,15 @@
 // print EXPR value (on r==0), individual times,  minumal time,  test name
 #define PRINT(NAME,EXPR)	\
 	tick[r] = ticks = t.interval_ticks() / float (N);     sec = t.interval_cpu();		\
-	if (r==0)		cout	<< setprecision(6) << setw(11) << (EXPR) << "  " << setprecision(3) << setw(8) << sec <<"\t";\
-	/* any r */		cout	<< "\t" <<  ticks; \
-	if (r==(REPEAT-1))	cout	<< "\t\t" <<  tick.min() << "  \t" << NAME << endl;\
+	if (r==0)		cerr	<< setprecision(6) << setw(11) << (EXPR) << "  " << setprecision(3) << setw(8) << sec <<"\t";\
+	/* any r */		cerr	<< "\t" <<  ticks; \
+	if (r==(REPEAT-1))	cerr	<< "\t\t" <<  tick.min() << "  \t" << NAME << endl;\
 	t.interval_ticks();
 
 ////////////////////////////////////////////////////////////////////////////////////////////  PRINT CONFIG
-#define BENCHMARK_HEADER	  cout	<< "*** TYPE:  "  << LVV_STR(TYPE) << endl \
+#define BENCHMARK_HEADER	  cerr	<< "*** TYPE:  "  << LVV_STR(TYPE) << endl \
 					<< "*** REPEAT:"  << REPEAT << endl\
 					<< "*** ID:    "  << "" ID << endl; \
-				cout <<  "\nValue\tSeconds\t\tTick/Cycle ...   Min-Tick/Cycle \t Method\n" << setprecision(4);
+				cerr <<  "\nValue\tSeconds\t\tTick/Cycle ...   Min-Tick/Cycle \t Method\n" << setprecision(4);
 
 				#endif  // LVV_BENCHMARK_H

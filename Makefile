@@ -4,7 +4,7 @@
 include include.mk
 	
 
-t-* u-*    : *.h
+#t-* u-*    : *.h
 
 #CXXFLAGS +=  -D ASMLIB -I .. -I /usr/local/include
 #LDFLAGS  +=  -L /usr/local/lib/ -l:alibelf64o.a -lgsl

@@ -82,8 +82,29 @@ using namespace std;
 	template<typename T> struct list_t;
 	
 
+// print any C-array —  T[]
+template<int N>
+std::ostream&                                              
+operator<<      (ostream& os, int A[N]) {              
+
+        if (!A) return os;
+
+	/*os << *A;
+	for (size_t i=1;  i < sizeof(A)/sizeof(*A);  i++)  
+                os <<  ", " << *(A+i);
+
+        os << "   size:" << sizeof(A)/sizeof(*A) <<"  "; */
+	os << *A;
+	for (size_t i=1;  i < N;  i++)  
+                os <<  ", " << *(A+i);
+
+        os << "   size:" << N <<"  ";
+        return os;
+};
+
+
 // print any std::sequance-containter<printable>
-template<typename E, template<typename E, typename L> class L > inline std::ostream&                                              
+template<typename E, template<typename E, typename L> class L > std::ostream&                                              
 operator<<      (ostream& os, const L<E, std::allocator<E> >& LL) {              
 
         if (LL.empty()) return os;
