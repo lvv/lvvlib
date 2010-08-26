@@ -7,6 +7,10 @@
 #include <iostream>
 	using std::cout;
 	using std::endl;
+
+#include <algorithm>
+	using std::is_sorted;
+	
 #include <fstream>
 	using std::ifstream;
 
@@ -117,7 +121,7 @@ main() {
 	{
 		array<float,2> c1={{1,2}};
 		array<float,2> c2={{2,2}};
-		CHECK(	dot(c1,c2) == 6 );
+		CHECK(	dot_prod(c1,c2) == 6 );
 
 	// dot prod:  matrix.matrix   
 		//matrix<float,2,2> A22={ {{1,2}}, {{3,4}} };
@@ -267,6 +271,12 @@ main() {
 	cout << "\n #####  0-size  ##########################################\n"; ///////////////////////////////////////////////
 	array<int,0> i0;
 	CHECKeq((i0.size()), 0);
+
+	cout << "\n #####  STL COMPATIBLE  ##########################################\n"; ///////////////////////////////////////////////
+	{
+	array<int,3> A = {{1, 2, 3}};
+	CHECKeq((is_sorted(A.begin(), A.end())), true);
+	}
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

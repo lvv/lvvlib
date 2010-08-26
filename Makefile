@@ -4,6 +4,7 @@
 include include.mk
 	
 
+u-*    : CXXFLAGS +=
 #t-* u-*    : *.h
 
 #CXXFLAGS +=  -D ASMLIB -I .. -I /usr/local/include
