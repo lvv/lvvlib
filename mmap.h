@@ -15,10 +15,10 @@
 	using  std::cerr;
 	namespace lvv {
 
-struct  no_file: std::exception {};
-struct  no_free_space: std::exception {};
-struct  open_error: std::exception {};
-struct  io_error: std::exception {};
+	struct  no_file: std::exception {};
+	struct  no_free_space: std::exception {};
+	struct  open_error: std::exception {};
+	struct  io_error: std::exception {};
 
 void * mmap_read  ( const char *name,  int flags=MAP_SHARED)   {
 
@@ -58,6 +58,9 @@ template<typename T>    T&   mmap_read(const char* name, int flags=MAP_SHARED)  
 
 			template<typename T>
 void	mmap_write(const char* name, T &obj, size_t size=sizeof(T)) {
+
+	unlink(name);
+
 	int	trg_fd = open(name, O_CREAT | O_RDWR, S_IRWXU);
 	if (trg_fd  < 0) {
 		cerr  << "mmap_write error: couldn't open  \"" << name << "\"  file\n";
@@ -101,4 +104,5 @@ void	mmap_write(const char* name, T &obj, size_t size=sizeof(T)) {
 		throw exception();
 	}
  }
+
  } // namespace lvv

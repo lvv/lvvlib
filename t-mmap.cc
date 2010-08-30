@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
 
 	float *ff, *fff;
 	//ff = (float*)mmap_read("/tmp/_fa.mmap", MAP_PRIVATE);
+	//ff = (float*)mmap_read("/tmp/_fa.mmap");
 	ff = (float*)mmap_read("/tmp/_fa.mmap");
 		cout << "ff[0]=" << ff[0] << endl;
 		cout << "ff[1]=" << ff[1] << endl;

@@ -114,16 +114,16 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////////// DEBUG MACROS
- #ifdef DEBUG
+ #if !defined(NDEBUG) || defined(DEBUG)
     #define DBG             ;
 
     #define dPR(x)               PR(x)
-
     #define dPR1(x1)             PR1(x1)
     #define dPR2(x1,x2)          PR2(x1,x2)          
     #define dPR3(x1,x2,x3)       PR3(x1,x2,x3)       
     #define dPR4(x1,x2,x3,x4)    PR4(x1,x2,x3,x4)    
     #define dPR5(x1,x2,x3,x4,x5) PR5(x1,x2,x3,x4,x5)
+    #define dPR6(x1,x2,x3,x4,x5,x6) PR6(x1,x2,x3,x4,x5,x6)
  #else
 
     #define DBG             if(false) 
@@ -133,6 +133,7 @@
     #define dPR3(x1,x2,x3)       ; 
     #define dPR4(x1,x2,x3,x4)    ; 
     #define dPR5(x1,x2,x3,x4,x5) ; 
+    #define dPR6(x1,x2,x3,x4,x5,x6) ; 
  #endif
 
 

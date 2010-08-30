@@ -85,17 +85,11 @@ CXXFLAGS_CHECK		:= -DDEBUG   -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEBUG
 CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS_COMMON)  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF) $(CFLAGS) 
 
 
-.SUFFIXES:	.cc -r -c -g  -gp
+.SUFFIXES:	.cc -r -c -g  -gr -gp -d 
 .PHONY:		%-r %-g %-gr  %-gp *-r
 
 b-%  u-%  : MAKEFLAGS	+= -B
 
-#% : %.cc
-#	@tput sgr0; tput setaf 4
-#	$(CXX)	 $< -o $(name_prefix)$@     $(CXXFLAGS)  $(LDFLAGS)
-#	@tput sgr0
-#
-#	#@make $<
 
 %-gp: %
 	@tput sgr0; tput setaf 4
@@ -104,19 +98,20 @@ b-%  u-%  : MAKEFLAGS	+= -B
 
 %-g: %
 	echo -e "br main\nr" > /tmp/t
-	gdb -x /tmp/t $<
+	gdb -q -x /tmp/t $<
 
 %-gr: %
 	echo -e "r" > /tmp/t
-	gdb -x /tmp/t $<
+	gdb -q -x /tmp/t $<
 
 
-%-r: %
+%-d %-r: %
 	./$<
 
-%-r: %.cc
-	make $(<:.cc=)
-	./$(<:.cc=)
+
+%-g       : SPEED 	= DEBUG
+%-gr      : SPEED 	= DEBUG
+%-d       : SPEED 	= DEBUG
 
 a-%       : CXXFLAGS	+= -O3 -save-temps
 u-%       : CXXFLAGS	+= -Wno-unused-variable
