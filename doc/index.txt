@@ -75,5 +75,7 @@ Other
 
 include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 
+// TR http://stackoverflow.com/questions/199333/best-way-to-detect-integer-overflow-in-c-c
+
 
 // vim:ft=asciidoc:

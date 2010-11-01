@@ -9,7 +9,7 @@ LVV::ARRAY
 include::summary.txt[]
 
 lvv::array is just plain C-array wrapped in class. Wrapping adds zero memory and speed overhead.
-As C-arrays the lvv::array is static-sized,  meaning "known at compile time size" and typically allocated on stack.
+As C-arrays the lvv::array is static-sized,  meaning "known at compile time size".
 
 Quick Start
 -----------
@@ -157,8 +157,11 @@ include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 - [[[2]]] httpx://eigen.tuxfamily.org/index.php?title=Main_Page[Eigen 2 - C++ template library for linear algebra]
 - [[[3]]] http://www.devx.com/cplus/Article/42114/1954?pf=true[std::array: The Secure, Convenient Option for Fixed-Sized Sequences]
 - [[[4]]] httpx://www.research.att.com/~bs/C++0xFAQ.html#std-array[+++C++0x+++ - the next ISO C++ standard / atd::array]
-- [[[5]]] Nicolai Josuttis httpx://boost.cowic.de/rc/pdf/array.pdf[Boost.Array] 
+- [[[5]]] Nicolai Josuttis -- httpx://boost.cowic.de/rc/pdf/array.pdf[Boost.Array] 
 - [[[6]]] http://www.boost.org/doc/libs/1_37_0/doc/html/array.html[boost::array]
 - [[[7]]] http://www.eld.leidenuniv.nl/~moene/Home/tips/matrix2d/[Three ways to allocate memory for a 2-dimensional matrix in C++]
+- [[[8]]] Igor Ostrovsky -- http://igoro.com/archive/gallery-of-processor-cache-effects/[Gallery of Processor Cache Effects]
+- [[[9]]] GCC Wiki -- http://gcc.gnu.org/wiki/Graphite/Parallelization[Automatic parallelization in Graphite]
+- [[[10]]] WikiPedia -- http://en.wikipedia.org/wiki/Kahan_summation_algorithm[Kahan summation algorithm]
 
 // vim:ft=asciidoc ts=8 sw=8:

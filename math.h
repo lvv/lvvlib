@@ -71,25 +71,22 @@
 	// TODO:  add asserts 
 	// TODO:  fast pow with lookup table: http://www.hxa7241.org/articles/content/fast-pow-adjustable_hxa7241_2007.html
 			template<typename T> inline  static
-T		powi		(T x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c
-    T y;
-    if( n & 1 )
-	y = x;
-    else
-	y = 1.0;
-
-    T w = x;
-    n >>= 1;
-    while( n ) {
-	w = w * w; 
-
-	if( n & 1 )
-	    y *= w;
-
+T  powi (T x, int n)  {  // simplified http://dslinux.gits.kiev.ua/trunk/lib/libm/powi.c
+	T y;
+	if ( n & 1 )	y = x;
+	else		y = 1.0;
+	
+	T w = x;
 	n >>= 1;
-    }
-    return y;
+	while( n ) {
+	    w = w * w; 
+	
+	    if  ( n & 1 )	y *= w;
+	    n >>= 1;
+	}
+	return y;
  };
+
 
 	template<typename T>  T static inline pow2(T x)  { return x*x; };
 	template<typename T>  T static inline pow3(T x)  { return x*x*x; };

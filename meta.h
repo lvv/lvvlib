@@ -158,7 +158,14 @@
 	
 
 //------------------------------------------------------------------------------------------	TODO IS_POW_OF_TWO
-// (x&(x-1)) == 0 
+
+/*
+	template<int x, unsigned y>	struct ipower		{ enum { value = x * ipower<x, y-1>::value }; };
+	template<int x>			struct ipower<x, 0>	{ enum { value = 1 }; };
+	template<unsigned y>		struct ipower<0, y>	{ enum { value = 0 }; };
+	template<>			struct ipower<0, 0>	{};
+*/
+
 //------------------------------------------------------------------------------------------	IPOW
        template<unsigned X, unsigned  P>       struct  ipow            {  enum { value =  ipow<X, P % 2>::value  *  ipow<X*X, P / 2>::value }; };
        template<unsigned X>                    struct  ipow<X, 0>      {  enum { value =  1 };  };
@@ -187,8 +194,8 @@
 	template <> 		struct binary<0> { static uint32_t const	value	= 0; };
 
 	// useage: cout << to_binary(0x1f);
-	template <typename T>	
-	char* to_binary(T n) {
+		template <typename T> inline	
+	const char* to_binary(T n) {
 		static char	s[500];
 		int 		ni;
 		size_t 		si;
@@ -204,7 +211,13 @@
 		s[si] = '\0';
 		return s;
 	    };
-
+	
+	// hex
+	//
+	//for (int i=2*sizeof(int) - 1; i>=0; i--) {
+	//	cout << "0123456789ABCDEF"[((n >> i*4) & 0xF)];
+	//}
+		
 
 
 
