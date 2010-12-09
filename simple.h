@@ -180,4 +180,6 @@ operator<<      (ostream& os, const std::tuple<T0, REST...>& tup) {
 };*/
 
 
+// Using C++0x Variadic Templates to Pretty-Print Types  -- http://mlangc.wordpress.com/2010/04/18/using-c0x-variadic-templates-to-pretty-print-types/
+
 #endif

@@ -37,7 +37,7 @@ g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare # -fstrict-aliasing # 
 # SAFE
 #g++FLAGS_OPTIMIZE := -O2 -march=native 
 #g++FLAGS_OPTIMIZE := -O2 -march=native  -fwhole-program --combine
-g++FLAGS_OPTIMIZE :=         -O3 -fwhole-program --combine  -fopenmp -fomit-frame-pointer -funsafe-loop-optimizations
+g++FLAGS_OPTIMIZE :=         -O3 -fwhole-program --combine  -fopenmp -fomit-frame-pointer -funsafe-loop-optimizations -fno-stack-protector -D_FORTIFY_SOURCE=0 
 # FAST
 #g++FLAGS_OPTIMIZE :=        -O3 -march=native  -fwhole-program --combine  -fopenmp -fomit-frame-pointer -fargument-noalias-anything -ffast-math -funsafe-loop-optimizations -fassociative-math -fassociative-math  -mfpmath=sse,387 -fno-builtin -fargument-noalias-anything  -fassociative-math
 g++FLAGS_PROFILE := -pg -g -O2 -march=native -fno-omit-frame-pointer -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline
@@ -115,6 +115,6 @@ b-%  u-%  : MAKEFLAGS	+= -B
 
 a-%       : CXXFLAGS	+= -O3 -save-temps
 u-%       : CXXFLAGS	+= -Wno-unused-variable
-b-%       : SPEED      	 = OPTIMIZE
+#b-%       : SPEED      	 = OPTIMIZE
 
 # vim:noexpandtab ft=make:
