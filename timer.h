@@ -36,6 +36,7 @@
 
 /////////////////////////////////////////////////////////////////////////////////////  READ_TICK
 
+// TODO:  new stop start seq  --- http://blog.regehr.org/archives/330
 #if defined(__x86_64) || defined (__i386)
 
 	uint64_t static	read_tick() {				// tested with with x86_64 only. 

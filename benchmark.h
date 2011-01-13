@@ -39,8 +39,15 @@
 	if (r==(REPEAT-1))	cerr	<< "\t\t" <<  tick.min() << "  \t" << NAME << endl;\
 	t.interval_ticks();
 
+///////////////////////////////////////////////////////////////////////////////////////////// ONLY TICKS
+// called multile time from test-cycle (cycle var: r)
+#define PRINT1	\
+	tick[r] = ticks = t.interval_ticks() / float (N);     sec = t.interval_cpu();		\
+	if (r==(REPEAT-1))	cerr	<<  setprecision(3) << setw(8) <<  tick.min() ;\
+	t.interval_ticks();
+
 ////////////////////////////////////////////////////////////////////////////////////////////  PRINT CONFIG
-#define BENCHMARK_HEADER	  cerr	<< "*** TYPE:  "  << LVV_STR(TYPE) << endl \
+#define BENCHMARK_HEADER	  cerr	/*<< "*** TYPE:  "  << LVV_STR(TYPE) << endl*/ \
 					<< "*** REPEAT:"  << REPEAT << endl\
 					<< "*** ID:    "  << "" ID << endl; \
 				cerr <<  "\nValue\tSeconds\t\tTick/Cycle ...   Min-Tick/Cycle \t Method\n" << setprecision(4);

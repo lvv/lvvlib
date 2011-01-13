@@ -105,8 +105,8 @@ b-%  u-%  : MAKEFLAGS	+= -B
 	gdb -q -x /tmp/t $<
 
 
-%-d %-r: %
-	./$<
+#%-d %-r: %
+#	./$<
 
 
 %-g       : SPEED 	= DEBUG
