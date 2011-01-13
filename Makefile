@@ -26,6 +26,8 @@ testall:	u-array u-powi
 	./u-array
 	./u-powi
 
+t-png: CXXFLAGS += -I..  -O3  -Wall -march=native -DNDEBUG -I /home/lvv/p/ -std=c++0x  -lpng
+
 t-lin-r: t-lin
 	echo -e "aaaa\n1 2 3\nA: 11 22 33 44" | ./t-lin
 
