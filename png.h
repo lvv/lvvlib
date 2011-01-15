@@ -10,6 +10,9 @@
 
 #include <png.h>
 
+#include <lvv/array.h>
+	using lvv::array;
+
 
     namespace lvv {
 
@@ -25,7 +28,7 @@
 			
 
 	template <int height, int width, int channel=4>  static
-void array2png (char* file_name, uint8_t* A) {
+void array2png (const char* file_name, uint8_t* A) {
 
 		png_byte color_type = PNG_COLOR_TYPE_RGB_ALPHA;
 		png_byte bit_depth = 8;
@@ -66,6 +69,9 @@ void array2png (char* file_name, uint8_t* A) {
 
         fclose(fp);
 }
+
+	template <typename T, int H, int W, int CH=4>  static
+void array2png ( const char* file_name,  array<array<array<T,CH>,W>,H>& A ) 	{ array2png<H,W,CH> (file_name, &A[0][0][0]); }
 
 
 

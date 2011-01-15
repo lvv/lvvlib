@@ -2,6 +2,8 @@
     #define  LVV_CSV_H
 
 // from http://www.daniweb.com/code/snippet217438.html
+//
+// TOFIX:  If the last input line isn't terminated by right recordDelim character last returned record doesn't contain last value. 
 
 #include <istream>
 #include <string>
