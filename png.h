@@ -13,6 +13,13 @@
 #include <lvv/array.h>
 	using lvv::array;
 
+// possible tipes:
+//	PNG_COLOR_TYPE_GRAY
+//	PNG_COLOR_TYPE_PALETTE
+//	PNG_COLOR_TYPE_RGB    
+//	PNG_COLOR_TYPE_RGB_ALPHA
+//	PNG_COLOR_TYPE_GRAY_ALPHA
+
 
     namespace lvv {
 
@@ -27,10 +34,10 @@
 
 			
 
-	template <int height, int width, int channel=4>  static
+	template <int height, int width, int channel=4, int PNG_TYPE=PNG_COLOR_TYPE_RGB_ALPHA,  typename T=uint8_t>  static
 void array2png (const char* file_name, uint8_t* A) {
 
-		png_byte color_type = PNG_COLOR_TYPE_RGB_ALPHA;
+		png_byte color_type = PNG_TYPE;
 		png_byte bit_depth = 8;
 
 		png_structp png_ptr;
@@ -72,6 +79,9 @@ void array2png (const char* file_name, uint8_t* A) {
 
 	template <typename T, int H, int W, int CH=4>  static
 void array2png ( const char* file_name,  array<array<array<T,CH>,W>,H>& A ) 	{ array2png<H,W,CH> (file_name, &A[0][0][0]); }
+
+	template <typename T, int H, int W>  static
+void array2png ( const char* file_name,  array<array<array<T,3>,W>,H>& A ) 	{ array2png<H,W,3,PNG_COLOR_TYPE_RGB> (file_name, &A[0][0][0]); }
 
 
 
