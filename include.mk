@@ -20,7 +20,7 @@ ID := $(shell echo "$(_date)-$(_cc)-$(SPEED:DEBUG=g)-$(_rev)-$(_cpu)-x$(_cores)@
 ########################################################################################
 #SPEED := $(s:o=OPTIMZE)
 SPEED := $(s:d=DEBUG)
-#SPEED := $(c:d=CHECK)
+#SPEED := $(s:d=CHECK)
 #SPEED = $($($(s:d=DEBUG):c=CHECK):o=OPTIMIZE)
 SPEED  	?= DEBUG
 

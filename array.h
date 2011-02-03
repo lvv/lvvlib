@@ -1,6 +1,10 @@
 #ifndef LVV_ARRAY
 #define LVV_ARRAY
 
+									#ifndef __GXX_EXPERIMENTAL_CXX0X__
+										#error "array.h require c++0x"
+									#endif
+
 
 		#include	<lvv/lvv.h>
 		#include	<lvv/math.h>
