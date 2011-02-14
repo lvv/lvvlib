@@ -5,7 +5,9 @@
 :gh-ll:		http://github.com/lvv/lvvlib/tree/master/
 
 Private library of headers that I use in my projects.  'LVV' are my initials (Leonid V. Volnitsky).
-Needs some cleanup, dependency pruning and documentation.  Not ready for prime time.
+Needs some cleanup, dependency pruning and documentation.  Not ready for prime
+time, parts of it probably bit-rotten from neglect.
+Files: u-* — unit tests; t-* —  simple test; b-* — benchmarks 
 
 === http://github.com/lvv/lvvlib/tree/master/array.h[array.h]
 
@@ -135,10 +137,11 @@ compile BOOST_CHECK. Implemented mostly in macros. See examples in any ++u-*.cc+
 [width="80%",cols="3,3,6",frame="none",options="header"]
 |==========================
 | Header                 | Sample Use                    | Description
-| {gh-ll}mmap.h[mmap.h]  | {gh-ll}t-mmap.cc[t-mmap.cc]   | simplified mmap files ops.
 | {gh-ll}timer.h[timer.h]| {gh-ll}t-timer.cc[t-timer.cc] | timer of interval/total for cpu/wall/tick time.
 | {gh-ll}meta.h[meta.h]  | {gh-ll}u-meta.cc[u-meta.cc]   | meta programming
 | {gh-ll}float.h[float.h]  | {gh-ll}u-float.cc[u-float.cc]| floating point traits and bit-twiddling
+| {gh-ll}mmap.h[mmap.h]  | {gh-ll}t-mmap.cc[t-mmap.cc]	| wrapper to simplify mmap ops.
+| {gh-ll}csv.h[float.h]  | {gh-ll}t-csv.cc[u-float.cc]	| CSV reader
 |==========================
 
 == Refrence
