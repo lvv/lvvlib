@@ -35,7 +35,7 @@
 #define PRINT(NAME,EXPR)	\
 	tick[r] = ticks = t.interval_ticks() / float (N);     sec = t.interval_cpu();		\
 	if (r==0)		cerr	<< setprecision(6) << setw(11) << (EXPR) << "  " << setprecision(3) << setw(8) << sec <<"\t";\
-	/* any r */		cerr	<< "\t" <<  ticks; \
+	/* any r */		cerr	<< "\t" <<  std::fixed << ticks; \
 	if (r==(REPEAT-1))	cerr	<< "\t\t" <<  tick.min() << "  \t" << NAME << endl;\
 	t.interval_ticks();
 

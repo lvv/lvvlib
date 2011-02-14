@@ -6,7 +6,7 @@
 									#endif
 
 
-		#include	<lvv/lvv.h>
+		//#include	<lvv/lvv.h>
 		#include	<lvv/math.h>
 		#include	<cassert>
 
@@ -184,7 +184,7 @@ struct array {
 	T	sum_impl (plain, T) 		const	{ return std::accumulate(begin(), end(), T()); };			// default impt
 
 	#ifdef __SSE__
-	float	sum_impl (sse, float)		const	{ DBG cerr << " max<sse,float> " << N << "(" << N-N%8 <<")"; 
+	float	sum_impl (sse, float)		const	{ // DBG cerr << " max<sse,float> " << N << "(" << N-N%8 <<")"; 
 		float  __attribute__((aligned(16))) sum4[4] = {};
 		double sum = 0;
 		__m128 _0, _1, _2, _3;

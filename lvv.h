@@ -37,16 +37,27 @@
     
     // FIXME add || http://developer.apple.com/documentation/DeveloperTools/gcc-4.0.1/cpp/Defined.html#Defined
 
+	#ifdef	GOOGLE_SPARSE
+		#include    <google/sparse_hash_map>
+		#ifndef     MAP
+			//SPARSE HASH (default)
+		       #define     MAP    google::sparse_hash_map
+		#endif
+		#ifndef     SET
+			#include    <google/sparse_hash_set>
+			#define     SET    google::sparse_hash_set
+		#endif
+	#endif
+
 	#ifndef     MAP
-	 	//SPARSE HASH (default)
-	       #include    <google/sparse_hash_map>
-	       #define     MAP    google::sparse_hash_map
+	       #define     MAP   std::map
 	#endif
 	
 	#ifndef     SET
-		#include    <google/sparse_hash_set>
-		#define     SET    google::sparse_hash_set
+		#define     SET    std::set
 	#endif
+
+
 
     using std::flush;
     using std::string;

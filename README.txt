@@ -4,8 +4,8 @@
 
 :gh-ll:		http://github.com/lvv/lvvlib/tree/master/
 
-Initially collection of headers that I used in my projects.  'LVV' are my initials (Leonid V. Volnitsky).
-Needs some cleanup, dependency pruning and documentation. 
+Private library of headers that I use in my projects.  'LVV' are my initials (Leonid V. Volnitsky).
+Needs some cleanup, dependency pruning and documentation.  Not ready for prime time.
 
 === http://github.com/lvv/lvvlib/tree/master/array.h[array.h]
 
