@@ -166,5 +166,6 @@ include::~/p/volnitsky.com/project/howto-submit-patch.txt[]
 - [[[10]]] http://en.wikipedia.org/wiki/Kahan_summation_algorithm[WikiPedia -- Kahan summation algorithm]
 - [[[11]]] http://www.ibm.com/developerworks/library/pa-dalign/[Developer works — Data alignment]
 - [[[12]]] http://blogs.utexas.edu/jdm4372/2010/11/09/optimizing-amd-opteron-memory-bandwidth-part-4-single-thread-read-only/[Optimizing AMD Opteron Memory Bandwidth, Part 4: single-thread, read-only]
+- [[[13]]] http://locklessinc.com/articles/interval_arithmetic/[Interval Arithmetic with SSE]
 
 // vim:ft=asciidoc ts=8 sw=8:
