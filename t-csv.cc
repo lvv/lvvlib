@@ -9,8 +9,8 @@ using namespace std;
 
 
 int main() {
-	string
-	    csv =
+
+	string csv =
 	    "a\"\"b\"\"c\n"
 	    "a\"\"\"b\"\"\"c\n"
 	    "\"a\"\"b\"\"c\"\n"
@@ -20,8 +20,8 @@ int main() {
 	    "a,\n"
 	    "a,\" a\"a,b\"b \"\n"
 	    "aa,b\"b,c\"c,   d   ,,ee,ff,  g\"g,h\"h  \n" "aa,  bb,cc  ,\"  dd\",\"ee  \",\"f,  g\n" ",  h\",\"i,\"\"j,k\"\",l\"\n";
-	istringstream
-	is(csv);
+
+	istringstream is(csv);
 
 	while (true) {
 		typedef vector <string> rec_t;

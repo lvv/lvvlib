@@ -1,11 +1,12 @@
+// MEMOIZE() from http://slackito.com/2011/03/17/automatic-memoization-in-cplusplus0x/
+
 			    #ifndef  LVV_MEMOIZE_H
 			    #define  LVV_MEMOIZE_H
 
-#include <functional>
-#include <map>
+	#include <functional>
+	#include <map>
 			    namespace lvv {
 
-// MEMOIZE() from http://slackito.com/2011/03/17/automatic-memoization-in-cplusplus0x/
 
 		template <typename ReturnType, typename... Args>
 		std::function<ReturnType (Args...)>
