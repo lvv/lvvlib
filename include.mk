@@ -30,23 +30,18 @@ SPEED  	?= DEBUG
 
 
 #######################################################################################  GCC
-#
-#  TO TRY (new in 4.4.1)
-#  	-findirect-inlining
-#   	-floop-block
-#   	-floop-strip-mine
-#   	-floop-interchange
-g++FLAGS          := -pipe -Wno-reorder -Wno-sign-compare # -fstrict-aliasing # -Wmissing-braces
+
+g++FLAGS          :=-Wno-reorder -Wno-sign-compare # -fstrict-aliasing # -Wmissing-braces
 #g++FLAGS_COMMON +=  -march=native -I /usr/local/include -l:/opt/intel/Compiler/11.0/074/lib/intel64/libimf.so  -Wstrict-aliasing=2
-g++FLAGS_COMMON +=  -march=native -I /usr/local/include  -Wstrict-aliasing=2
+g++FLAGS_COMMON += -pipe -I /usr/local/include  -Wstrict-aliasing=2
 
-# SAFE
-#g++FLAGS_OPTIMIZE := -O2 -march=native 
-#g++FLAGS_OPTIMIZE := -O2 -march=native  -fwhole-program --combine
-g++FLAGS_OPTIMIZE :=         -O3 -fwhole-program --combine  -fopenmp -fomit-frame-pointer -funsafe-loop-optimizations -fno-stack-protector -D_FORTIFY_SOURCE=0 
+g++FLAGS_OPTIMIZE :=   -O3   -march=native -fno-stack-protector -D_FORTIFY_SOURCE=0 
+g++FLAGS_OPTIMIZE +=   -fomit-frame-pointer -funsafe-loop-optimizations
+g++FLAGS_OPTIMIZE +=   -fwhole-program
+g++FLAGS_OPTIMIZE +=   -fopenmp
+# fast math
+#g++FLAGS_OPTIMIZE :=    -ffast-math -fassociative-math -mfpmath=sse,387 -fno-builtin -fargument-noalias-anything
 
-# FAST
-#g++FLAGS_OPTIMIZE :=        -O3 -march=native  -fwhole-program --combine  -fopenmp -fomit-frame-pointer -fargument-noalias-anything -ffast-math -funsafe-loop-optimizations -fassociative-math -fassociative-math  -mfpmath=sse,387 -fno-builtin -fargument-noalias-anything  -fassociative-math
 
 g++FLAGS_PROFILE := -pg -g -O2 -march=native -fno-omit-frame-pointer -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline
 
@@ -55,10 +50,9 @@ g++FLAGS_PROFILE := -pg -g -O2 -march=native -fno-omit-frame-pointer -fno-inline
 								#-fargument-noalias-anything   (newuoa segfalts at the end)
 								#-fast-math
 
-
 # CHECK+DEBUG
-g++FLAGS_CHECK    :=  -$(g++FLAGS_DEBUG) -fmudflaps  -lmudflaps  -fdelete-null-pointer-checks -fstack-protector -ftrapv -fbounds-check  -fsignaling-nans 
 g++FLAGS_DEBUG    :=  -ggdb3 -O0 -D_GLIBCXX_DEBUG  
+g++FLAGS_CHECK    :=  -$(g++FLAGS_DEBUG) -fmudflaps  -lmudflaps  -fdelete-null-pointer-checks -fstack-protector -ftrapv -fbounds-check  -fsignaling-nans 
 
 #g++FLAGS_CHECK    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK
 #g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
@@ -96,8 +90,13 @@ CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS_COM
 b-%  u-%  : MAKEFLAGS	+= -B
 
 
+%-r: %
+	@tput sgr0; tput setaf 2
+	$< 
+	@tput sgr0
+
 %-c: %
-	@tput sgr0; tput setaf 4
+	@tput sgr0; tput setaf 2
 	$< 
 	@tput sgr0
 
@@ -111,11 +110,11 @@ b-%  u-%  : MAKEFLAGS	+= -B
 #	./$<
 
 
+%-r       : SPEED 	= OPTIMIZE
 %-c       : SPEED 	= CHECK
 %-g       : SPEED 	= DEBUG
 
 a-%       : CXXFLAGS	+= -O3 -save-temps
 u-%       : CXXFLAGS	+= -Wno-unused-variable
-#b-%       : SPEED      	 = OPTIMIZE
 
 # vim:noexpandtab ft=make:
