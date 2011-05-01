@@ -7,7 +7,7 @@ FC	= gfortran
 
 TMPDIR ?=/v
 
-################################################################################ LABEL
+################################################################################  ID
 _cc := $(CXX)-$(shell $(CXX) -v 2>&1 | sed  -n 's/^.*ersion *\(4[^ ]*\) .*/\1/p')
 _date := $(shell date +'%y%m%d_%H%M%S')
 _rev :=$(shell test -d .git && git rev-parse HEAD|sed -n 's/^\(........\).*/\1/p')++$(shell test -d .git && git branch |sed -n 's/master/M/; s/^* //p')
@@ -24,35 +24,27 @@ SPEED := $(s:d=DEBUG)
 #SPEED = $($($(s:d=DEBUG):c=CHECK):o=OPTIMIZE)
 SPEED  	?= DEBUG
 
-#############################################################################################################
-#######################################################################################  COMPILE SPECIFIC ###
-#############################################################################################################
 
 
 #######################################################################################  GCC
 
 g++FLAGS          :=-Wno-reorder -Wno-sign-compare # -fstrict-aliasing # -Wmissing-braces
-#g++FLAGS_COMMON +=  -march=native -I /usr/local/include -l:/opt/intel/Compiler/11.0/074/lib/intel64/libimf.so  -Wstrict-aliasing=2
-g++FLAGS_COMMON += -pipe -I /usr/local/include  -Wstrict-aliasing=2
+#g++FLAGS+=  -march=native -I /usr/local/include -l:/opt/intel/Compiler/11.0/074/lib/intel64/libimf.so  -Wstrict-aliasing=2
+g++FLAGS+= -pipe  -Wstrict-aliasing=2
 
 g++FLAGS_OPTIMIZE :=   -O3   -march=native -fno-stack-protector -D_FORTIFY_SOURCE=0 
-g++FLAGS_OPTIMIZE +=   -fomit-frame-pointer -funsafe-loop-optimizations
+#g++FLAGS_OPTIMIZE +=   -fomit-frame-pointer -funsafe-loop-optimizations
 g++FLAGS_OPTIMIZE +=   -fwhole-program
-g++FLAGS_OPTIMIZE +=   -fopenmp
-# fast math
+#g++FLAGS_OPTIMIZE +=   -fopenmp  -D_GLIBCXX_PARALLEL
 #g++FLAGS_OPTIMIZE :=    -ffast-math -fassociative-math -mfpmath=sse,387 -fno-builtin -fargument-noalias-anything
 
 
 g++FLAGS_PROFILE := -pg -g -O2 -march=native -fno-omit-frame-pointer -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline
 
-
-								# DO NOT USE
-								#-fargument-noalias-anything   (newuoa segfalts at the end)
-								#-fast-math
-
 # CHECK+DEBUG
-g++FLAGS_DEBUG    :=  -ggdb3 -O0 -D_GLIBCXX_DEBUG  
-g++FLAGS_CHECK    :=  -$(g++FLAGS_DEBUG) -fmudflaps  -lmudflaps  -fdelete-null-pointer-checks -fstack-protector -ftrapv -fbounds-check  -fsignaling-nans 
+g++FLAGS_DEBUG    :=  -g -O0 -D_GLIBCXX_DEBUG  
+g++FLAGS_CHECK    :=  $(g++FLAGS_DEBUG) -fdelete-null-pointer-checks -fstack-protector -ftrapv -fbounds-check  -fsignaling-nans 
+g++FLAGS_CHECK    :=  -fmudflap  -lmudflap 
 
 #g++FLAGS_CHECK    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK
 #g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
@@ -70,18 +62,15 @@ iccFLAGS_DEBUG    := -debug all
 iccFLAGS_CHECK    := -check-uninit -fmudflap -fstack-security-check -ftrapuv -Wcheck
 #for icc PATH=/usr/x86_64-pc-linux-gnu/gcc-bin/4.2.4:$(PATH)
 
-#######################################################################################   ANY 
-CXXFLAGS_COMMON		 = -Wall -std=c++0x -DID='"$(ID)"'   -I /home/lvv/p/ 
-#CXXFLAGS_COMMON		 = -Wall -std=c++0x -DID='"$(ID)"'   -I /home/lvv/p/ -I /usr/include/boost-1_37/ 
-#-frecord-gcc-switches
+
+#######################################################################################   NON-COMPILER SPECIFIC
+CXXFLAGS		+= -Wall -std=c++0x -DID='"$(ID)"'   -I /home/lvv/p/ 
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK 
-#-D_GLIBCXX_PARALLEL
-#CXXFLAGS_DEBUG		:= -DDEBUG   -lgzstream -lz -lmudflap
-CXXFLAGS_DEBUG		:= -DDEBUG   -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_ON
+CXXFLAGS_DEBUG		:= -DDEBUG   -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_ON -lmudflap
 CXXFLAGS_CHECK		:= -DDEBUG   -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEBUG  
 
 #######################################################################################  BUILD CXXFLAGS
-CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS_COMMON)  $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF) $(CFLAGS) 
+CXXFLAGS		+= $(CXXFLAGS_$(SPEED))   $($(CXX)FLAGS) $($(CXX)FLAGS_$(SPEED))  $(CF) $(CFLAGS) 
 
 
 .SUFFIXES:	.cc -r -c -g  
@@ -90,15 +79,15 @@ CXXFLAGS           += $(CXXFLAGS_COMMON) $(CXXFLAGS_$(SPEED))  $($(CXX)FLAGS_COM
 b-%  u-%  : MAKEFLAGS	+= -B
 
 
-%-r: %
+%-r %-c: %
 	@tput sgr0; tput setaf 2
 	$< 
 	@tput sgr0
 
-%-c: %
-	@tput sgr0; tput setaf 2
-	$< 
-	@tput sgr0
+#%-c: %
+#	@tput sgr0; tput setaf 2
+#	$< 
+#	@tput sgr0
 
 %-g: %
 	echo -e "br main\nr" > /tmp/t
