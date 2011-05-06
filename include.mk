@@ -9,13 +9,13 @@ TMPDIR ?=/v
 
 ################################################################################  ID
 _cc := $(CXX)-$(shell $(CXX) -v 2>&1 | sed  -n 's/^.*ersion *\(4[^ ]*\) .*/\1/p')
-_date := $(shell date +'%y%m%d_%H%M%S')
-_rev :=$(shell test -d .git && git rev-parse HEAD|sed -n 's/^\(........\).*/\1/p')++$(shell test -d .git && git branch |sed -n 's/master/M/; s/^* //p')
+#_date := $(shell date +'%y%m%d_%H%M%S')
+_rev :=$( shell test -d .git && git rev-parse HEAD|sed -n 's/^\(........\).*/\1/p' )
 #_cpu=$(shell uname -m -p  |sed 's/Intel(R)//;s/(TM)//;s/@//;s/CPU//;s/ \+/-/g')
 _cpu :=$(shell sed -n '/^model name/!d; s/.*: //; s/(tm) Processor//; s/Intel(R)//; s/(TM)//; s/@//; s/^ //; s/ \+/-/g;p;q' /proc/cpuinfo )
 _cores := $(shell awk '/^processor/{cores=$$3+1}; END{print cores}' /proc/cpuinfo)
 _mhz := $(shell awk '/^cpu MHz/{mhz=$$4}; END{print mhz}' /proc/cpuinfo |sed 's/\.[0-9]\+//')
-ID := $(shell echo "$(_date)-$(_cc)-$(SPEED:DEBUG=g)-$(_rev)-$(_cpu)-x$(_cores)@$(_mhz)" | tr -d ' ')
+ID := $(shell echo "$(_rev)-$(_cc)-$(SPEED:DEBUG=g)-$(_cpu)-x$(_cores)@$(_mhz)" | tr -d ' ')
 
 ########################################################################################
 #SPEED := $(s:o=OPTIMZE)
@@ -44,7 +44,7 @@ g++FLAGS_PROFILE := -pg -g -O2 -march=native -fno-omit-frame-pointer -fno-inline
 # CHECK+DEBUG
 g++FLAGS_DEBUG    :=  -g -O0 -D_GLIBCXX_DEBUG  
 g++FLAGS_CHECK    :=  $(g++FLAGS_DEBUG) -fdelete-null-pointer-checks -fstack-protector -ftrapv -fbounds-check  -fsignaling-nans 
-g++FLAGS_CHECK    :=  -fmudflap  -lmudflap 
+#g++FLAGS_CHECK    :=  -fmudflap  -lmudflap 
 
 #g++FLAGS_CHECK    := -O0 -p -Wpacked -fsignaling-nans -fdelete-null-pointer-checks  -fstack-protector -ftrapv -fbounds-check -D_GLIBCXX_DEBUG  -DGSL_RANGE_CHECK
 #g++FLAGS_DEBUG    := -O0 -ggdb3 -p -Wpacked -fsignaling-nans 
@@ -66,7 +66,7 @@ iccFLAGS_CHECK    := -check-uninit -fmudflap -fstack-security-check -ftrapuv -Wc
 #######################################################################################   NON-COMPILER SPECIFIC
 CXXFLAGS		+= -Wall -std=c++0x -DID='"$(ID)"'   -I /home/lvv/p/ 
 CXXFLAGS_OPTIMIZE	:= -DNDEBUG  -DGSL_RANGE_CHECK_OFF -DNOCHECK 
-CXXFLAGS_DEBUG		:= -DDEBUG   -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_ON -lmudflap
+CXXFLAGS_DEBUG		:= -DDEBUG   -DNOCHECK -DNOSTATS -DGSL_RANGE_CHECK_ON
 CXXFLAGS_CHECK		:= -DDEBUG   -DDOCHECK -DDOSTATS   -D_GLIBCXX_DEBUG  
 
 #######################################################################################  BUILD CXXFLAGS
