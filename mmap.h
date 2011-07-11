@@ -20,10 +20,10 @@
 	struct  open_error: std::exception {};
 	struct  io_error: std::exception {};
 
-void * mmap_read  ( const char *name,  int flags=MAP_SHARED)   {
+void * mmap_read  ( const char *name,  int flags=MAP_PRIVATE)   {
 
-	int 	src_fd = open(name, O_RDONLY);
-	//int 	src_fd = open(name, O_RDWR);
+	//int 	src_fd = open(name, O_RDONLY);
+	int 	src_fd = open(name, O_RDWR);
 
 	if (src_fd  < 0) {
 		cerr  << "mmap_read error: couldn't open  \"" << name << "\"  file\n";
@@ -40,8 +40,8 @@ void * mmap_read  ( const char *name,  int flags=MAP_SHARED)   {
 		//exit(3);
 	}
 
-	//void *p =  mmap(NULL, sb.st_size , PROT_READ | PROT_WRITE , flags, src_fd, 0);
-	void *p =  mmap(NULL, sb.st_size , PROT_READ, flags, src_fd, 0);
+	void *p =  mmap(NULL, sb.st_size , PROT_READ | PROT_WRITE , flags, src_fd, 0);
+	//void *p =  mmap(NULL, sb.st_size , PROT_READ, flags, src_fd, 0);
 
 	if  ( p == MAP_FAILED ) {
 		cerr  << "mmap_read error: couldn't mmap  \"" << name << "\"  file\n";
@@ -94,14 +94,14 @@ void	mmap_write(const char* name, T &obj, size_t size=sizeof(T)) {
 		cerr << "mmap_write error: couldn't memcpy() for \"" << name << "\" file\n";
 		close(trg_fd);
 		//exit(8);
-		throw exception();
+		throw std::exception();
 	}
 
 	if (munmap(p, size) < 0) {
 		cerr << "mmap_write error: couldn't munmap() for \"" << name << "\" file\n";
 		close(trg_fd);
 		//exit(10);
-		throw exception();
+		throw std::exception();
 	}
  }
 

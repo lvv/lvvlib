@@ -4,15 +4,6 @@
     #include <iostream> 
     #include <iomanip>
 
-	//#include <boost/lexical_cast.hpp>
-	//using boost::lexical_cast; 
-
-	//#include <boost/format.hpp>
-	//using boost::format; 
-	//#define FMT(f)	std::cout << boost::format(f)
-	//#define MSG(f)	std::cerr << boost::format(f)
-	//#define LOG(f)	std::clog << boost::format(f)
-	
 
     #if  defined(NDEBUG) && defined(DEBUG)
         #undef DEBUG
@@ -70,12 +61,20 @@
 
     namespace lvv {
 
- ///////////////////////////////////////////////////////////////////////////////////
+// from linux kernel
+#define likely(x)       __builtin_expect((x),1)
+#define unlikely(x)     __builtin_expect((x),0)
+
+///////////////////////////////////////////////////////////////////////////////////
  
+ 	
 	#define LVV_STR(x) __LVV_STR__(x)
 	#define __LVV_STR__(x) #x
 
-	// TODO replace lexica_cast with boost::format  
+	// TODO reimplement with __VA_ARGS__ 
+	//  #define A_(a, ...)   << a  A(__VA_ARGS__)
+	//  #define A (...)   cout A_(__VA_ARGS__) ;
+
 	
 	#define _STR(x)              (string(" " #x "=")+lexical_cast<string>(x))
 	#undef __PRETTY_FUNCTION__
@@ -105,21 +104,7 @@
 		#define PR9(x1,x2,x3,x4,x5,x6,x7,x8,x9)		std::cerr << "--("<<__LINE__<< ")-- "; PR(x1) PR(x2) PR(x3) PR(x4) PR(x5) PR(x6) PR(x7) PR(x8) PR(x9);	std::cerr <<std::endl;
 	#endif
     
-    	//#undef	NL
-    	//#define NL	cerr << endl;
-
 ///////////////////////////////////////////////////////////////////////////////////// MACROS
-
-#define  FOR_ARRAY_I(i,A)   for(int i  = A.ibegin(); i  <  A.iend();  i++)
-
-// from BOOST mailing list.  Not works with breakes
-#define XXX_FOR_EACH(a, A) \
-	for(typeof(A.begin()) _for_each_i = A.begin(), _for_each_e = A.end();\
-	_for_each_i != _for_each_e; ++_for_each_i)\
-	if(bool _for_each_continue = false) {}\
-	else\
-	for(typeof(*A.begin()) a = *_for_each_i; !_for_each_continue; _for_each_continue=true) 
-
 
 #define SKIP continue
 
