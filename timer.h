@@ -22,6 +22,8 @@
 
 	namespace lvv {
 
+// TR http://www.viva64.com/en/b/0097/
+
 /*  OpenMP thread time?
          double omp_time = 0;                                                                                                                               
          double last_omp_time;
@@ -71,6 +73,8 @@
 	static ostream&   operator<< (ostream& os, Timer& t) __attribute__((unused)) ;
 
 class Timer { //=========================================== TIMER
+			// TR http://www.viva64.com/en/b/0097/
+			// -------------
 			// article about hi-res timers: http://www.devx.com/cplus/Article/35375/0/page/2
 			// see also OpenMP timer: http://gcc.gnu.org/onlinedocs/libgomp/omp_005fget_005fwtime.html#omp_005fget_005fwtime
 			// ---

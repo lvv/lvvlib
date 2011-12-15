@@ -1,4 +1,6 @@
 
+# TODO add options from http://www.antoarts.com/the-most-useful-gcc-options-and-extensions/
+#
 ############################################################################   CONFIG
 
 # to set speed run as:  make s=o

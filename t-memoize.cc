@@ -4,8 +4,8 @@
 #include <iostream>
 using namespace std;
 
-int f  (int i) { cout << "f(" << i << ")\n";  return i+1; };
-int ff (int i, int j) { cout << "f(" << i << ", " << j << ")\n";  return i+j; };
+int f  (int i) 		{ cout << "f(" << i << ")\n";  return i+1; };
+int ff (int i, int j)	{ cout << "f(" << i << ", " << j << ")\n";  return i+j; };
 
 
 int main()  {
