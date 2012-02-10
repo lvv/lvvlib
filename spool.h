@@ -59,17 +59,17 @@ struct  spool_t {
 		buf_t* bp = buf_list [buf_list_last];
 		size_t  len = strlen(bp->pool+bp->last);
 		OFFSET_t  end = bp->last + len + 1;
-		
+
 		// new buf?
-		if (end + STRING_MAX+1  >  POOL_SIZE)  {	
-			buf_list_last += 1;	
+		if (end + STRING_MAX+1  >  POOL_SIZE)  {
+			buf_list_last += 1;
 					assert(buf_list_last < BUF_LIST_MAX);
 			bp = buf_list[buf_list_last] = new buf_t();
 			end = 0;
 		} else {
 			bp->last = end;
 		}
-			
+
 		ref.buf = buf_list_last;
 		ref.offset = end;
 
@@ -78,4 +78,4 @@ struct  spool_t {
 	} ;
  };
 			};	// namespace lvv
-			#endif	
+			#endif

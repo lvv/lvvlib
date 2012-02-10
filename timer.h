@@ -25,12 +25,12 @@
 // TR http://www.viva64.com/en/b/0097/
 
 /*  OpenMP thread time?
-         double omp_time = 0;                                                                                                                               
+         double omp_time = 0;
          double last_omp_time;
          last_omp_time = omp_time;
          omp_time = omp_get_wtime();
- 
-         int static cnt = 0;   
+
+         int static cnt = 0;
          MSG("(%d/%.1fs ? :%.1fs elapsed)%8t") % cnt++  %timer() %(omp_time-last_omp_time);  
 	--------------------------------
 	Timers:  http://www.strchr.com/performance_measurements_with_rdtsc
@@ -42,16 +42,16 @@
 #if defined(__x86_64) || defined (__i386)
 
 	uint64_t static	read_tick() {				// tested with with x86_64 only. 
-		uint64_t now_tick;			
+		uint64_t now_tick;
 		asm volatile (	"subl	%%eax,	%%eax;"
 			"cpuid;"
 			"rdtsc;"
-			#if defined(__x86_64) 
+			#if defined(__x86_64)
 				"shlq	$32,	%%rdx;"
-				"orq	%%rdx,	%%rax;"		// combine into 64 bit register        
+				"orq	%%rdx,	%%rax;"		// combine into 64 bit register
 				"movq	%%rax,	%[now_tick];"
 			#endif
-			#if defined(__i386) 
+			#if defined(__i386)
 				"movl	%%eax,	%[now_tick];"
 				"lea	%0, 	%%eax;"
 				"movl	%%edx,	4(%%eax);"
@@ -59,12 +59,12 @@
 			"cpuid;"
 				 :[now_tick] "=m"(now_tick)        // output
 				 :
-			#if defined(__x86_64) 
+			#if defined(__x86_64)
 				 :"rax", "rdx", "rbx","rcx", "rdx"         // clobbered register
 			#else
 				 :"ebx","ecx", "edx"         // clobbered register
 			#endif
-		 );  
+		 );
 		return now_tick;
 	}
 #endif
@@ -90,7 +90,7 @@ class Timer { //=========================================== TIMER
 			//      every measurement is zero, but for other ratios it might not be so
 			//      evident at a glance.
 			//
-    private: 
+    private:
 		bool		verbose_dtor;
 
 		// Tick (cpu cycle)
@@ -100,25 +100,25 @@ class Timer { //=========================================== TIMER
 		uint64_t now_tick;
 		uint64_t overhead;
 		#endif
-		
+
 		// TV - wall clock time
-		timeval		ctor_tv; 
-		timeval		interval_start_tv; 
-		timeval		now_tv; 
+		timeval		ctor_tv;
+		timeval		interval_start_tv;
+		timeval		now_tv;
 
 		// RU - CPU time
-		struct rusage	ctor_ru;        
-		struct rusage	interval_start_ru;        
-		struct rusage	now_ru;        
+		struct rusage	ctor_ru;
+		struct rusage	interval_start_ru;
+		struct rusage	now_ru;
 
 		double
 	wall_time_at(timeval tv) { return tv.tv_sec + tv.tv_usec / 1000000.;  };
 
 		double
 	cpu_time_at(struct rusage ru) {
-            return 
+            return
                 ru.ru_utime.tv_sec + ru.ru_utime.tv_usec / 1000000. +
-                ru.ru_stime.tv_sec + ru.ru_stime.tv_usec / 1000000.; 
+                ru.ru_stime.tv_sec + ru.ru_stime.tv_usec / 1000000.;
         };
 
 public:

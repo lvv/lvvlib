@@ -29,7 +29,7 @@ int main() {
 	cout << "timer()=" <<  t() << endl;
 	cout << "\n***  usleep 1000\n";
 	usleep(useconds_t(10000));
-		cout << "interval_ticks(): " << t.interval_ticks()  << flush << endl;
+		cout << "interval_ticks(): " << t.interval_ticks()  << '\n';
 		t.print("2nd print()");
 
 	cout << "\n***  usleep 2000\n";
