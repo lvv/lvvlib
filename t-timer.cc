@@ -6,7 +6,7 @@ using namespace std;
 
 #include <stdint.h>
 #include <lvv/timer.h>
-using lvv::Timer;
+using lvv::timer_t;
 
 
 int main() {
@@ -21,9 +21,9 @@ int main() {
 	cout << lvv::read_tick() << "  -- 1 \n";
 	cout << lvv::read_tick() << "  -- 1 \n";
 	cout << lvv::read_tick() << "  -- 1 \n";
-	cout << "Timer CTOR\n";
-	Timer verboze_t(true);
-	Timer t;
+	cout << "timer_t CTOR\n";
+	timer_t verboze_t(true);
+	timer_t t;
 	t.print("timer.print() MSG test");
 
 	cout << "timer()=" <<  t() << endl;
@@ -40,6 +40,6 @@ int main() {
 	cout << "\n***  usleep 3000\n";
 	usleep(useconds_t(30000));
 
-    cout << "Last line will be from Timer destructor \n";
+    cout << "Last line will be from timer_t destructor \n";
     return 0;
 }

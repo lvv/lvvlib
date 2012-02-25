@@ -78,7 +78,7 @@ int main() {
 
 	///////////////////////////////////
 
-	Timer	t(true);
+	timer_t	t(true);
 	float sec, ticks;
 	cout <<  "\nValue\tSeconds\t\tTick/Cycle ...   Min-Tick/Cycle \t Method\n" << setprecision(4);
 

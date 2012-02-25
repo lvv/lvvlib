@@ -17,14 +17,14 @@
 		using lvv::mk_array;
 
 	#include <lvv/timer.h>
-		using lvv::Timer;
+		using lvv::timer_t;
 
 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////// STATIC  VARS
 	array<float,REPEAT>	tick;
-	Timer			t(true);
+	timer_t			t(true);
 	float			sec, ticks;
 
 

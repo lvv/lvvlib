@@ -69,10 +69,10 @@
 	}
 #endif
 
-	class Timer;
-	static ostream&   operator<< (ostream& os, Timer& t) __attribute__((unused)) ;
+	class timer_t;
+	static ostream&   operator<< (ostream& os, timer_t& t) __attribute__((unused)) ;
 
-class Timer { //=========================================== TIMER
+class timer_t { //=========================================== TIMER
 			// TR http://www.viva64.com/en/b/0097/
 			// -------------
 			// article about hi-res timers: http://www.devx.com/cplus/Article/35375/0/page/2
@@ -125,7 +125,7 @@ public:
 
 
 
-Timer(bool verbose_dtor=false) : verbose_dtor(verbose_dtor)     {
+timer_t(bool verbose_dtor=false) : verbose_dtor(verbose_dtor)     {
 	#if defined(__x86_64) || defined (__i386)
 	ctor_tick = interval_start_tick = read_tick();
 	overhead = interval_ticks();
@@ -134,7 +134,7 @@ Timer(bool verbose_dtor=false) : verbose_dtor(verbose_dtor)     {
 	getrusage(RUSAGE_SELF, &now_ru);	ctor_ru = interval_start_ru = now_ru;
  };
 
-~Timer()    {
+~timer_t()    {
 	if (verbose_dtor)
 		cerr  << "(*) on exit: cpu time: "  << total_cpu()  << "s    " << "wall time: " << total_wall() << "s " << endl; 
 	// memory report
@@ -207,12 +207,12 @@ print(std::string msg="") {
 	std::cerr << std::endl;
  };
 
-        friend std::ostream& operator<< (std::ostream& os, Timer& t);
+        friend std::ostream& operator<< (std::ostream& os, timer_t& t);
 };
 
 
 	static ostream& 
-operator<< (ostream& os, Timer& t)   {
+operator<< (ostream& os, timer_t& t)   {
 	os << setprecision(5) << " " << t() << "s ";
 	return os;
  }
