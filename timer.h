@@ -135,8 +135,10 @@ timer_t(bool verbose_dtor=false) : verbose_dtor(verbose_dtor)     {
  };
 
 ~timer_t()    {
-	if (verbose_dtor)
-		cerr  << "(*) on exit: cpu time: "  << total_cpu()  << "s    " << "wall time: " << total_wall() << "s " << endl; 
+	if (verbose_dtor) {
+		if (total_cpu() < 0.001)   cerr  << "(*) on exit: cpu time: "  << std::fixed << total_cpu()/1000000  << " μs    " << "wall time: " << total_wall()/1000000 << " μs " << endl; 
+		else 			   cerr  << "(*) on exit: cpu time: "  << std::fixed << total_cpu()  << " s    " << "wall time: " << total_wall() << " s " << endl; 
+	}
 	// memory report
 	//system("egrep -r '^Vm(Peak|Size|RSS|Data|Stk|Exe|Lib)' /proc/$PPID/status |sed 's/^Vm//; s/ kB/k/; s/  *//'|tr '	\n' ' '");
 	    // amount of unrequested memory  -   CommitLimit - Committed_AS
