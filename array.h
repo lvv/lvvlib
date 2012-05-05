@@ -72,7 +72,8 @@
 struct array {
 
 
-	typename select_alignment<T,N>::type 	elems;
+	//typename select_alignment<T,N>::type 	elems;	 
+	T elems[N]  __attribute__((aligned(16)));
 
 	enum { sz = N, ibg=B, ien=B+N };	// ibg and ien are  <first-index> and <last-index +1>
 						// sz  is ugly work around for gcc: "a function call cannot appear in a constant-expression" in something like x<V::size()>
