@@ -137,7 +137,7 @@ compile BOOST_CHECK. Implemented mostly in macros. See examples in any ++u-*.cc+
 [width="80%",cols="3,3,6",frame="none",options="header"]
 |==========================
 | Header                 | Sample Use                    | Description
-| {gh-ll}timer.h[timer.h]| {gh-ll}t-timer.cc[t-timer.cc] | timer of interval/total for cpu/wall/tick time.
+| {gh-ll}timer.h[timer.h]| {gh-ll}t-timer.cc[t-timer.cc] | timer of interval/total for cpu/wall/tick time (depricated by +++C++11+++)
 | {gh-ll}meta.h[meta.h]  | {gh-ll}u-meta.cc[u-meta.cc]   | meta programming
 | {gh-ll}float.h[float.h]  | {gh-ll}u-float.cc[u-float.cc]| floating point traits and bit-twiddling
 | {gh-ll}mmap.h[mmap.h]  | {gh-ll}t-mmap.cc[t-mmap.cc]	| wrapper to simplify mmap ops.

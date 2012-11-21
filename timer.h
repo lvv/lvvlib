@@ -1,3 +1,7 @@
+//
+// TODO
+// 	http://bryanstamour.com/2012/05/13/timing-functions-with-chrono.html
+//	http://solarianprogrammer.com/2012/10/14/cpp-11-timing-code-performance/
 
 	#ifndef  LVV_TIMER_H
 	#define  LVV_TIMER_H
