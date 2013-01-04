@@ -3,6 +3,7 @@
 						namespace lvv {
 
 	// TR floating point utils:  http://www.codeproject.com/KB/cpp/floatutils.aspx
+	// TR http://stackoverflow.com/questions/17333/most-effective-way-for-float-and-double-comparison/3423299#3423299
 
 //////////////////////////////////////////////////////////////////////////////////////////////  IEEE FLOATING POINT
 	template<typename T, long M=0, long E=1>	struct 	fp {
