@@ -13,7 +13,9 @@ struct  strref  {
 
 	pos_t b, e;
 	size_t size() const { return e-b; };
-	//explicit operator std::string () const { return std::string(b,e); };
+	operator std::string () const { return std::string(b,e); };
+	bool operator==(const char* p)        const { const char* pe=p;  while(*pe) ++pe;  return  e-b == pe-p  &&  std::equal(b,e, p); };
+	bool operator==(const std::string& s) const { return  size_t(e-b) == s.size()   &&  std::equal(b,e, s.begin()); };
 };
 
 //std::ostream&   operator<< (std::ostream& os, const strref& s)  {
