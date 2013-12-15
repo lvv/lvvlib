@@ -1,10 +1,14 @@
-
+#include<algorithm>
+	using std::find_if;
+	using std::find_if_not;
 							namespace {
+
+typedef  const char*   	pos_t;
 
 // names, token
 struct  strref_t  {
 	strref_t  ()                   : b(nullptr), e(nullptr)		{};
-	strref_t  (pos_t b, pos_t e) : b(b), e(e)			{};
+	strref_t  (pos_t b, pos_t e)   : b(b), e(e)			{};
 	strref_t  (const char* cs)					{ b=cs; e=cs; while(*e) ++e; };
 
 	pos_t b, e;
@@ -12,13 +16,13 @@ struct  strref_t  {
 	//explicit operator std::string () const { return std::string(b,e); };
 };
 
-std::ostream&   operator<< (std::ostream& os, const strref_t& s)  {
-	return os << " (" << std::string(s.b,s.e) << ") ";
-};
+//std::ostream&   operator<< (std::ostream& os, const strref_t& s)  {
+//	return os << " (" << std::string(s.b,s.e) << ") ";
+//};
 
 
 struct  is_t {
-	is() { for (auto c: " \t\n\r-,.:'~`!@#$%^&*()_-+={}[]|\\|:;\"',<>./?")  separato[c]=1; }
+	is_t() { for (auto c: " \t\n\r-,.:'~`!@#$%^&*()_-+={}[]|\\|:;\"',<>./?")  separator[(size_t)c]=1; }
 	char separator[256]={0};
 };
 
