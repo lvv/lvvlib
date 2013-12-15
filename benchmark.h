@@ -49,7 +49,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////  PRINT CONFIG
 #define BENCHMARK_HEADER	  cerr	/*<< "*** TYPE:  "  << LVV_STR(TYPE) << endl*/ \
 					<< "*** REPEAT:"  << REPEAT << endl\
-					<< "*** ID:    "  << "" ID << endl; \
+					<< "*** CID:    "  << "" CID << endl; \
 				cerr <<  "\nValue\tSeconds\t\tTick/Cycle ...   Min-Tick/Cycle \t Method\n" << setprecision(4);
 
 				#endif  // LVV_BENCHMARK_H
