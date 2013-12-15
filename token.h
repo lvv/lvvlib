@@ -6,17 +6,17 @@
 typedef  const char*   	pos_t;
 
 // names, token
-struct  strref_t  {
-	strref_t  ()                   : b(nullptr), e(nullptr)		{};
-	strref_t  (pos_t b, pos_t e)   : b(b), e(e)			{};
-	strref_t  (const char* cs)					{ b=cs; e=cs; while(*e) ++e; };
+struct  strref  {
+	strref  ()                   : b(nullptr), e(nullptr)		{};
+	strref  (pos_t b, pos_t e)   : b(b), e(e)			{};
+	strref  (const char* cs)					{ b=cs; e=cs; while(*e) ++e; };
 
 	pos_t b, e;
 	size_t size() const { return e-b; };
 	//explicit operator std::string () const { return std::string(b,e); };
 };
 
-//std::ostream&   operator<< (std::ostream& os, const strref_t& s)  {
+//std::ostream&   operator<< (std::ostream& os, const strref& s)  {
 //	return os << " (" << std::string(s.b,s.e) << ") ";
 //};
 
@@ -83,7 +83,7 @@ bool	is_head_of (pos_t b1, pos_t e1, pos_t b2, pos_t e2, pos_t& match_e)  {
 	}
 }
 
-bool	are_equal_token_chains(strref_t n1, strref_t n2)  { return are_equal_token_chains(n1.b, n1.e,  n2.b, n2.e); }
-bool	is_head_of(strref_t n1, strref_t n2, pos_t& match_e)  { return is_head_of(n1.b, n1.e,  n2.b, n2.e, match_e); }
+bool	are_equal_token_chains(strref n1, strref n2)  { return are_equal_token_chains(n1.b, n1.e,  n2.b, n2.e); }
+bool	is_head_of(strref n1, strref n2, pos_t& match_e)  { return is_head_of(n1.b, n1.e,  n2.b, n2.e, match_e); }
 
 							}
