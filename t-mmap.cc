@@ -25,7 +25,6 @@ int main(int argc, char *argv[]) {
 
 	cout  << "\n\n   *** flat plain-array write, read  *** \n";
 	float f[3]={1.11, 2.22, 3.33};
-	//mmap_write("/tmp/_fa.mmap", *f, sizeof(f[0])*3);
 	mmap_write("/tmp/_fa.mmap", f);
 
 
