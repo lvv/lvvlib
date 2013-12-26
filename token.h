@@ -1,6 +1,8 @@
 #include<algorithm>
 	using std::find_if;
 	using std::find_if_not;
+
+#include <assert.h>
 							namespace {
 
 typedef  const char*   	pos_t;
@@ -18,9 +20,10 @@ struct  strref  {
 	bool operator==(const std::string& s) const { return  size_t(e-b) == s.size()   &&  std::equal(b,e, s.begin()); };
 };
 
-//std::ostream&   operator<< (std::ostream& os, const strref& s)  {
-//	return os << " (" << std::string(s.b,s.e) << ") ";
-//};
+__attribute__((unused)) 
+std::ostream&   operator<< (std::ostream& os, const strref& s)  {
+	return os << " (" << std::string(s.b,s.e) << ") ";
+};
 
 
 struct  is_t {
@@ -32,8 +35,9 @@ is_t	is;
 
 
 
-pos_t	get_tb(pos_t b, pos_t e)  { return std::find_if_not (b,e, [](char c){ return c==' ' || c=='\t' || c=='\n'; }); };
-pos_t	get_te(pos_t b, pos_t e)  { return std::find_if     (b,e, [](char c){ return c==' ' || c=='\t' || c=='\n'; }); };
+pos_t	get_tb(pos_t b, pos_t e)  { assert(b<=e); return std::find_if     (b,e, [](char c){ return !(c==' ' || c=='\t' || c=='\n'); }); };
+//pos_t	get_tb(pos_t b, pos_t e)  { return std::find_if_not (b,e, [](char c){ return   c==' ' || c=='\t' || c=='\n' ; }); };
+pos_t	get_te(pos_t b, pos_t e)  { assert(b<=e); return std::find_if     (b,e, [](char c){ return   c==' ' || c=='\t' || c=='\n' ; }); };
 
 bool	are_equal_token_chains (pos_t b1, pos_t e1, pos_t b2, pos_t e2)  {
 
@@ -85,7 +89,7 @@ bool	is_head_of (pos_t b1, pos_t e1, pos_t b2, pos_t e2, pos_t& match_e)  {
 	}
 }
 
-bool	are_equal_token_chains(strref n1, strref n2)  { return are_equal_token_chains(n1.b, n1.e,  n2.b, n2.e); }
+bool	are_equal_token_chains(strref n1, strref n2)      { return are_equal_token_chains(n1.b, n1.e,  n2.b, n2.e); }
 bool	is_head_of(strref n1, strref n2, pos_t& match_e)  { return is_head_of(n1.b, n1.e,  n2.b, n2.e, match_e); }
 
 							}
