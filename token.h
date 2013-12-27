@@ -35,9 +35,12 @@ is_t	is;
 
 
 
-pos_t	get_tb(pos_t b, pos_t e)  { assert(b<=e); return std::find_if     (b,e, [](char c){ return !(c==' ' || c=='\t' || c=='\n'); }); };
-//pos_t	get_tb(pos_t b, pos_t e)  { return std::find_if_not (b,e, [](char c){ return   c==' ' || c=='\t' || c=='\n' ; }); };
-pos_t	get_te(pos_t b, pos_t e)  { assert(b<=e); return std::find_if     (b,e, [](char c){ return   c==' ' || c=='\t' || c=='\n' ; }); };
+////pos_t	get_tb(pos_t b, pos_t e)  { return std::find_if_not (b,e, [](char c){ return   c==' ' || c=='\t' || c=='\n' ; }); };
+//pos_t	get_tb(pos_t b, pos_t e)  { assert(b<=e); return std::find_if     (b,e, [](char c){ return !(c==' ' || c=='\t' || c=='\n'); }); };
+//pos_t	get_te(pos_t b, pos_t e)  { assert(b<=e); return std::find_if     (b,e, [](char c){ return   c==' ' || c=='\t' || c=='\n' ; }); };
+
+pos_t	get_tb(pos_t b, pos_t e)  { assert(b<=e); return std::find_if     (b,e, [](char c){ return !is.separator[(size_t)c]; }); };
+pos_t	get_te(pos_t b, pos_t e)  { assert(b<=e); return std::find_if     (b,e, [](char c){ return  is.separator[(size_t)c]; }); };
 
 bool	are_equal_token_chains (pos_t b1, pos_t e1, pos_t b2, pos_t e2)  {
 
