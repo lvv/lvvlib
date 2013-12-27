@@ -1,3 +1,7 @@
+// Simple unit test.
+// Part of lvvlib - https://github.com/lvv/lvvlib
+// Copyright (c) 2000-2013
+// Leonid Volnitsky (Leonid@Volnitsky.com)
 				
 				#ifndef LVV_CHECK_H
 				#define LVV_CHECK_H

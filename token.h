@@ -1,3 +1,6 @@
+// splits string into tokens
+// part of lvvlib - https://github.com/lvv/lvvlib
+				
 #include<algorithm>
 	using std::find_if;
 	using std::find_if_not;

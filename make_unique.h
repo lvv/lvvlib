@@ -1,3 +1,6 @@
+// last_n - circular buffer class
+// Part of lvvlib - https://github.com/lvv/lvvlib
+
 // Missing in STD make_unique implemetaition by S T Lavavej
 // http://stackoverflow.com/questions/7038357/make-unique-and-perfect-forwarding
 #include <memory>

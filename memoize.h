@@ -1,4 +1,9 @@
-// MEMOIZE() from http://slackito.com/2011/03/17/automatic-memoization-in-cplusplus0x/
+// memoize - add chashing to pure function
+// Part of lvvlib - https://github.com/lvv/lvvlib
+// Copyright (c) 2000-2013
+// Leonid Volnitsky (Leonid@Volnitsky.com)
+
+// from http://slackito.com/2011/03/17/automatic-memoization-in-cplusplus0x/
 
 				#ifndef  LVV_MEMOIZE_H
 				#define  LVV_MEMOIZE_H

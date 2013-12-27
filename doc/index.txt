@@ -4,8 +4,24 @@ LvvLib - C++ utility library
 
 //  HTML rendered version of this file is at:  http://volnitsky.com/project/lvvlib
 
-:gh-ll:		http://github.com/lvv/lvvlib/tree/master/
+MMAP.H
+-------
 
+Wraps and simplifies use of mmap(2) and munmap(2) functions.
+
+	/////  save T oject
+	#define path "t.mmap"
+	T  out;
+	mmap_write(path,out);		// saves object out
+	T& in  = mmap_read<T>(path);    // restore it in object in
+
+
+	////// save T array
+	T  a[n];
+	mmap_write(path,a);
+
+	size_t n;			// array size
+	T  *aa  = mmap_read<T>(path,n); // restore it, size in n 
 
 ARRAY.H
 -------

@@ -1,5 +1,8 @@
+// meta.h - template metaprogramming and convenience macros (obsolete)
+// Part of lvvlib - https://github.com/lvv/lvvlib
+// Copyright (c) 2000-2013
+// Leonid Volnitsky (Leonid@Volnitsky.com)
 
-	// template metaprogramming and convenience macros
 					
 					#ifndef LVV_META_H
 					#define LVV_META_H

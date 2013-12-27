@@ -1,3 +1,7 @@
+// spool.h
+// Part of lvvlib - https://github.com/lvv/lvvlib
+// Copyright (c) 2000-2013
+// Leonid Volnitsky (Leonid@Volnitsky.com)
 
 		#ifndef LVV_SPOOL
 		#define LVV_SPOOL
