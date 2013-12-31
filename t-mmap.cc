@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
 	//ff[1] = 11;     cout << "can modify _fa map "  << endl;
 
-	cout << "\n\n   *** double lvv::array write, read ***  \n";
+	cout << "\n\n   *** double lvv::array ***  \n";
 	typedef lvv::array<double, 3> array_t;
 	array_t  d={{0.11, 0.22, 0.33}};
 	mmap_write<array_t> ("/tmp/_da.mmap", d); 	// size is taken from array_t 
@@ -47,5 +47,21 @@ int main(int argc, char *argv[]) {
 	cout << "array<double,3> d  =" << d  << endl;
 	cout << "array<double,3> dd =" << dd  << endl;
 
-	return 0;
+	////////////////////////////////////////////////// PART OF VECTOR<CHAR>
+	
+	{
+	cout << "\n\n   *** vector char ***  \n";
+	vector<char> A={'a','b','c','d'};
+	mmap_write("/tmp/vector_char.mmap", *(A.data()),2);
+
+
+	char *B;
+	size_t B_size;
+	B = mmap_read<char>("/tmp/vector_char.mmap",B_size);
+	
+	for (size_t i=0;  i<B_size;  ++i) {
+		cout << B[i] << ' ';
+	};  
+	cout << "   B_size=" << B_size << endl;
+	}
 }
