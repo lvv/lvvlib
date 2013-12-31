@@ -52,12 +52,30 @@ int main(int argc, char *argv[]) {
 	{
 	cout << "\n\n   *** vector char ***  \n";
 	vector<char> A={'a','b','c','d'};
-	mmap_write("/tmp/vector_char.mmap", *(A.data()),2);
+	mmap_write("/tmp/vector_char.mmap", A.data(),2);
 
 
 	char *B;
 	size_t B_size;
 	B = mmap_read<char>("/tmp/vector_char.mmap",B_size);
+	
+	for (size_t i=0;  i<B_size;  ++i) {
+		cout << B[i] << ' ';
+	};  
+	cout << "   B_size=" << B_size << endl;
+	}
+
+	////////////////////////////////////////////////// PART OF VECTOR<size_t>
+	
+	{
+	cout << "\n\n   *** vector vector<size_t> ***  \n";
+	vector<size_t> A={1,2,3,4,5};
+	mmap_write<size_t>("/tmp/vector_size.mmap", &A[0], 3);
+
+
+	size_t *B;
+	size_t  B_size;
+	B = mmap_read<size_t>("/tmp/vector_size.mmap",B_size);
 	
 	for (size_t i=0;  i<B_size;  ++i) {
 		cout << B[i] << ' ';

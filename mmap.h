@@ -68,8 +68,9 @@ template<typename REC_T,       int SHARING=MAP_SHARED>    REC_T*         mmap_re
  };
 
 
-template<typename T> void	mmap_write(const char* path, T &obj, size_t size=sizeof(T)) {
+template<typename T> void	mmap_write(const char* path, T &obj) {	// write an object
 
+	size_t size=sizeof(T);
 	unlink(path);
 
 	int	trg_fd = open(path, O_CREAT | O_RDWR, S_IRWXU);
@@ -102,6 +103,48 @@ template<typename T> void	mmap_write(const char* path, T &obj, size_t size=sizeo
        	mapping is less portable, the use of this option is discouraged. */
 
 	if (memcpy(p, &obj, size) < 0) {
+		cerr << "mmap_write error: couldn't memcpy() for \"" << path << "\" file\n";
+		close(trg_fd);
+		//exit(8);
+		throw std::exception();
+	}
+
+	if (munmap(p, size) < 0) {
+		cerr << "mmap_write error: couldn't munmap() for \"" << path << "\" file\n";
+		close(trg_fd);
+		//exit(10);
+		throw std::exception();
+	}
+ }
+
+template<typename REC_T> void	mmap_write(const char* path, REC_T* rec, size_t n) {	// wirte array REC_t[n]
+
+	size_t  size  = n * sizeof(REC_T);
+
+	unlink(path);
+
+	int	trg_fd = open(path, O_CREAT | O_RDWR, S_IRWXU);
+	if (trg_fd  < 0) {
+		cerr  << "mmap_write error: couldn't open  \"" << path << "\"  file\n";
+		throw open_error();
+	}
+
+	if (ftruncate(trg_fd, size) < 0) {
+		cerr << "mmap_write error: couldn't allocate space for  \"" << path << "\" file\n";
+		close(trg_fd);
+		throw no_free_space();
+	}
+
+
+	void *p = mmap(NULL, size, PROT_WRITE, MAP_SHARED, trg_fd, 0);
+	if ( p == MAP_FAILED ) {
+		cerr << "mmap_write error: couldn't mmap \"" << path << "\" file\n";
+		close(trg_fd);
+		//exit(6);
+		throw io_error();
+	}
+
+	if (memcpy(p, rec, size) < 0) {
 		cerr << "mmap_write error: couldn't memcpy() for \"" << path << "\" file\n";
 		close(trg_fd);
 		//exit(8);
