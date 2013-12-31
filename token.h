@@ -9,6 +9,8 @@
 							namespace {
 
 typedef  const char*   	pos_t;
+constexpr char	token_separator = ' ';
+
 
 // names, token
 struct  strref  {
@@ -25,7 +27,7 @@ struct  strref  {
 
 __attribute__((unused)) 
 std::ostream&   operator<< (std::ostream& os, const strref& s)  {
-	return os << " (" << std::string(s.b,s.e) << ") ";
+	return os << "(" << std::string(s.b,s.e) << ")";
 };
 
 
