@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
 	{
 	cout << "\n\n   *** vector vector<size_t> ***  \n";
 	vector<size_t> A={1,2,3,4,5};
-	mmap_write<size_t>("/tmp/vector_size.mmap", &A[0], 3);
+	mmap_write("/tmp/vector_size.mmap", &A[0], 3);
 
 
 	size_t *B;
