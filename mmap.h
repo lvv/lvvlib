@@ -23,7 +23,9 @@
 	struct  open_error: std::exception {};
 	struct  io_error: std::exception {};
 
-template<int SHARING=MAP_PRIVATE> void * mmap_read_ptr  (const char *path, size_t& n)   {
+	// this function not used directly
+	template<int SHARING=MAP_PRIVATE>
+void * mmap_read_ptr  (const char *path, size_t& n)   {	
 
 	int 	src_fd = open(path, O_RDWR);
 
@@ -55,12 +57,16 @@ template<int SHARING=MAP_PRIVATE> void * mmap_read_ptr  (const char *path, size_
 	return p;
  }
 
-template<typename MMAPED_TYPE, int SHARING=MAP_SHARED>    MMAPED_TYPE&   mmap_read(const char* path)               {
+	// read  an object of MMAPTED_TYPE
+	template<typename MMAPED_TYPE, int SHARING=MAP_SHARED>   
+MMAPED_TYPE&   mmap_read(const char* path)               {
 	size_t unused;   
 	return  *(MMAPED_TYPE*) mmap_read_ptr<SHARING>(path, unused);
  };
 
-template<typename REC_T,       int SHARING=MAP_SHARED>    REC_T*         mmap_read(const char* path, size_t& n)    {
+	// read c-array of REC_T[] type
+	template<typename REC_T,       int SHARING=MAP_SHARED>   
+REC_T*         mmap_read(const char* path, size_t& n)    {
 	size_t n_bytes;  
 	auto res =  (REC_T*)       mmap_read_ptr<SHARING>(path, n_bytes);
 	n = n_bytes/sizeof(REC_T);
@@ -68,7 +74,9 @@ template<typename REC_T,       int SHARING=MAP_SHARED>    REC_T*         mmap_re
  };
 
 
-template<typename T> void	mmap_write(const char* path, T &obj) {	// write an object
+	// write and oject of T type
+	template<typename T> void     
+mmap_write(const char* path, T &obj) {
 
 	size_t size=sizeof(T);
 	unlink(path);
@@ -115,9 +123,11 @@ template<typename T> void	mmap_write(const char* path, T &obj) {	// write an obj
 		//exit(10);
 		throw std::exception();
 	}
- }
-
-template<typename REC_T> void	mmap_write(const char* path, REC_T* rec, size_t n) {	// wirte array REC_t[n]
+ }                                                            
+	
+ 	// wirte c-array of REC_t[n] type
+	template<typename REC_T>
+void	mmap_write(const char* path, REC_T* rec, size_t n) {
 
 	size_t  size  = n * sizeof(REC_T);
 

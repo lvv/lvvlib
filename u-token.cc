@@ -1,9 +1,9 @@
 
 #include "check.h"
 
-//#include <ro/ro.h>
-//#include <scc/simple.h>
-//#include <lvv/lvv.h>
+#include <ro/ro.h>
+#include <scc/simple.h>
+#include <lvv/lvv.h>
 
 using namespace std;
 
@@ -115,5 +115,18 @@ int main() {
 	CHECK( ! is_head_of(" aa \n bb\t\n", "aa bbe",unused));
 	CHECK( ! is_head_of("A b C", "A b Ce",unused));
 	
+
+	//////////////////////////////////////////////////////// UNICODE
+	{
+	const char us[] = u8"Леонид Волницкий";
+	const octet* p=(const octet*)us;
+	const octet* e=p+strlen(us);
+	codepoint cp;
+	__ us; 
+	while (get_codepoint_from_utf8(p, e, cp)) {
+		__ cp, p;
+	}
+	}
+
 	CHECK_EXIT;
 }

@@ -1,7 +1,11 @@
 // splits string into tokens
 // part of lvvlib - https://github.com/lvv/lvvlib
-				
-#include<algorithm>
+
+//[u'\t', u'\n', u'\x0b', u'\x0c', u'\r', u'\x1c', u'\x1d', u'\x1e', u'\x1f', u' ', u'\x85', u'\xa0', u'\u1680', u'\u180e', u'\u2000', u'\u2001', u'\u2002', u'\u2003', u'\u2004', u'\u2005', u'\u2006', u'\u2007', u'\u2008', u'\u2009', u'\u200a', u'\u2028', u'\u2029', u'\u202f', u'\u205f', u'\u3000']				
+
+#include "unicode.h"
+
+#include <algorithm>
 	using std::find_if;
 	using std::find_if_not;
 
@@ -67,6 +71,7 @@ bool	are_equal_token_chains (pos_t b1, pos_t e1, pos_t b2, pos_t e2)  {
 
 	return tb1==e1  &&  tb2==e2;
 }
+
 
 bool	is_head_of (pos_t b1, pos_t e1, pos_t b2, pos_t e2, pos_t& match_e)  {
                                           // (b1,e1) - token chain;  

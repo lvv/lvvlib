@@ -9,19 +9,23 @@ MMAP.H
 
 Wraps and simplifies use of mmap(2) and munmap(2) functions.
 
-	/////  save T oject
+Example of how to save an object of type T:
+
 	#define path "t.mmap"
-	T  out;
-	mmap_write(path,out);		// saves object out
-	T& in  = mmap_read<T>(path);    // restore it in object in
+	T  a;
+	mmap_write(path,out);		// saves object a
+	T& b  = mmap_read<T>(path);     // restore object a in object b
 
 
-	////// save T array
+Same, but now we save an array:
 	T  a[n];
 	mmap_write(path,a);
 
 	size_t n;			// array size
-	T  *aa  = mmap_read<T>(path,n); // restore it, size in n 
+	T  *b  = mmap_read<T>(path,n);  // restore it, size in n 
+	for (size_t i=0;  i<n;  ++i)
+		cout << b[i];
+
 
 ARRAY.H
 -------
