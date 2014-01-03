@@ -1,7 +1,9 @@
 // mmap(2) wrapper
-// Part of lvvlib - https://github.com/lvv/lvvlib
+// Part of lvvlib - https://github.com/lvv/lvvlib, 
 // Copyright (c) 2000-2013
 // Leonid Volnitsky (Leonid@Volnitsky.com)
+//
+// Usage docs at doc/index.txt, see also t-mmap.cc
 
 
 	#include <string.h>
@@ -23,7 +25,7 @@
 	struct  open_error: std::exception {};
 	struct  io_error: std::exception {};
 
-	// this function not used directly
+	// this function is not used directly
 	template<int SHARING=MAP_PRIVATE>
 void * mmap_read_ptr  (const char *path, size_t& n)   {	
 
@@ -74,32 +76,32 @@ REC_T*         mmap_read(const char* path, size_t& n)    {
  };
 
 
-	// write and oject of T type
+	// write an oject of T type
 	template<typename T> void     
 mmap_write(const char* path, T &obj) {
 
 	size_t size=sizeof(T);
 	unlink(path);
 
-	int	trg_fd = open(path, O_CREAT | O_RDWR, S_IRWXU);
-	if (trg_fd  < 0) {
+	int	fd = open(path, O_CREAT | O_RDWR, S_IRWXU);
+	if (fd  < 0) {
 		cerr  << "mmap_write error: couldn't open  \"" << path << "\"  file\n";
 		//exit(2);
 		throw open_error();
 	}
 
-	if (ftruncate(trg_fd, size) < 0) {
+	if (ftruncate(fd, size) < 0) {
 		cerr << "mmap_write error: couldn't allocate space for  \"" << path << "\" file\n";
-		close(trg_fd);
+		close(fd);
 		//exit(4);
 		throw no_free_space();
 	}
 
 
-	void *p = mmap(NULL, size, PROT_WRITE, MAP_SHARED, trg_fd, 0);
+	void *p = mmap(NULL, size, PROT_WRITE, MAP_SHARED, fd, 0);
 	if ( p == MAP_FAILED ) {
 		cerr << "mmap_write error: couldn't mmap \"" << path << "\" file\n";
-		close(trg_fd);
+		close(fd);
 		//exit(6);
 		throw io_error();
 	}
@@ -112,14 +114,14 @@ mmap_write(const char* path, T &obj) {
 
 	if (memcpy(p, &obj, size) < 0) {
 		cerr << "mmap_write error: couldn't memcpy() for \"" << path << "\" file\n";
-		close(trg_fd);
+		close(fd);
 		//exit(8);
 		throw std::exception();
 	}
 
 	if (munmap(p, size) < 0) {
 		cerr << "mmap_write error: couldn't munmap() for \"" << path << "\" file\n";
-		close(trg_fd);
+		close(fd);
 		//exit(10);
 		throw std::exception();
 	}
@@ -133,37 +135,37 @@ void	mmap_write(const char* path, REC_T* rec, size_t n) {
 
 	unlink(path);
 
-	int	trg_fd = open(path, O_CREAT | O_RDWR, S_IRWXU);
-	if (trg_fd  < 0) {
+	int	fd = open(path, O_CREAT | O_RDWR, S_IRWXU);
+	if (fd  < 0) {
 		cerr  << "mmap_write error: couldn't open  \"" << path << "\"  file\n";
 		throw open_error();
 	}
 
-	if (ftruncate(trg_fd, size) < 0) {
+	if (ftruncate(fd, size) < 0) {
 		cerr << "mmap_write error: couldn't allocate space for  \"" << path << "\" file\n";
-		close(trg_fd);
+		close(fd);
 		throw no_free_space();
 	}
 
 
-	void *p = mmap(NULL, size, PROT_WRITE, MAP_SHARED, trg_fd, 0);
+	void *p = mmap(NULL, size, PROT_WRITE, MAP_SHARED, fd, 0);
 	if ( p == MAP_FAILED ) {
 		cerr << "mmap_write error: couldn't mmap \"" << path << "\" file\n";
-		close(trg_fd);
+		close(fd);
 		//exit(6);
 		throw io_error();
 	}
 
 	if (memcpy(p, rec, size) < 0) {
 		cerr << "mmap_write error: couldn't memcpy() for \"" << path << "\" file\n";
-		close(trg_fd);
+		close(fd);
 		//exit(8);
 		throw std::exception();
 	}
 
 	if (munmap(p, size) < 0) {
 		cerr << "mmap_write error: couldn't munmap() for \"" << path << "\" file\n";
-		close(trg_fd);
+		close(fd);
 		//exit(10);
 		throw std::exception();
 	}
